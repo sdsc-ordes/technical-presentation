@@ -1,3 +1,36 @@
+<img src="docs/logo.svg" style="margin-right: 10pt;width:100pt" align="right">
+<h1>Technical Presentations</h1>
+
+<br>
+Make technical presentations in Markdown/HTML etc.
+
+This is a fork of [`revealjs`](https://github.com/hakimel/reveal.js) with some modifications to
+package to PDF and standalone HTML format. Also it includes a company `scss`
+file for design modifications.
+
+**See the [demo presentation here](https://gabyx.github.io/Technical-Presentation)**.
+
+Authors: [Gabriel Nützi](https://github.com/gabyx) and [Simon Spörri](https://github.com/simonspoerri).
+
+## Examples
+
+- `npm install` -> Install all dependencies.
+- `npm run present` -> Presentation in Browser.
+- `npm run package` -> PDF & HTML and standalone `zip` file to distribute.
+
+## Modifications
+
+- Edit design in [`company.scss`](css/theme/source/company.scss).
+- Company Logo: Edit the file [`company-logo.svg`](css/theme/source/files/company-logo.svg).
+- Replace embedded image in [`company.scss`](css/theme/source/company.scss) with
+
+  ```shell
+  repl=$(cat css/theme/source/files/company-logo.svg | base64 -w 0| sed "s/\+/\\\+/g")
+  sed -i -E "s@background-image(.*);base64,.*\"@background-image\1;base64,$repl\"@" css/theme/source/company.scss
+  ```
+
+# RevealJS
+
 <p align="center">
   <a href="https://revealjs.com">
   <img src="https://hakim-static.s3.amazonaws.com/reveal-js/logo/v1/reveal-black-text-sticker.png" alt="reveal.js" width="500">
@@ -18,7 +51,9 @@ Want to create reveal.js presentation in a graphical editor? Try <https://slides
 ---
 
 ### Sponsors
+
 Hakim's open source work is supported by <a href="https://github.com/sponsors/hakimel">GitHub sponsors</a>. Special thanks to:
+
 <div align="center">
   <table>
     <td align="center">
@@ -38,13 +73,15 @@ Hakim's open source work is supported by <a href="https://github.com/sponsors/ha
 ---
 
 ### Getting started
+
 - 🚀 [Install reveal.js](https://revealjs.com/installation)
 - 👀 [View the demo presentation](https://revealjs.com/demo)
 - 📖 [Read the documentation](https://revealjs.com/markup/)
 - 🖌 [Try the visual editor for reveal.js at Slides.com](https://slides.com/)
 - 🎬 [Watch the reveal.js video course (paid)](https://revealjs.com/course)
 
---- 
+---
+
 <div align="center">
   MIT licensed | Copyright © 2011-2023 Hakim El Hattab, https://hakim.se
 </div>
