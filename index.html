@@ -103,7 +103,7 @@
       <section data-markdown>
         <script type="text/template">
             ### Code Focus
-            <pre><code class="language-cpp stretch" data-trim contenteditable=true>
+            <pre><code class="language-cpp stretch" data-trim contenteditable=true data-line-numbers="|3-4|8-10" data-fragment-index="1,2">
             int a = 3;
             int a;
             enum class C {A, B, C} b;
@@ -111,11 +111,16 @@
 
             int const * & const d;
 
-            using FuncPointer  = int (*)(float); // Typ: Pointer auf Funktion.
-            using FuncReferenz = int (&)(float); // Typ: Referenz auf Funktion.
-            using Func =             int(float);     // Typ: Funktion.</code></pre>
-            <span class="fragment current-only" data-code-focus="3-4">This is now important</span>
+            using FuncPointer  = int (*)(float); // Type: Pointer to function.
+            using FuncReferenz = int (&)(float); // Type: Reference to function.
+            using Func =             int(float); // Type: Function.
+            </code></pre>
+
+            <span class="fragment" data-fragment-index="1">This is now important</span>
+
             Link <a href="#/3/0/0">1</a>
+
+            <span class="fragment" data-fragment-index="2">This is now important too.</span>
         </script>
       </section>
 

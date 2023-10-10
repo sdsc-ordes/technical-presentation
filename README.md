@@ -1,5 +1,5 @@
 <img src="docs/logo.svg" style="margin-right: 10pt;width:100pt" align="right">
-<h1>Technical Presentations</h1>
+<h1>Technical Presentation</h1>
 
 <br>
 Make technical presentations in Markdown/HTML etc.
@@ -11,6 +11,8 @@ file for design modifications.
 **See the [demo presentation here](https://gabyx.github.io/Technical-Presentation)**.
 
 Authors: [Gabriel Nützi](https://github.com/gabyx) and [Simon Spörri](https://github.com/simonspoerri).
+
+Current [`revealjs`](https://github.com/hakimel/reveal.js) version: `4.6.1`
 
 ## Examples
 
