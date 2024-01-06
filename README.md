@@ -8,7 +8,8 @@ This is a fork of [`revealjs`](https://github.com/hakimel/reveal.js) with some m
 package to PDF and standalone HTML format. Also it includes a company `scss`
 file for design modifications.
 
-**See the [demo presentation here](https://gabyx.github.io/Technical-Presentation)**.
+- **See the [demo presentation here](https://gabyx.github.io/Technical-Presentation)**.
+- **See some other [C++ presentation here](https://gabyx.github.io/tech-pr-cpp-value-catergories)**.
 
 Authors: [Gabriel Nützi](https://github.com/gabyx) and [Simon Spörri](https://github.com/simonspoerri).
 
