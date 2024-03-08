@@ -28,7 +28,7 @@ Current [`revealjs`](https://github.com/hakimel/reveal.js) version: `4.6.1`
 - Replace embedded image in [`company.scss`](css/theme/source/company.scss) with
 
   ```shell
-  repl=$(cat css/theme/source/files/company-logo.svg | base64 -w 0| sed "s/\+/\\\+/g")
+  repl=$(cat css/theme/source/files/company-logo.svg | base64 -w 0| sed "s/\+/\\\+/g") &&
   sed -i -E "s@background-image(.*);base64,.*\"@background-image\1;base64,$repl\"@" css/theme/source/company.scss
   ```
 
