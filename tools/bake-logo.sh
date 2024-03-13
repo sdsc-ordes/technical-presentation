@@ -21,9 +21,10 @@ function clean_up() {
   [ -f "$temp" ] && rm -rf "$temp"
 }
 
-repl=$(cat "$ROOT_DIR/css/theme/source/files/company-logo.png" | base64 -w 0 | sed "s/\+/\\\+/g")
+repl=$(base64 -w 0 <"$ROOT_DIR/css/theme/source/files/company-logo.$type" | sed "s/\+/\\\+/g")
 temp=$(mktemp)
 
 # shellcheck disable=SC2028
+echo "Baking logo into 'company.scss'..."
 printf 's@background-image(.*);base64,.*"@background-image: url("data:image/%s;base64,%s"@' "$mime" "$repl" >"$temp"
 sed -i -E -f "$temp" "$ROOT_DIR/css/theme/source/company.scss"
