@@ -17,20 +17,20 @@ Current [`revealjs`](https://github.com/hakimel/reveal.js) version: `4.6.1`
 
 ## Examples
 
-- `npm install` -> Install all dependencies.
-- `npm run present` -> Presentation in Browser.
-- `npm run package` -> PDF & HTML and standalone `zip` file to distribute.
+- `just install` -> Install all dependencies.
+- `just present` -> Presentation in Browser.
+- `just package` -> PDF & HTML and standalone `zip` file to distribute.
 
 ## Modifications
 
 - Edit design in [`company.scss`](css/theme/source/company.scss).
 - Company Logo: Edit the file [`company-logo.svg`](css/theme/source/files/company-logo.svg).
-- Replace embedded image in [`company.scss`](css/theme/source/company.scss) with
 
-  ```shell
-  repl=$(cat css/theme/source/files/company-logo.svg | base64 -w 0| sed "s/\+/\\\+/g") &&
-  sed -i -E "s@background-image(.*);base64,.*\"@background-image\1;base64,$repl\"@" css/theme/source/company.scss
-  ```
+  - Replace embedded image in [`company.scss`](css/theme/source/company.scss) with
+
+    ```shell
+    just bake-logo
+    ```
 
 # RevealJS
 
