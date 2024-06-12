@@ -6,6 +6,17 @@ root_dir := justfile_directory()
 nix-develop:
     nix develop ./nix#default
 
+# Init reveal.js into build folder.
+init:
+    #!/usr/bin/env bash
+    set -eu
+    rsync -avv "{{root_dir}}/external/reveal.js/" "{{root_dir}}/build/"
+    rsync -avv "{{root_dir}}/src/mixing/" "{{root_dir}}/build/"
+    ln -fs "{{root_dir}}/src/export" "{{root_dir}}/build/export"
+    ln -fs "{{root_dir}}/src/files" "{{root_dir}}/build/files"
+    ln -fs "{{root_dir}}/src/index.html" "{{root_dir}}/build/index.html"
+
+
 # Install all stuff.
 install:
     npm install

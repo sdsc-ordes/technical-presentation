@@ -50,6 +50,7 @@
           parallel
           direnv
           nodePackages_latest.npm
+          lsyncd
         ];
       in
         with pkgs; {
