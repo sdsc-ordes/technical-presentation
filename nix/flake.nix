@@ -1,5 +1,5 @@
 {
-  description = "Homepage Dev";
+  description = "technical-presentation";
 
   nixConfig = {
     substituters = [
@@ -25,13 +25,6 @@
     # Also see the 'stable-packages' overlay at 'overlays/default.nix'.
 
     flake-utils.url = "github:numtide/flake-utils";
-    rust-overlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "flake-utils";
-      };
-    };
   };
 
   outputs = {
@@ -39,7 +32,6 @@
     nixpkgs,
     nixpkgsStable,
     flake-utils,
-    rust-overlay,
     ...
   } @ inputs:
     flake-utils.lib.eachDefaultSystem
@@ -53,24 +45,21 @@
         };
 
         # Things needed only at compile-time.
-        nativeBuildInputsBasic = with pkgs; [
+        nativeBuildInputs = with pkgs; [
           just
           parallel
+          direnv
           nodePackages_latest.npm
         ];
-
-        # Things needed only at compile-time.
-        nativeBuildInputsDev = with pkgs; [
-        ];
-
-        # Things needed at runtime.
-        buildInputs = with pkgs; [postgresql];
       in
         with pkgs; {
+          # The formatter usable with `nix fmt ./nix`
+          formatter = nixpkgs.legacyPackages.${system}.alejandra;
+
+          # The default development shell usable by `nix develop ./nix#default`.
           devShells = {
             default = mkShell {
-              inherit buildInputs;
-              nativeBuildInputs = nativeBuildInputsBasic ++ nativeBuildInputsDev;
+              nativeBuildInputs = nativeBuildInputs;
             };
           };
         }

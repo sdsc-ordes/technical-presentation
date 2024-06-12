@@ -15,6 +15,21 @@ Authors: [Gabriel Nützi](https://github.com/gabyx) and [Simon Spörri](https://
 
 Current [`revealjs`](https://github.com/hakimel/reveal.js) version: `4.6.1`
 
+## Requirements
+
+Check the requirements in [`revealjs`](https://github.com/hakimel/reveal.js).
+
+### Using [`nix`](https://nixos.org)
+
+You can enter a development shell with
+
+```shell
+nix develop ./nix#default
+```
+
+where all requirements are installed to start working on your first
+presentation.
+
 ## Examples
 
 - `just install` -> Install all dependencies.
