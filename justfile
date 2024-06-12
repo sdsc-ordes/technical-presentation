@@ -10,6 +10,12 @@ nix-develop:
 install:
     npm install
 
+# Build all stuff.
+# When you changes styles and
+# themes you need to run this.
+build:
+    npm run build
+
 # Present the presentation.
 present:
     npm run present
