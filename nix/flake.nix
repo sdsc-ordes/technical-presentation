@@ -50,7 +50,8 @@
           parallel
           direnv
           nodePackages_latest.npm
-          lsyncd
+          nodePackages_latest.yarn
+          inotify-tools
         ];
       in
         with pkgs; {

@@ -30,9 +30,14 @@ nix develop ./nix#default
 where all requirements are installed to start working on your first
 presentation.
 
-## Examples
+## Usage
 
-- `just install` -> Install all dependencies.
+1. `just init` -> Init the `build` folder with the pinned `reveal.js` source and
+   inject some changed files (styles, fonts, etc.) and install dependencies inside the build folder.
+2. `just watch` -> Watch the files in [`src`](src/) and synchronize changes to the `build` folder.
+3. `just install` -> Install all dependencies inside the `build` folder
+4. `just present`
+
 - `just present` -> Presentation in Browser.
 - `just package` -> PDF & HTML and standalone `zip` file to distribute.
 
