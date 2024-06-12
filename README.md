@@ -4,20 +4,24 @@
 <br>
 Make technical presentations in Markdown/HTML etc.
 
-This is a fork of [`revealjs`](https://github.com/hakimel/reveal.js) with some modifications to
-package to PDF and standalone HTML format. Also it includes a company `scss`
-file for design modifications.
+This uses [`revealjs`](https://github.com/hakimel/reveal.js) with some
+modifications to package to PDF and standalone HTML format. Also it includes a
+company `scss` file for design modifications.
 
-- **See the [demo presentation here](https://gabyx.github.io/Technical-Presentation)**.
-- **See some other [C++ presentation here](https://gabyx.github.io/tech-pr-cpp-value-catergories)**.
+- **See the
+  [demo presentation here](https://gabyx.github.io/Technical-Presentation)**.
+- **See some other
+  [C++ presentation here](https://gabyx.github.io/tech-pr-cpp-value-catergories)**.
 
-Authors: [Gabriel Nützi](https://github.com/gabyx) and [Simon Spörri](https://github.com/simonspoerri).
+Authors: [Gabriel Nützi](https://github.com/gabyx) and
+[Simon Spörri](https://github.com/simonspoerri).
 
 Current [`revealjs`](https://github.com/hakimel/reveal.js) version: `4.6.1`
 
-## Requirements
+- [ ] TODO: Containerize for `.devcontainer` usage over Ubuntu and `nix`.
+- [ ] TODO: Add one modern presentation with all `.md` files.
 
-Check the requirements in [`revealjs`](https://github.com/hakimel/reveal.js).
+## Requirements
 
 ### Using [`nix`](https://nixos.org)
 
@@ -30,81 +34,37 @@ nix develop ./nix#default
 where all requirements are installed to start working on your first
 presentation.
 
+### Manual
+
+You need the following tools:
+
+- `bash`
+- `just`
+- `rsync`
+- `inotifywait`
+- `npm`
+- `yarn`
+
 ## Usage
 
 1. `just init` -> Init the `build` folder with the pinned `reveal.js` source and
-   inject some changed files (styles, fonts, etc.) and install dependencies inside the build folder.
-2. `just watch` -> Watch the files in [`src`](src/) and synchronize changes to the `build` folder.
-3. `just install` -> Install all dependencies inside the `build` folder
-4. `just present`
-
-- `just present` -> Presentation in Browser.
-- `just package` -> PDF & HTML and standalone `zip` file to distribute.
+   inject some changed files (styles, fonts, etc.) and install dependencies
+   inside the build folder.
+2. `just watch` -> Watch the files in [`src`](src/) and synchronize changes to
+   the `build` folder.
+3. `just present` -> Serve the presentation in the browser.
+4. `just package` -> Export the presentation as HTML and PDF inside a `.zip`
+   file.
 
 ## Modifications
 
 - Edit design in [`company.scss`](css/theme/source/company.scss).
-- Company Logo: Edit the file [`company-logo.svg`](css/theme/source/files/company-logo.svg).
 
-  - Replace embedded image in [`company.scss`](css/theme/source/company.scss) with
+- Company Logo: Edit the file
+  [`company-logo.svg`](css/theme/source/files/company-logo.svg).
 
-    ```shell
-    just bake-logo
-    ```
+- Replace embedded image in [`company.scss`](css/theme/source/company.scss) with
 
-# RevealJS
-
-<p align="center">
-  <a href="https://revealjs.com">
-  <img src="https://hakim-static.s3.amazonaws.com/reveal-js/logo/v1/reveal-black-text-sticker.png" alt="reveal.js" width="500">
-  </a>
-  <br><br>
-  <a href="https://github.com/hakimel/reveal.js/actions"><img src="https://github.com/hakimel/reveal.js/workflows/tests/badge.svg"></a>
-  <a href="https://slides.com/"><img src="https://s3.amazonaws.com/static.slid.es/images/slides-github-banner-320x40.png?1" alt="Slides" width="160" height="20"></a>
-</p>
-
-reveal.js is an open source HTML presentation framework. It enables anyone with a web browser to create beautiful presentations for free. Check out the live demo at [revealjs.com](https://revealjs.com/).
-
-The framework comes with a powerful feature set including [nested slides](https://revealjs.com/vertical-slides/), [Markdown support](https://revealjs.com/markdown/), [Auto-Animate](https://revealjs.com/auto-animate/), [PDF export](https://revealjs.com/pdf-export/), [speaker notes](https://revealjs.com/speaker-view/), [LaTeX typesetting](https://revealjs.com/math/), [syntax highlighted code](https://revealjs.com/code/) and an [extensive API](https://revealjs.com/api/).
-
----
-
-Want to create reveal.js presentation in a graphical editor? Try <https://slides.com>. It's made by the same people behind reveal.js.
-
----
-
-### Sponsors
-
-Hakim's open source work is supported by <a href="https://github.com/sponsors/hakimel">GitHub sponsors</a>. Special thanks to:
-
-<div align="center">
-  <table>
-    <td align="center">
-      <a href="https://workos.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=revealjs&utm_source=github">
-        <div>
-          <img src="https://user-images.githubusercontent.com/629429/151508669-efb4c3b3-8fe3-45eb-8e47-e9510b5f0af1.svg" width="290" alt="WorkOS">
-        </div>
-        <b>Your app, enterprise-ready.</b>
-        <div>
-          <sub>Start selling to enterprise customers with just a few lines of code. Add Single Sign-On (and more) in minutes instead of months.</sup>
-        </div>
-      </a>
-    </td>
-  </table>
-</div>
-
----
-
-### Getting started
-
-- 🚀 [Install reveal.js](https://revealjs.com/installation)
-- 👀 [View the demo presentation](https://revealjs.com/demo)
-- 📖 [Read the documentation](https://revealjs.com/markup/)
-- 🖌 [Try the visual editor for reveal.js at Slides.com](https://slides.com/)
-- 🎬 [Watch the reveal.js video course (paid)](https://revealjs.com/course)
-
----
-
-<div align="center">
-  MIT licensed | Copyright © 2011-2023 Hakim El Hattab, https://hakim.se
-</div>
+  ```shell
+  just bake-logo
+  ```
