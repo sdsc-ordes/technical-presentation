@@ -60,7 +60,7 @@ watch:
     )
 
 clean:
-    cd "{{root_dir}}" && rm -rf build && mkdir -p build && \
+    cd "{{root_dir}}" && rm -rf build && mkdir -p build
 
 # Present the presentation.
 present:
