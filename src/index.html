@@ -22,11 +22,11 @@
       // If decktape export we need to load some other css
       // Emoji-Convertion
       if (window.location.search.match(/decktape/gi)) {
-        let link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.type = "text/css";
-        link.href = "css/print/decktape.css";
-        document.getElementsByTagName("head")[0].appendChild(link);
+        let link = document.createElement("link")
+        link.rel = "stylesheet"
+        link.type = "text/css"
+        link.href = "css/print/decktape.css"
+        document.getElementsByTagName("head")[0].appendChild(link)
       }
     </script>
 
@@ -171,7 +171,7 @@
           RevealMath,
           RevealZoom,
         ],
-      });
+      })
     </script>
   </body>
 </html>
