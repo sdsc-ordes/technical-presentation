@@ -36,7 +36,18 @@ presentation.
 
 ### DevContainer
 
-There is a minimal `.devcontainer` which lets you
+There is a [`.devcontainer`](.devcontainer) which lets you run `code` or CLI run
+the project inside. First build the container:
+
+```shell
+just build-dev-container
+```
+
+or with `docker` instead of `podman`:
+
+```shell
+just container_mgr=docker build-dev-container
+```
 
 ### Manual
 

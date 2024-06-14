@@ -25,6 +25,7 @@ init:
     mkdir -p "build"
 
     echo "Init pinned reveal.js folder to 'build'..."
+    git submodule update --init
     rsync -avv "external/reveal.js/" "build/"
 
     just sync
@@ -72,6 +73,16 @@ bake-logo mime="svg":
   cd "{{root_dir}}" && \
   	tools/bake-logo.sh "{{mime}}"
 
+# Build the container for `.devcontainer`.
+build-dev-container *args:
+  cd "{{root_dir}}" && \
+    "{{container_mgr}}" build \
+    --build-arg "REPOSITORY_COMMIT_SHA=$(git rev-parse --short=11 HEAD)" \
+    -f nix/devcontainer/Containerfile \
+    -t technical-presentation:latest \
+    "$@" \
+    nix/
+
 [private]
 sync:
     #!/usr/bin/env bash
@@ -87,7 +98,6 @@ sync:
 
     # Cannot use symlink because `serve` does not like it.
     echo "Add additional files (styles, themes, etc.) ..."
-    sync src/export/ build/export/
     sync src/presentations/ build/presentations/
     sync src/mixing/ build/
     sync src/index.html build/index.html
