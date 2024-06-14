@@ -47,9 +47,9 @@
         # Things needed only at compile-time.
         nativeBuildInputs = with pkgs; [
           just
-          podman
           parallel
           direnv
+
           nodePackages_latest.npm
           nodePackages_latest.yarn
           inotify-tools
@@ -63,6 +63,27 @@
           devShells = {
             default = mkShell {
               nativeBuildInputs = nativeBuildInputs;
+            };
+          };
+
+          packages = {
+            devcontainer-deps = pkgs.buildEnv {
+              name = "devcontainer-deps";
+              paths = with pkgs;
+                [
+                  coreutils
+                  findutils
+                  binutils
+
+                  git
+                  podman
+                  just
+
+                  # zsh # TODO: Somehow I cannot get the plugins work with LC_ALL and locales.
+                  figlet
+                  glibcLocales
+                ]
+                ++ nativeBuildInputs;
             };
           };
         }

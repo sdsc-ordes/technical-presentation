@@ -9,22 +9,22 @@ type="${1:-svg}"
 mime=""
 
 if [ "$type" = "png" ]; then
-  mime="png"
+    mime="png"
 elif [ "$type" = "svg" ]; then
-  mime="svg+xml"
+    mime="svg+xml"
 else
-  echo "Image type not supported."
+    echo "Image type not supported."
 fi
 
 temp=""
 function clean_up() {
-  [ -f "$temp" ] && rm -rf "$temp"
+    [ -f "$temp" ] && rm -rf "$temp"
 }
 
-repl=$(base64 -w 0 <"$ROOT_DIR/src/css/theme/source/files/company-logo.$type" | sed "s/\+/\\\+/g")
+repl=$(base64 -w 0 <"$ROOT_DIR/src/mixin/css/theme/source/files/company-logo.$type" | sed "s/\+/\\\+/g")
 temp=$(mktemp)
 
 # shellcheck disable=SC2028
 echo "Baking logo into 'company.scss'..."
 printf 's@background-image(.*);base64,.*"@background-image: url("data:image/%s;base64,%s"@' "$mime" "$repl" >"$temp"
-sed -i -E -f "$temp" "$ROOT_DIR/src/css/theme/source/company.scss"
+sed -i -E -f "$temp" "$ROOT_DIR/src/mixin/css/theme/source/company.scss"

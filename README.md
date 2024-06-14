@@ -36,7 +36,18 @@ presentation.
 
 ### DevContainer
 
-There is a minimal `.devcontainer` which lets you
+There is a [`.devcontainer`](.devcontainer) which lets you run `code` or CLI run
+the project inside. First build the container:
+
+```shell
+just build-dev-container
+```
+
+or with `docker` instead of `podman`:
+
+```shell
+just container_mgr=docker build-dev-container
+```
 
 ### Manual
 
@@ -52,7 +63,7 @@ You need the following tools:
 ## Usage
 
 1. **`just init`** -> Init the `build` folder with the pinned
-   [`reveal.js`](.gitmodules) source and inject some [changed files](src/mixing)
+   [`reveal.js`](.gitmodules) source and inject some [changed files](src/mixin)
    (styles, fonts, etc.) and install dependencies inside the build folder.
 
 2. **`just watch`** -> Watch the files in [`src`](src/) and synchronize changes

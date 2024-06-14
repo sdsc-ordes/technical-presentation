@@ -1,0 +1,87 @@
+# syntax = docker/dockerfile:1.2
+ARG CONTAINER_OS_DIST=alpine
+
+FROM $CONTAINER_OS_DIST:latest as technical-presentation
+ARG SECRETS_DIR=""
+ARG CONTAINER_OS_DIST
+
+ARG TIME_ZONE="Europe/Zurich"
+ARG LOCALE="en_US"
+
+ENV CONTAINER_SETUP_DIR="/container-setup"
+
+ARG USER_NAME="ci"
+ARG USER_PASSWORD="$USER_NAME"
+
+ENV CONTAINER_NAME="Technical-Presentation"
+ENV CONTAINER_ID="c56dd7b2-7315-478c-820d-33bb6a3dd3cc"
+ARG BUILD_VERSION=
+ENV CONTAINER_BUILD_VERSION=$BUILD_VERSION
+ARG REPOSITORY_COMMIT_SHA
+ENV CONTAINER_REPOSITORY_COMMIT_SHA=$REPOSITORY_COMMIT_SHA
+
+ARG USER_UID=1000
+ARG USER_GID=1000
+ARG ZSH_HISTORY="/home/$USER_NAME/.zsh_history"
+ARG PYTHON_ENVS="/home/$USER_NAME/python-envs"
+
+# Basics just until we have Nix.
+RUN apk add \
+  sudo \
+  shadow \
+  bash \
+  zsh \
+  curl \
+  xz \
+  tzdata \
+  ca-certificates && \
+  update-ca-certificates
+
+# Set the locale.
+ENV LANG $LOCALE.UTF-8
+ENV LC_ALL $LOCALE.UTF-8
+ENV LANGUAGE $LOCALE.UTF-8
+
+# Add common scripts.
+COPY devcontainer/setup/common $CONTAINER_SETUP_DIR/common
+
+# Configure Timezone.
+COPY devcontainer/setup/setup-time-zone.sh $CONTAINER_SETUP_DIR/
+RUN chmod +x $CONTAINER_SETUP_DIR/setup-time-zone.sh && \
+  $CONTAINER_SETUP_DIR/setup-time-zone.sh \
+  --time-zone "$TIME_ZONE"
+
+# Add the user and delete password.
+RUN adduser "$USER_NAME" -s /bin/zsh -D -u "$USER_UID" -g "$USER_GID" -h "/home/$USER_NAME" && \
+  mkdir -p /etc/sudoers.d && \
+  echo "$USER_NAME ALL=(root) NOPASSWD:ALL" > "/etc/sudoers.d/$USER_NAME" && \
+  chmod 0440 "/etc/sudoers.d/$USER_NAME" && \
+  chown -R "$USER_NAME:$USER_NAME" /home "$CONTAINER_SETUP_DIR"
+USER "$USER_NAME"
+
+# Setup Nix.
+COPY --chown=$USER_NAME:$USER_NAME devcontainer/setup/setup-nix.sh $CONTAINER_SETUP_DIR/
+RUN chmod +x $CONTAINER_SETUP_DIR/setup-nix.sh && \
+  $CONTAINER_SETUP_DIR/setup-nix.sh
+ENV PATH="/home/ci/.nix-profile/bin:$PATH"
+
+# Install dependencies.
+COPY --chown=$USER_NAME:$USER_NAME flake.nix flake.lock $CONTAINER_SETUP_DIR/
+RUN nix profile install "$CONTAINER_SETUP_DIR#devcontainer-deps" && nix store gc
+
+# Add Zsh shell and plugins.
+COPY --chown=$USER_NAME:$USER_NAME devcontainer/setup/setup-zsh.sh $CONTAINER_SETUP_DIR/
+COPY --chown=$USER_NAME:$USER_NAME devcontainer/setup/shell $CONTAINER_SETUP_DIR/shell/
+RUN chmod +x $CONTAINER_SETUP_DIR/setup-zsh.sh && \
+  $CONTAINER_SETUP_DIR/setup-zsh.sh "$PATH"
+
+# Install Project dependencies.
+WORKDIR "/home/$USER_NAME"
+
+# Setup runtime script
+COPY --chown=$USER_NAME:$USER_NAME devcontainer/setup/setup-runtime.sh $CONTAINER_SETUP_DIR/
+RUN chmod +x $CONTAINER_SETUP_DIR/setup-runtime.sh && \
+  [ ! -d $CONTAINER_SETUP_DIR/runtime ] || chmod +x $CONTAINER_SETUP_DIR/runtime/*
+
+ENTRYPOINT ["/container-setup/setup-runtime.sh"]
+CMD ["zsh"]
