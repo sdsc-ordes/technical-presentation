@@ -91,4 +91,4 @@ using Func =             int(float); // Type: Function.
 
 # Disclaimer
 
-Customized with ❤️ by Gabriel Nützi and Simon Spörri.
+Customized with ❤️ by Gabriel Nützi for SDSC.

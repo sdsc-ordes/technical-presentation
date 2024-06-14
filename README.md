@@ -2,14 +2,16 @@
 <h1>Technical Presentation</h1>
 
 <br>
-Make technical presentations in Markdown/HTML etc.
 
-This uses [`revealjs`](https://github.com/hakimel/reveal.js) with some
-modifications to package to PDF and standalone HTML format. Also it includes a
-company `scss` file for design modifications.
+Make technical presentations in Markdown/HTML with
+[`reveal.js`](https://github.com/hakimel/reveal.js.git).
+
+This is a fork of
+[`technical-presentation`](https://github.com/gabyx/technical-presentation.git)
+with some small modifications for SDSC.
 
 - **See the
-  [demo presentation here](https://gabyx.github.io/Technical-Presentation)**.
+  [demo presentation here](https://sdsc-ordes.github.io/technical-presentation)**.
 - **See some other
   [C++ presentation here](https://gabyx.github.io/tech-pr-cpp-value-catergories)**
   [src](https://github.com/gabyx/tech-pr-cpp-value-catergories).
@@ -17,7 +19,6 @@ company `scss` file for design modifications.
 Authors:
 
 - [Gabriel Nützi](https://github.com/gabyx) and
-- [Simon Spörri](https://github.com/simonspoerri).
 
 Current [`revealjs`](https://github.com/hakimel/reveal.js) version: `4.6.1`
 
