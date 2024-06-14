@@ -47,6 +47,7 @@
         # Things needed only at compile-time.
         nativeBuildInputs = with pkgs; [
           just
+          podman
           parallel
           direnv
           nodePackages_latest.npm

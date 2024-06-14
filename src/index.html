@@ -45,92 +45,13 @@
   <body>
     <div class="reveal">
       <div class="slides">
-        <section>
-          <h1>Technical Presentation</h1>
-          <p>Reveal.js based presentations are cool:</p>
-          <ul>
-            <li>Markdown</li>
-            <li>CSS</li>
-            <li>Code Highlighting</li>
-            <li>Versioning</li>
-            <li>etc.</li>
-          </ul>
-        </section>
-
-        <section>
-          <h1>Smart Presentation</h1>
-          <h2>Smart Presentation</h2>
-          <h3>Smart Presentation</h3>
-          <h4>Smart Presentation</h4>
-        </section>
-
-        <section>
-          <h2>Code</h2>
-          <pre><code class="language-cpp stretch" data-trim>
-        int a = 3;
-        void foo(int a){
-            std::cout << "Hello. click!" << std::endl;
-            std::vector&lt;int&gt; v{1,2,4};
-        }</code></pre>
-        </section>
-
-        <section data-markdown>
-          <script type="text/template">
-            ### Markdown
-            - *Carpe Diem*
-            - **b**) This is good.
-            - Inline Code `asd`
-            - [Links](http://coliru.stacked-crooked.com/)
-            - **Code**:
-            ```cpp
-            void foo(int a){
-                std::cout << "Hello. click!" << std::endl;
-                std::vector<int>; v{1,2,4};
-            }
-            ```
-            - **Editierbarer Code:**
-              <span class="fragment" data-code-focus="1,2" data-fragment-index="1">Focus</span>
-              <span class="fragment" data-code-focus="3" data-fragment-index="1" >Focus</span>
-              <pre class="fragment"><code class="language-cpp stretch" data-trim contenteditable=true>int a = 3;
-              void foo(int a){
-                  std::cout &lt;&lt; "Hello. click!" &lt;&lt; 1 != 3 std::endl;
-                  std::vector&lt;int&gt; v{1,2,4};
-              }</code></pre>
-
-              <span class="fragment">Cool.</span>
-          </script>
-        </section>
-
-        <section data-markdown>
-          <script type="text/template">
-            ### Code Focus
-            <pre><code class="language-cpp stretch" data-trim contenteditable=true data-line-numbers="|3-4|8-10" data-fragment-index="1,2">
-            int a = 3;
-            int a;
-            enum class C {A, B, C} b;
-            std::vector&lt;int&gt; c; // asd
-
-            int const * & const d;
-
-            using FuncPointer  = int (*)(float); // Type: Pointer to function.
-            using FuncReferenz = int (&)(float); // Type: Reference to function.
-            using Func =             int(float); // Type: Function.
-            </code></pre>
-
-            <span class="fragment" data-fragment-index="1">This is now important</span>
-
-            Link <a href="#/3/0/0">1</a>
-            <span class="fragment" data-fragment-index="2">This is now important too.</span>
-          </script>
-        </section>
-
-        <section>
-          <h1>Disclaimer</h1>
-          <p class="fragment current-only">
-            Customized with <i class="emoji">❤️</i> by Gabriel Nützi and Simon
-            Spörri.
-          </p>
-        </section>
+        <section
+          data-markdown="presentations/presentation-1/presentation.md"
+          data-separator="^\n---\n"
+          data-separator-vertical="^\n--\n"
+          data-separator-notes="^Note:"
+          data-charset="utf-8"
+        ></section>
       </div>
     </div>
 

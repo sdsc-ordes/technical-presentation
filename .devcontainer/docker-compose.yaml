@@ -1,0 +1,15 @@
+version: "3.5"
+services:
+  dev:
+    image: "dev-container-technical-presentations:0.0.1"
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_PTRACE
+    volumes:
+      - ..:/workspace
+      - ./shell:/home/ci/.shell
+      - /etc/localtime:/etc/localtime
+      - /etc/timezone:/etc/timezone
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: tail -f /dev/null
