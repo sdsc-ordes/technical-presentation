@@ -3,7 +3,7 @@
     "container_mgr": "podman"
   },
   "scripts": {
-    "present": "npm run build && concurrently --kill-others --success first \"npm run start\" \"npm run present::browser-sync\"",
+    "present": "concurrently --kill-others --success first \"npm run start\" \"npm run present::browser-sync\"",
     "present::browser-sync": "browser-sync start --index index.html --server --files . --ignore '.git/**' --port 3000",
     "pdf": "npm-run-all -s build pdf::start",
     "pdf::start": "concurrently --kill-others --success first \"npm run pdf::export\" \"npm run pdf::server\"",

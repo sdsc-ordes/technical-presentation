@@ -31,7 +31,8 @@ init:
     just sync
 
     echo "Install node packages in 'build' ..."
-    (cd build && yarn install)
+    (cd build && yarn install && npm run build)
+
 
 # Watch the files in `src` and synchronize them into the `build` folder.
 watch:
@@ -50,6 +51,11 @@ watch:
             just sync
         done
     )
+
+# Build the presentation.
+build:
+    cd "{{root_dir}}/build" && \
+      npm run build
 
 # Present the presentation.
 present:
