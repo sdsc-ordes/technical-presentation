@@ -43,6 +43,10 @@
       /* Column divs */
       .reveal .columns {
         display: flex;
+        align-items: flex-start;
+        flex-wrap: nowrap;
+        flex-direction: row;
+        justify-content: space-evenly;
       }
       .reveal .column {
         flex: 1;
@@ -59,6 +63,18 @@
       .reveal pre code {
         max-height: initial;
       }
+
+      .emph {
+        color: #6d7dd8;
+      }
+
+      .center-content {
+        max-width: fit-content;  
+        margin-left: auto;  
+        margin-right: auto; 
+        text-align: center;
+      }
+
     </style>
   </head>
 

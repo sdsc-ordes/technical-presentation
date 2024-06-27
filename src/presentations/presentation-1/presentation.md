@@ -1,4 +1,4 @@
-<!-- markdownlint-disable-file MD034 MD033 MD001 -->
+<!-- markdownlint-disable-file MD034 MD033 MD001 MD024 MD026-->
 
 # Rust Workshop 🦀
 
@@ -14,17 +14,23 @@ Note: With focus from python to rust.
 
 # What the Hack is Rust 🦀
 
-- It's multi-paradigm language:
+#### A Multi-Paradigm Language
 
-  - procedural like Python (functions, loops, ...)
-  - functional aspects like iterators, lambdas (closures) etc.
-  - object-oriented aspects but unlike Python ( :heart:)
+- procedural like Python, i.e. _functions_ 󰊕, _loops_ 󰑙, ...
+- functional aspects, i.e. _iterators_ 🏃, _lambdas_ 󰡱 ...
+- object-oriented aspects but unlike Python ( its better ❤️)
 
-- It's a **compiled** language unlike Python:
+---
 
-  - It has a strong type system ([algebraic types](TODO)).
-  - The Rust compiler `rustc` will convert your code to machine-code. Python is
-    an interpreter.
+# What the Hack is Rust 🦀
+
+#### A **Compiled** Language Unlike Python
+
+- The Rust compiler `rustc` 🦀 will convert your code to machine-code ⚙️. Python
+  is an interpreter.
+
+- It has a **strong type system** ([algebraic types](TODO): sum types, product
+  types).
 
 - It was invented in 2009 by Mozilla (Firefox) - Rust Foundation as the driver
   today.
@@ -42,12 +48,11 @@ A few selling points for `python` programmers.
 
 ---
 
-# Come on... show me some syntax!
+## Come on 🐨 show me syntax!
 
-The syntax\* is as easy to read as in Python.
+The syntax\* is similar and as easy to read as in Python.
 
 <!-- prettier-ignore-start -->
-
 <div class="columns">
 <div class="column">
 
@@ -94,7 +99,7 @@ def grow() -> List[Apple]:
 </div>
 </div>
 
-\*: 80% you will encounter is very readable. Macros etc. get verbose and bit
+\*: 80% you will encounter is very readable. Macros implementation code etc. get verbose and much
 harder.
 
 ---
@@ -102,79 +107,176 @@ harder.
 # But Why?
 
 <h3>
-  More reasons why you should learn a <span style="color:lightgreen"><em>compiled, statically typed</em> </span>language...
+  More reasons why you should learn a <em class="emph">compiled, statically typed</em> </span>language...
 </h3>
 
 ---
 
-## 2. Memory Safety
+### What Rust Promises 🤚
 
-- **Safe Memory Management**: Rust prevents common programming errors related to
-  memory, such as null pointer dereferencing, buffer overflows, and data races.
-  This reduces bugs and security vulnerabilities in software development.
-- **Ownership Model**: Rust’s ownership model enforces strict rules on how
-  memory is managed and shared, which can help Python programmers write safer
-  and more robust code.
+<div class="center-content">
+
+1. **Pedal to the metal**
+2. **Comes with a warranty**
+3. **Beautiful code**
+4. **Rust is practical**
+
+</div>
+
 
 ---
 
-### Performance
+# Pedal to The Metal
 
-- **Speed**: Rust is **fast** 🚀. Same or faster then `C`.
+- Compiled language, not interpreted.
 
-  _Python is slow, that's why most libraries outsource to `C` or
+- State-of-the-art machine-code generation using LLVM.
+
+- No garbage collector (GC) getting in the way of execution.
+
+  ```python
+  def run():
+    d = { "a":1, "b":2 } # Memory is allocated on the heap.
+
+  run()
+  ```
+ 
+  **Question:** Does the memory of `d` still exist at `run()`?
+  
+     We don't know 🤷 <!-- .element: class="fragment"-->
+
+
+
+- Usable in embedded devices, operating systems and demanding websites.
+
+Note: Explain what a garbage collector does explain what the heap/stack are later.
+
+---
+
+## Rust Comes with a Warranty
+
+- Strong type system helps prevent silly bugs 🐞:
+
+  ```python
+  def concat(numbers: List[str]) -> str:
+    return "-".join(numbers)
+
+  concat(["1", "2", "30", 4, "5", "7", "10"])
+  ```
+
+- Explicit errors instead of exceptions ❗([later](TODO)):
+
+  ```python
+  # Is this error handling correct?
+  def main():
+    file_count = get_number_of_files()
+    if file_count is None:
+      print("Could not determine file count.")
+  ```
+
+  <code class="python hjls language-python">get_number_of_files = lambda:
+  int(sys.argv[0])</code>
+
+  `asdf` 
+
+---
+
+## Rust Comes with a Warranty
+
+- **Ownership Model**: Type system tracks lifetime of objects.
+
+  - No more exceptions about accessing `None`.
+  - You know who owns an objects (variable/memory).
+
+- Programs don't trash your system accidentally
+  - Warranty _can_ be voided (`unsafe`).
+
+Note: Throws two exceptions: `ValueError` and `TypeError`. **Ownership Model**:
+Strict rules on how memory is managed and shared  Safe Code 🦺. (<small>Note:
+variables bind to memory</small>)
+
+---
+
+## Rust Comes with a Warranty
+
+**Experience: <span class="emph">_"♥️ If it compiles, it is more often correct.
+♥️"_</span>**
+
+Enables
+[compiler driven development](https://www.youtube.com/watch?v=Kdpfhj3VM04):
+
+- 100% code coverage:
+<!-- prettier-ignore-start -->
+
+<div class="columns">
+<div class="column" style="float: left; width:50%;">
+
+  ```python
+  def get_float(num: str | float):
+    match (num):
+        case str(num):
+            return float(num)
+  ```
+
+  <!-- .element: style="font-size:14pt"-->
+
+  *You trust `mypy` which is not enforced on runtime.*
+
+</div>
+<div class="column" style="float: right; width:50%;">
+
+  ```rust
+  enum StrOrFloat { 
+    MyStr(String), 
+    MyFloat(f64),
+  }
+
+  fn get_float(n: StrOrFloat) -> f64 {
+      match n {
+          StrOrFloat::MyFloat(x) => x, 
+      }
+  }
+  ```
+  <!-- .element: style="font-size:14pt"-->
+
+</div>
+</div>
+
+<!-- prettier-ignore-end -->
+
+- No invalid syntax.
+- Guaranteed thread safety.
+- Model your business logic with `struct` and `enums`.
+
+Note: Rust allows quite a different programming experience. It's called
+**compiler driven development** (e.g. guard your business logic with the
+type-system at your hand, e.g. type-state pattern. I explain threads later.
+Certain statements allow `rustc` to check that you covered all cases. Python:
+With power comes responsibility. Python is very dynamic, but this duck-typing
+and non-strictness results often in a mess.
+
+---
+
+## Performance
+
+- Rust is **fast** 🚀. Comparable to C++/C, faster than `go`.
+
+  _Python is slow, that's why most libraries outsource to C or
   [`Rust`](https://github.com/PyO3/pyo3)._
 
-- **Concurrency**: Rust is concurrent by design, safe-guarded by the ownership
-  model (later).
+- Rust is **concurrent** ⇉ by design _(safe-guarded by the ownership model)_.
 
 ---
 
-## 3. Interoperability
+## Why Should 🫵 Learn Rust?
 
-- **FFI (Foreign Function Interface)**: Rust can be integrated with Python
-  through libraries like PyO3 and Rust-CPython, allowing Rust code to be called
-  from Python. This enables Python developers to leverage Rust’s performance and
-  safety in existing Python applications.
+- Learning a new language teaches you new tricks:
 
-## 4. Expanding Skill Set
+  - You will also write better Python code!
 
-- **Low-Level Systems Programming**: Learning Rust provides insights into
-  low-level programming concepts and systems programming. This can deepen a
-  programmer’s understanding of how computers work, improving their overall
-  programming proficiency.
-- **Versatility**: Adding Rust to a programmer’s toolkit enhances their
-  versatility, making them more valuable in the job market. They can tackle a
-  wider range of problems, from web development to systems programming.
-
-## 5. Modern Language Features
-
-- **Error Handling**: Rust has a robust error handling mechanism with the
-  `Result` and `Option` types, which encourages developers to write more
-  reliable and maintainable code.
-- **Pattern Matching**: Rust’s powerful pattern matching and type system can
-  inspire Python programmers to adopt more expressive and clean coding
-  practices.
-
-## 6. Community and Ecosystem
-
-- **Growing Community**: Rust has a rapidly growing community and ecosystem.
-  Engaging with this community can provide learning opportunities and access to
-  a wealth of libraries and tools.
-- **Active Development**: Rust is under active development with strong support
-  from companies like Mozilla. This ensures it will continue to evolve and
-  improve, providing long-term value for those who invest time in learning it.
-
-## 7. Complementary Strengths
-
-- **Python for Rapid Development, Rust for Performance**: Python is excellent
-  for rapid development and prototyping, while Rust excels in performance and
-  safety. Combining the strengths of both languages can lead to more effective
-  and efficient software development practices.
-
-In summary, learning Rust can help Python programmers write faster, safer, and
-more efficient code, while also broadening their programming expertise and
-enhancing their career opportunities.
+- Rust is a young, but a quickly growing platform:
+  - You can help shape its future.
+  - Demand for Rust programmers will increase!
 
 <!-- [`Reveal.js`](https://github.com/hakimel/reveal.js.git) based presentations are -->
 <!-- cool: -->
@@ -270,3 +372,7 @@ enhancing their career opportunities.
 <!-- Customized with ❤️ by Gabriel Nützi for SDSC. -->
 
 <!-- markdownlint-restore-->
+
+```
+
+```
