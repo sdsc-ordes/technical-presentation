@@ -10,7 +10,8 @@
 @import url("./fonts/fira-sans/fira-sans.css");
 
 // Company Colors
-$companyBlue: #5561a6;
+$companyBlueLight: #5561a6;
+$companyBlue: #4640a8;
 $companyBlueDark: #26235c;
 $companyHipsterBlack: #1a1a1a;
 
@@ -25,8 +26,8 @@ $headingTextTransform: none;
 $mainFont: "Museo", "Palatino Linotype", "Book Antiqua", "Palatino", serif;
 $headingFont: "Museo Sans", "Palatin Linotype", "Book Antiqua", "Palatino",
   serif;
-$linkColor: $companyBlueDark;
-$linkColorHover: $companyBlue;
+$linkColor: $companyBlueLight;
+$linkColorHover: lighten($companyBlueLight, 20%);
 
 // Image
 $imgBorderSize: 0;
@@ -80,8 +81,9 @@ $codeFontSize: 16pt;
   // Block Code
   pre {
     border-radius: 4pt;
+    font-size: $codeFontSize;
     code {
-      font-size: $codeFontSize;
+      font-size: inherit;
       line-height: normal;
       background: #232323;
       padding: 0.5ex;
@@ -113,11 +115,12 @@ $codeFontSize: 16pt;
     border-top-right-radius: 2pt;
   }
 
-  .reveal h2,
-  .reveal h3,
-  .reveal h4,
-  .reveal h5,
-  .reveal h6 {
-    color: var();
+  h2,
+  h3,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: $companyBlueLight;
   }
 }
