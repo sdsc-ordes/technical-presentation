@@ -39,6 +39,26 @@
       .reveal .line.focus {
         background: #383838;
       }
+
+      /* Column divs */
+      .reveal .columns {
+        display: flex;
+      }
+      .reveal .column {
+        flex: 1;
+        margin-left: 5pt;
+        margin-right: 5pt;
+      }
+
+      /* Code blocks in columns need full width */
+      .reveal .column pre {
+        width: 100%;
+      }
+
+      /* Some how code blocks are only 400px max size */
+      .reveal pre code {
+        max-height: initial;
+      }
     </style>
   </head>
 

@@ -18,7 +18,8 @@ $backgroundColor: #fff;
 
 $mainFontSize: 20pt;
 $mainColor: $companyHipsterBlack;
-$headingColor: $companyBlue;
+$headingColor: $companyBlueDark;
+$headingColorSub: $companyBlue;
 $headingTextTransform: none;
 
 $mainFont: "Museo", "Palatino Linotype", "Book Antiqua", "Palatino", serif;
@@ -110,5 +111,13 @@ $codeFontSize: 16pt;
   .slide-number {
     border-top-left-radius: 2pt;
     border-top-right-radius: 2pt;
+  }
+
+  .reveal h2,
+  .reveal h3,
+  .reveal h4,
+  .reveal h5,
+  .reveal h6 {
+    color: var();
   }
 }
