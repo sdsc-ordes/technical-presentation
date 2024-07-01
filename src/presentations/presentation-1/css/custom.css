@@ -1,0 +1,42 @@
+<style type="text/css">
+  /* Code Focus */
+  .reveal .line {
+    display: block;
+  }
+  .reveal .line.focus {
+    background: #383838;
+  }
+
+  /* Column divs */
+  .reveal .columns {
+    gap: min(0.5vw, 1em);
+  }
+
+  /* Code blocks in columns need full width */
+  .reveal .column pre {
+    width: 100%;
+  }
+
+  /* Some how code blocks are only 400px max size */
+  .reveal pre code {
+    max-height: initial;
+  }
+
+  .reveal pre.smaller-code {
+    font-size: calc(0.9 * var(--r-code-font-size)) !important;
+  }
+
+  .emph {
+    color: #6d7dd8;
+  }
+
+
+  .center-content {
+    max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+
+</style>

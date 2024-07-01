@@ -53,6 +53,13 @@
           nodePackages_latest.npm
           nodePackages_latest.yarn
           inotify-tools
+
+          pandoc
+          pandoc-include
+          haskellPackages.citeproc
+          haskellPackages.pandoc-crossref
+
+          python312
         ];
       in
         with pkgs; {

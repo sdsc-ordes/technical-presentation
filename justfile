@@ -40,14 +40,16 @@ watch:
     set -eu
     cd "{{root_dir}}"
 
-    EVENTS="CREATE,DELETE,MODIFY,MOVED_FROM,MOVED_TO"
+    EVENTS="CREATE,MODIFY,MOVED_FROM,MOVED_TO"
     watch() {
-      inotifywait -e "$EVENTS" -m -r --format '%:e %f' "$1"
+      inotifywait -e "$EVENTS" -m -r --format '%:e %f' "$1" \
+        --excludei ".temp.pandoc-include"
     }
 
     watch src | (
         while true ; do
           read -t 1 LINE &&
+            echo "File: $LINE changes" &&
             just sync
         done
     )
@@ -107,3 +109,17 @@ sync:
     sync src/presentations/ build/presentations/
     sync src/mixin/ build/
     sync src/index.html build/index.html
+
+    just pandoc
+
+pandoc:
+    cd "{{root_dir}}" && \
+    data_dir="src/pandoc" && \
+    pandoc \
+           --data-dir="$data_dir" \
+           --defaults=pandoc-dirs.yaml \
+           --defaults=pandoc-general.yaml \
+           --defaults=pandoc-revealjs.yaml \
+           --defaults=pandoc-filters.yaml \
+           -o build/index.html \
+           build/presentations/presentation-1/presentation.md || true
