@@ -40,35 +40,35 @@ watch:
     set -eu
     cd "{{root_dir}}"
 
-    EVENTS="CREATE,MODIFY,MOVED_FROM,MOVED_TO"
     watch() {
-      inotifywait -e "$EVENTS" -m -r --format '%:e %f' "$1" \
-        --excludei ".temp.pandoc-include"
+      watchman-wait -m 0 -t 0 "$1"
     }
 
     checksum_dir=build/.checksums
     mkdir -p "$checksum_dir"
 
-    trigger() {
+    watch src | (
       while true; do
-        read -t 0 LINE && { echo "Read"; } || continue
-
-        echo "Watched file: '$LINE'"
+        read -t 1 LINE && { echo "Watchman: $LINE"; } || continue
+        
+        if [ ! -f "$LINE" ]; then
+          continue
+        fi
 
         # Ignore some stupid files.
         if echo "$LINE" | grep ".temp.pandoc-include"; then
           continue
         fi
 
-        # key=$(echo "$LINE" | sha1sum | cut -f 1 -d ' ')
-        # current_hash=$(sha1sum "$LINE" | cut -f 1 -d ' ')
-        #
-        # if [ -f "$checksum_dir/$key" ]; then
-        #   if [ "$(cat "$checksum_dir/$key")" = "$current_hash" ]; then
-        #     # File did not change.
-        #     continue
-        #   fi
-        # fi
+        key=$(echo "$LINE" | sha1sum | cut -f 1 -d ' ')
+        current_hash=$(sha1sum "$LINE" | cut -f 1 -d ' ')
+
+        if [ -f "$checksum_dir/$key" ]; then
+          if [ "$(cat "$checksum_dir/$key")" = "$current_hash" ]; then
+            echo "No changes detected."
+            continue
+          fi
+        fi
 
         # Store file hash.
         echo "$current_hash" > "$checksum_dir/$key"
@@ -76,9 +76,8 @@ watch:
         echo "File: '$LINE' changes"
         just sync
       done
-    }
-
-    watch src | trigger
+    )
+    )
 
 # Build the presentation.
 build:

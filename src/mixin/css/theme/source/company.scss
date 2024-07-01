@@ -90,14 +90,15 @@ $codeFontSize: 16pt;
   pre {
     border-radius: 4pt;
     font-size: $codeFontSize;
+    width: fit-content;
     code {
       font-size: inherit;
       line-height: normal;
       color: #e6e6e6;
       background: #232323;
-      padding: 0.5ex;
-      padding-left: 1ex;
-      padding-right: 1ex;
+      padding: 1ex;
+      padding-left: 1.5ex;
+      padding-right: 1.5ex;
     }
   }
 
@@ -124,8 +125,6 @@ $codeFontSize: 16pt;
     border-top-right-radius: 2pt;
   }
 
-  h2,
-  h3,
   h3,
   h4,
   h5,
