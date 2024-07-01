@@ -4,11 +4,15 @@
 --- License:   MIT – see LICENSE file for details
 
 -- Module pandoc.path is required and was added in version 2.12
+
+local logging = require("logging")
+
 PANDOC_VERSION:must_be_at_least("2.12")
 
 local List = require("pandoc.List")
 local path = require("pandoc.path")
 local system = require("pandoc.system")
+local utils = require("pandoc.utils")
 local cs = PANDOC_STATE
 
 -- Save env. variables and root working dir.
@@ -47,7 +51,7 @@ local function var_replace_codeblocks(cb)
     end
 
     if repl == nil then
-      io.stderr:write("Could not replace variable in codeblock: '" .. var .. "'\n")
+      logging.info("Could not replace variable in codeblock: '" .. var .. "'\n")
     end
 
     return repl
@@ -100,7 +104,7 @@ function get_vars(meta)
   include_relative_to_cwd = meta["include-paths-relative-to-cwd"]
 
   -- The include root directory to add to each non-absolute path, by default "."
-  include_rel_base_dir = meta["include-rel-base-dir"] ~= nil and meta["include-rel-base-dir"] or "."
+  include_rel_base_dir = meta["include-rel-base-dir"] ~= nil and utils.stringify(meta["include-rel-base-dir"]) or "."
 
   -- Save meta table for var_replace.
   metaMap = meta
@@ -199,7 +203,7 @@ function transclude(cb)
     line = replace_ext(cb, line)
 
     if cs.verbosity == "INFO" then
-      io.stderr:write(string.format("Including: [format: %s, raw: %s]\n - '%s'\n", format, tostring(raw), line))
+      logging.info(string.format("Including: [format: %s, raw: %s]\n - '%s'\n", format, tostring(raw), line))
     end
 
     -- Make relative include path relative to pandoc's working
@@ -207,9 +211,6 @@ function transclude(cb)
     if path.is_relative(line) then
       -- Add base path
       line = path.join({ include_rel_base_dir, line })
-      for k, v in pairs(metaMap) do
-        io.stderr:write(k .. ":" .. metaMap[v])
-      end
 
       if include_relative_to_cwd and not cb.classes:includes("relative-to-current") then
         line = path.normalize(path.join({ cwd, line }))
@@ -220,10 +221,10 @@ function transclude(cb)
     if not fh then
       local msg = "Cannot find include file: '" .. line .. "', curr. working dir: '" .. cwd .. "'"
       if include_fail_if_read_error then
-        io.stderr:write(msg .. " | error\n")
+        logging.error(msg .. " | error\n")
         error("Abort due to include failure")
       else
-        io.stderr:write(msg .. " | skipping include\n")
+        logging.warning(msg .. " | skipping include\n")
         goto skip_to_next
       end
     end

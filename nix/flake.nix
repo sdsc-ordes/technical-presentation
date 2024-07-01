@@ -60,6 +60,9 @@
           haskellPackages.pandoc-crossref
 
           python312
+
+          watchman
+          python312Packages.pywatchman
         ];
       in
         with pkgs; {

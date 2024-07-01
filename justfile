@@ -26,7 +26,7 @@ init:
 
     echo "Init pinned reveal.js folder to 'build'..."
     git submodule update --init
-    rsync -avv "external/reveal.js/" "build/"
+    rsync -a "external/reveal.js/" "build/"
 
     just sync
 
@@ -46,13 +46,39 @@ watch:
         --excludei ".temp.pandoc-include"
     }
 
-    watch src | (
-        while true ; do
-          read -t 1 LINE &&
-            echo "File: $LINE changes" &&
-            just sync
-        done
-    )
+    checksum_dir=build/.checksums
+    mkdir -p "$checksum_dir"
+
+    trigger() {
+      while true; do
+        read -t 0 LINE && { echo "Read"; } || continue
+
+        echo "Watched file: '$LINE'"
+
+        # Ignore some stupid files.
+        if echo "$LINE" | grep ".temp.pandoc-include"; then
+          continue
+        fi
+
+        # key=$(echo "$LINE" | sha1sum | cut -f 1 -d ' ')
+        # current_hash=$(sha1sum "$LINE" | cut -f 1 -d ' ')
+        #
+        # if [ -f "$checksum_dir/$key" ]; then
+        #   if [ "$(cat "$checksum_dir/$key")" = "$current_hash" ]; then
+        #     # File did not change.
+        #     continue
+        #   fi
+        # fi
+
+        # Store file hash.
+        echo "$current_hash" > "$checksum_dir/$key"
+
+        echo "File: '$LINE' changes"
+        just sync
+      done
+    }
+
+    watch src | trigger
 
 # Build the presentation.
 build:
@@ -98,7 +124,7 @@ sync:
     cd "{{root_dir}}"
 
     sync() {
-      rsync --checksum -avv "$@"
+      rsync --checksum -a "$@"
     }
 
     echo "Add additional 'npm' scripts."
@@ -115,6 +141,7 @@ sync:
 pandoc:
     cd "{{root_dir}}" && \
     data_dir="src/pandoc" && \
+    export LUA_PATH="$(pwd)/tools/pandoc/modules/?.lua;;" && \
     pandoc \
            --data-dir="$data_dir" \
            --defaults=pandoc-dirs.yaml \
