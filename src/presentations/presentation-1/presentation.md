@@ -265,6 +265,7 @@ and non-strictness results often in a mess.
   [`Rust`](https://github.com/PyO3/pyo3)._
 
 - Rust is **concurrent** ⇉ by design _(safe-guarded by the ownership model)_.
+  Python has an [interpreter lock (GIL)](https://realpython.com/python-gil/) which prohibits proper threading.
 
 ---
 
