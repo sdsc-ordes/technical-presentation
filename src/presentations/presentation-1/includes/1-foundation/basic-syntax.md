@@ -6,22 +6,21 @@
 
 ---
 
-# Variables
+## Variables
 
-<pre python><code data-line-numbers>
+```rust
 fn main() {
     let some_x = 5;
     println!("some_x = {}", some_x);
     some_x = 6;
     println!("some_x = {}", some_x);
 }
-<pre><code>
+```
 
-```text {.smaller-code}
+```text {style="font-size:12pt;"}
 Compiling hello-world v0.1.0
 error[E0384]: cannot assign twice to immutable variable `some_x`
 --> src/main.rs:4:5
-  |
 2 |     let some_x = 5;
   |         ------
   |         |
@@ -30,24 +29,16 @@ error[E0384]: cannot assign twice to immutable variable `some_x`
 3 |     println!("some_x = {}", some_x);
 4 |     some_x = 6;
   |     ^^^^^^^^^^ cannot assign twice to immutable variable
-
-For more information about this error, try `rustc --explain E0384`.
-error: could not compile `hello-world` due to previous error
 ```
 
-::: notes
-
-- By convention Rust uses snake case (i.e. all lowercase with underscores) for
-  variable names
-- The immutable variable cannot be mutated in any way (exceptions apply) :::
-
-:::
+- Rust uses snake case (e.g. `some_x`) for variable names.
+- The **immutable** (_read-only_) variable cannot be mutated in any way.
 
 ---
 
-# Variables
+## Variables
 
-```rust
+```rust {data-line-numbers="2,4"}
 fn main() {
     let mut some_x = 5;
     println!("some_x = {}", some_x);
@@ -55,10 +46,6 @@ fn main() {
     println!("some_x = {}", some_x);
 }
 ```
-
-<v-click>
-
-<div class="no-line-numbers">
 
 ```text
 Compiling hello-world v0.1.0 (/home/teach-rs/Projects/hello-world)
@@ -68,35 +55,35 @@ some_x = 5
 some_x = 6
 ```
 
-</div>
-
-</v-click>
-
-<!--
-- We declare a mutable variable by adding `mut`, we can update the value for
-that variable
--->
+- Declare a **mutable** variable with `mut` to update
 
 ---
 
-# Assigning a type to a variable
+## Declaring a Type of Variable
 
 ```rust
 fn main() {
     let x: i32 = 20;
-    //   ^^^^^  Type annotation
+    //   ^^^^^---------- Type annotation. (as in python)
 }
 ```
 
-- Rust is strongly and strictly typed
-- Variables use type inference, so no need to specify a type
-- We can be explicit in our types (and sometimes have to be)
+- Rust is strongly and strictly typed.
+- Variables use _type inference_, so no need to specify a type.
+- We can be explicit in our types (and sometimes have to be).
 
 ---
 
-## layout: two-cols
+# Primitive Types
 
-# Integers
+---
+
+## Integers
+
+<!-- prettier-ignore-start -->
+
+:::::: {.columns}
+::: {.column width="50%"}
 
 | Length        | Signed  | Unsigned |
 | ------------- | ------- | -------- |
@@ -105,61 +92,67 @@ fn main() {
 | 32 bits       | `i32`   | `u32`    |
 | 64 bits       | `i64`   | `u64`    |
 | 128 bits      | `i128`  | `u128`   |
-| pointer-sized | `isize` | `usize`  |
+| pointer-sized | `isize` | `usize`  |{style="font-size:10pt"}
 
-- Rust prefers explicit integer sizes
-- Use `isize` and `usize` sparingly
+<br>
 
-::right::
 
-<v-click>
+:::
+::: {.column width="50%"}
 
-# Literals
+**Literals**
 
 ```rust
-fn main() {
-    let x = 42; // decimal as i32
-    let y = 42u64; // decimal as u64
-    let z = 42_000; // underscore separator
+let x = 42;
+let y = 42u64; // decimal as u64
+let z = 42_000; // underscore separator
 
-    let u = 0xff; // hexadecimal
-    let v = 0o77; // octal
-    let w = 0b0100_1101; // binary
-    let q = b'A'; // byte syntax (stored as u8)
-}
+let u = 0xff; // hexadecimal
+let v = 0o77; // octal
+let q = b'A'; // byte syntax (is u8)
+let w = 0b0100_1101; // binary
 ```
 
-</v-click>
+:::
+::::::
+<!-- prettier-ignore-end -->
 
-<!--
-- Use isize and usize mostly when working with indexing or other things
-that need to have a specific size for your platform
--->
+- Rust prefers explicit integer sizes.
+- Use `isize` and `usize` sparingly.
+
+::: notes
+
+Use `isize` and `usize` mostly when working with indexing or other things that
+need to have a specific size for your platform.
+
+:::
 
 ---
 
-# Floating points and floating point literals
+## Floating Points Numbers
 
 ```rust
 fn main() {
-    let x = 2.0; // f64
+    let x = 2.0;    // f64
     let y = 1.0f32; // f32
 }
 ```
 
-- `f32`: single precision (32-bit) floating point number
-- `f64`: double precision (64-bit) floating point number
-- `f128`: 128-bit floating point number
+- `f32`: single precision (32-bit) floating point number.
+- `f64`: double precision (64-bit) floating point number.
+- `f128`: 128-bit floating point number.
 
-<!--
+::: notes
+
 - Rust uses f64 by default
 - Similar to integers you can append the type of float to indicate a specific
-literal type
--->
+  literal type
+
+:::
 
 ---
 
-# Numerical operations
+## Numerical Operations
 
 ```rust
 fn main() {
@@ -172,11 +165,26 @@ fn main() {
 }
 ```
 
-<v-click>
+::: incremental
 
-- These expressions do overflow/underflow checking in debug
-- In release builds these expressions are wrapping, for efficiency
-- You cannot mix and match types here, not even between different integer types
+- Overflow/underflow checking in **debug**:
+
+  ```rust
+  let a: u8 = 0b1111_1111;
+  println!("{}", a + 10); // compiler error:
+                 ^^^^^^ attempt to compute `u8::MAX + 10_u8`,
+                        which would overflow
+  ```
+
+- In **release builds** these expressions are wrapping, for efficiency.
+
+:::
+
+---
+
+## Numerical Operations
+
+- You cannot mix and match types, i.e.:
 
 ```rust
 fn main() {
@@ -185,15 +193,11 @@ fn main() {
 }
 ```
 
-</v-click>
-
-<!--
-- Rust has your typical operations, just as with other C-like languages
--->
+- Rust has your typical operations, just as with other `python` languages.
 
 ---
 
-# Booleans and boolean operations
+## Booleans and Boolean Operations
 
 ```rust
 fn main() {
@@ -208,14 +212,14 @@ fn main() {
 
 ---
 
-# Comparison operators
+## Comparison Operators
 
 ```rust
 fn main() {
     let x = 10;
     let y = 20;
-    x < y; // true
-    x > y; // false
+    x < y;  // true
+    x > y;  // false
     x <= y; // true
     x >= y; // false
     x == y; // false
@@ -223,94 +227,109 @@ fn main() {
 }
 ```
 
-Note: as with numerical operators, you cannot compare different integer and
-float types with each other
+::: notes
+
+As with numerical operators, you cannot compare different integer and float
+types with each other
+
+:::
 
 ```rust
 fn main() {
-    3.0 < 20; // invalid
+    3.0 < 20;      // invalid
     30u64 > 20i32; // invalid
 }
 ```
 
-<!--
-- Boolean operators short-circuit: i.e. if in `a && b`, a is already false,
-then the code for b is not executed
--->
+- Boolean operators short-circuit: i.e. if in `a && b`, `a` is already false,
+  then the code for `b` is not executed.
 
 ---
 
-# Characters
+## Characters
 
 ```rust
 fn main() {
-    let c: char = 'z';
+    let c: char = 'z'; // Note: the single-quotes ''.
     let z = 'ℤ';
     let heart_eyed_cat = '😻';
 }
 ```
 
-- A `char` is a 32-bit unicode scalar value
-- Very much unlike C/C++ where `char is 8 bits
+- A `char` is a 32-bit **unicode scalar value** (like in python).
+<!-- - Very much unlike `C/C++` but like `python` where `char` is 8 bits. -->
 
-<!--
+::: notes
+
 - The final scalar type is the character, but it isn't often seen.
 - Note that it is not the same as u8 (a byte) in Rust, and cannot be used
-interchangeably.
+  interchangeably.
 - We'll see later that strings do not use chars, but are encoded as UTF-8
-instead.
--->
+  instead.
+
+:::
 
 ---
 
-# `String`s
+## Strings
 
 ```rust
-
     let s1 = String::from("Hello, 🌍!");
     //       ^^^^^^ Owned, heap-allocated string
 ```
 
-- Rust `String`s are UTF-8-encoded
-- Unlike C/C++: _Not null-terminated_
-- Cannot be indexed like C strings
-- `String` is heap-allocated
+::: incremental
+
+- Rust `String`s are UTF-8-encoded.
+<!-- - Unlike C/C++: _Not null-terminated_ -->
+- Cannot be indexed like Python `str`.
+- `String` is heap-allocated.
 - Actually many types of strings in Rust
   - `CString`
   - `PathBuf`
   - `OsString`
   - ...
 
-<!--
-- Rusts strings are complicated, because all strings are complicated
-- Rusts strings are UTF-8 encoded sequences. Not null terminated unlike C/C++
-- Literal strings are static by default, called string *slices*, being pointers to their start, accompanied with the length
--->
+:::
+
+::: notes
+
+- Rusts strings are complicated, because all strings are complicated.
+- Rusts strings are UTF-8 encoded sequences.
+- Literal strings are static by default and live for the whole life time of the
+  program, called string _slices_, being pointers to their start, accompanied
+  with the length
+
+:::
 
 ---
 
-## layout: three-slots
+## Tuples
 
-# Tuples
+<!-- prettier-ignore-start -->
 
-::left::
+:::::: {.columns}
+::: {.column width="50%"}
 
-```rust
+```rust {style="font-size:15pt;" .fragment}
 fn main() {
     let tup: (i32, f32, char) = (1, 2.0, 'a');
 }
 ```
 
-- Group multiple values into a single compound type
-- Fixed size
-- Different types per element
-- Create by writing a comma-separated list of values inside parentheses
+:::incremental
 
-::right::
+- Group multiple values into a single compound type.
+- Fixed size.
+- Different **types** per element.
 
-<v-click>
+:::
 
-```rust
+:::
+::: {.column width="50%"}
+
+
+```rust {.fragment}
 fn main() {
     let tup = (1, 2.0, 'Z');
     let (a, b, c) = tup;
@@ -321,53 +340,73 @@ fn main() {
 }
 ```
 
-- Tuples can be destructured to get to their individual values
-- You can also access individual elements using the period operator followed by
-  a zero based index
+:::incremental
 
-</v-click>
+- Tuples can be **destructured** to get to their individual values
+- Access an element with `.` followed by a zero based index.
 
-<!--
-- Note how the tuple type and the tuple value are constructed similarly, but
-the type contains individual element types
-- We will see more powerful variants of this destructuring later
-- Note that after destructuring the original value is no longer accessible
--->
+:::
+
+:::
+::::::
+
+<!-- prettier-ignore-end -->
+
+::: notes
+
+- Note how the tuple type and the tuple value are constructed similarly, but the
+  type contains individual element types.
+- We will see more powerful variants of this destructuring later.
+- Note that after destructuring the original value is no longer accessible.
+
+:::
 
 ---
 
-# Arrays
+## Arrays
 
 ```rust
 fn main() {
     let arr: [i32; 3] = [1, 2, 3];
     println!("{}", arr[0]);
+
     let [a, b, c] = arr;
     println!("[{}, {}, {}]", a, b, c);
 }
 ```
 
-- Also a collection of multiple values, but this time all of the same type
-- Always a fixed length at compile time (similar to tuples)
-- Use square brackets to access an individual value
-- Destructuring as with tuples
-- Rust always checks array bounds when accessing a value in an array
+:::incremental
 
-<!--
+- A collection of multiple values, but **same type**.
+- Always **fixed length** at compile time (similar to tuples).
+- Use `[i]` to access an individual `i`-th value.
+- Destructuring as with tuples.
+- Rust always checks array bounds when accessing a value in an array.
+
+:::
+
+:::notes
+
 - Create an array by writing a comma-separated list of values inside brackets
-- Note how unlike C/C++ arrays must always have a length defined at compile
-time and cannot be constructed dynamically
-- You can also construct an array using [value; repetitions] instead of having
-to write out each value if you have a repeating value.
-- For the type declaration the element type and count are separated by a semicolon and
-written between brackets
--->
+- Note how unlike C/C++ arrays must always have a length defined at compile time
+  and cannot be constructed dynamically
+- You can also construct an array using [value; repetitions] instead of having to
+  write out each value if you have a repeating value.
+- For the type declaration the element type and count are separated by a
+  semicolon and written between brackets
+
+:::
 
 ---
 
-# Control flow
+# Control Flow
 
-```rust {all|3-10|4-9|8|13-16|18-20|all}
+<!-- prettier-ignore-start -->
+
+:::::: {.columns}
+::: {.column width="50%"}
+
+```rust {data-line-numbers="|3-10|4-9|8|13-16|18-20|"}
 fn main() {
     let mut x = 0;
     loop {
@@ -391,19 +430,26 @@ fn main() {
 }
 ```
 
-<!--
-- A loop or if condition must always evaluate to a boolean type, so no `if 1`
-- Use break to break out of a loop, also works with for and while, continue
-to skip to the next iteration
--->
+:::
+::: {.column width="50%"}
+
+- A loop or if condition must always evaluate to a boolean type, so no `if 1`.
+
+- Use `break` to break out of a loop, also works with `for` and `while`,
+  continue to skip to the next iteration.
+
+:::
+::::::
+
+<!-- prettier-ignore-end -->
 
 ---
 
-# Functions
+## Functions
 
 ```rust
 fn add(a: i32, b: i32) -> i32 {
-    a + b
+    a + b // or: `return a+b`
 }
 
 fn returns_nothing() -> () {
@@ -415,32 +461,46 @@ fn also_returns_nothing() {
 }
 ```
 
-- The function boundary must always be explicitly annotated with types
-- Type inference may be used in function body
-- A function that returns nothing has the return type _unit_ (`()`)
-- Function body contains a series of statements optionally ending with an
-  expression
+:::incremental
 
-<!--
-- Rust always uses snake case for variables and functions
-- We must annotate each function parameter with a type, using a colon
+- The function signature must be annotated with types.
+- Type inference may be used in function body.
+- A function that returns nothing has the return type **_unit_ `()`**
+- Either return an expression on the **last line** with **no semicolon** (or
+  write `return expr`).
+
+:::
+
+:::notes
+
+- Rust always uses snake case for variables and functions.
+- We must annotate each function parameter with a type, using a colon.
 - We must annotate the function return type using an arrow (`->`) followed by
-the return type
+  the return type.
 - Unit may be omitted, note the syntax looks like an empty tuple: a tuple with
-no value members has no instances, just as with unit.
-- In Rust you must always specify your type signatures for function boundaries
--->
+  no value members has no instances, just as with unit.
+- In Rust you must always specify your type signatures for function boundaries.
+
+:::
 
 ---
 
-# Statements
+## Statements
 
-- Statements are instructions that perform some action and do not return a value
+- **Statements** are instructions that perform some action and **do not return a
+  value**.
 - A definition of any kind (function definition etc.)
-- The `let var = expr;` statement
-- Almost everything else is an expression
+- The `let var = expr;` statement.
+- Almost everything else is an _expression_.
 
-## Example statements
+<br>
+
+### Examples
+
+<!-- prettier-ignore-start -->
+
+:::::: {.columns}
+::: {.column width="50%"}
 
 ```rust
 fn my_fun() {
@@ -452,40 +512,49 @@ fn my_fun() {
 let x = 10;
 ```
 
+:::
+::: {.column width="50%"}
+
 ```rust
 return 42;
 ```
 
-<v-click>
-
-```rust
+```rust {.fragment}
 let x = (let y = 10); // invalid
 ```
 
-</v-click>
+:::
+::::::
 
-<!--
-- Note how `let` within a `let` is not allowed because of `let` being a statement,
-thus you may not declare multiple variables at the same time with the same
-value
+<!-- prettier-ignore-end -->
+
+:::notes
+
+- Note how `let` within a `let` is not allowed because of `let` being a
+  statement, thus you may not declare multiple variables at the same time with
+  the same value
 - `let` is a statement because ownership makes multiple assignments behave
-differently than many would expect, it is almost never what you want in
-Rust
+  differently than many would expect, it is almost never what you want in Rust
 - It also makes sense if you think of all other declarations also being
-statements
--->
+  statements
+
+:::
 
 ---
 
-# Expressions
+## Expressions
 
-- Expressions evaluate to a resulting value
-- Expressions make up most of the Rust code you write
-- Includes all control flow such as `if` and `loop`
-- Includes scoping braces (`{` and `}`)
-- Semicolon (`;`) turns expression into statement
+::: incremental
 
-```rust {all|2-5}
+- **Expressions** evaluate to a **resulting value**.
+- Expressions make up most of the Rust code you write.
+- Includes all control flow such as `if` and `loop`.
+- Includes scoping braces (`{` and `}`).
+- Semicolon (`;`) turns expression into statement.
+
+:::
+
+```rust {data-line-numbers="all|2-5" data-fragment-index="1"}
 fn main() {
     let y = {
         let x = 3;
@@ -497,65 +566,154 @@ fn main() {
 
 ---
 
-# Expressions - control flow
+## Scope
 
-- Control flow expressions as a statement do not need to end with a semicolon if
-  they return _unit_ (`()`)
-- Remember: A block/function can end with an expression, but it needs to have
-  the correct type
+- We just mentioned the scope braces (`{` and `}`).
+- Variable scopes are actually **very important** for how Rust works.
 
-```rust {all|3-8|10-15}
+```rust
 fn main() {
-    let y = 11;
-    // if as an expression
-    let x = if y < 10 {
-        42
-    } else {
-        24
-    };
+    println!("Hello, {}", name);  // invalid: name is not yet defined
 
-    // if as a statement
-    if x == 42 {
-        println!("Foo");
-    } else {
-        println!("Bar");
-    }
+    {
+        let name = "world";  // from this point name is in scope
+        println!("Hello, {}", name);
+    } // name goes out of scope
+
+    println!("Hello, {}", name);  // invalid: name is no more defined
 }
 ```
 
 ---
 
-# Scope
+## Expressions - Control Flow
 
-- We just mentioned the scope braces (`{` and `}`)
-- Variable scopes are actually very important for how Rust works
+- **Remember**: A block/function can end with an expression, but it needs to
+  have the correct type
 
-```rust
+- Control flow expressions as a statement do not <br> need to end with a
+  semicolon if they return _unit_ (`()`).
+
+```rust {data-fragment-index="all|3-8|10-15" width="100%"}
 fn main() {
-    println!("Hello, {}", name);  // invalid: name is not yet defined
-    let name = "world";  // from this point name is in scope
-    println!("Hello, {}", name);
-} // name goes out of scope
+    let y = 11;
+
+    // if as an expression
+    let x = if y < 10 {
+        42    // missing ;
+    } else {
+        24    // missing ;
+    };
+
+    // if (control-flow expr.) as a statement
+    if x == 42 {
+        println!("Foo");
+    } else {
+        println!("Bar");
+    } // no ; necessary
+}
 ```
 
 ---
 
-# Scope
+## Expression - Control Flow
+
+### Quiz: Does this compile?
+
+<!-- prettier-ignore-start -->
+
+:::::: {.columns}
+
+::: {.column width="50%"}
+
+```rust {data-line-numbers=""}
+fn main() {
+    if 2 < 10 {
+        42
+    } else {
+        24
+    }
+}
+```
+
+:::
+
+::: {.column width="50%"}
+
+```rust {data-line-numbers="" .fragment data-fragment-index="2"}
+fn main() {
+    if 2 < 10 {
+        42
+    } else {
+        24
+    };
+}
+```
+
+:::
+
+::::::
+
+
+<!-- prettier-ignore-end -->
+
+[ **Answer:** **No:** It needs a `;` on line 2 because the `if`
+expression returns a value which must be turned into statement
+with `};`]{.fragment data-fragment-index="1"}
+
+:::notes
+
+Fix the thing on the last line. Not by adding ; to 42, 24.
+
+:::
+
+---
+
+## Scope (more)
 
 As soon as a scope ends, all variables for that scope can be removed from the
 stack
 
+<!-- prettier-ignore-start -->
+
+:::::: {.columns}
+
+::: {.column width="50%"}
+
 ```rust
 fn main() { // nothing in scope here
     let i = 10; // i is now in scope
+
     if i > 5 {
-        let j = 20; // j is now also in scope
+        let j = 20; // j is now in scope
         println!("i = {}, j = {}", i, j);
-    } // j is no longer in scope, i still remains
+    } // j is no longer in scope
+
     println!("i = {}", i);
 } // i is no longer in scope
 ```
+:::
 
-<!--
-- Note that this is the same with C and C++
--->
+::: {.column width="50%"}
+
+```python {.fragment}
+def main():
+  i = 10;
+
+  if i > 5:
+      j = 20
+      print(j)
+
+
+  print(i, j) # 💩: j is STILL in scope
+```
+:::
+::::::
+
+<!-- prettier-ignore-end -->
+
+**Note**: This is very **different** from `python`.
+
+:::notes
+
+:::

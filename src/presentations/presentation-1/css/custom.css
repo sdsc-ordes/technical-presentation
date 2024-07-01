@@ -12,11 +12,6 @@
     gap: min(0.5vw, 1em);
   }
 
-  /* Code blocks in columns need full width */
-  .reveal .column pre {
-    width: 100%;
-  }
-
   /* Some how code blocks are only 400px max size */
   .reveal pre code {
     max-height: initial;
@@ -28,6 +23,23 @@
 
   .emph {
     color: #6d7dd8;
+  }
+
+  /* Highlight the lines */
+  .reveal code .highlight-line {
+    background:#323232
+  }
+  .reveal code table {
+    witdh: 100%
+  }
+
+  /* Tweak comments color */
+  .hljs-comment {
+    color: #5e5e5e;
+  }
+
+  .hljs-keyword {
+    font-weight: 600;
   }
 
 

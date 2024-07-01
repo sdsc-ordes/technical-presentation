@@ -25,7 +25,7 @@ fragmentInURL: true
 mouseWheel: false
 slideNumber: \'c/t\'
 transition: fade
-width: 960
+width: 1200
 height: 700
 margin: 0.05
 minScale: 0.1
@@ -39,7 +39,8 @@ hideMouseTime: 1000
 
 ```{.include}
 includes/intro.md
-includes/1-foundation/basic-syntax.md
 ```
 
-<!-- markdownlint-restore-->
+```{.include}
+includes/1-foundation/basic-syntax.md
+```
