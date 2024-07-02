@@ -12,6 +12,8 @@ date: July 15, 2024
 
 css: presentations/presentation-1/css/custom.css
 highlightjs-theme: railscasts
+highlightjs-keywords:
+  bash: ["cargo", "rustc"]
 
 # Settings: `pandoc-include-files` filter
 include-rel-base-dir: src/presentations/presentation-1/
@@ -35,12 +37,20 @@ hideInactiveMouse: true
 hideMouseTime: 1000
 ---
 
-<!-- markdownlint-disable-file MD034 MD033 MD001 MD024 MD026-->
+<!-- markdownlint-disable-file MD034 MD033 MD001 MD024 MD026 -->
 
 ```{.include}
 includes/intro.md
 ```
 
 ```{.include}
+includes/1-foundation/first-project.md
+```
+
+```{.include}
 includes/1-foundation/basic-syntax.md
 ```
+
+<!-- ```{.include} -->
+<!-- includes/1-foundation/move-semantics.md -->
+<!-- ``` -->

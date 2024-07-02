@@ -382,16 +382,17 @@ fn main() {
 - Use `[i]` to access an individual `i`-th value.
 - Destructuring as with tuples.
 - Rust always checks array bounds when accessing a value in an array.
+- **This is not Pythons `list` type!** (`Vec` later).
 
 :::
 
 :::notes
 
 - Create an array by writing a comma-separated list of values inside brackets
-- Note how unlike C/C++ arrays must always have a length defined at compile time
-  and cannot be constructed dynamically
-- You can also construct an array using [value; repetitions] instead of having to
-  write out each value if you have a repeating value.
+- Note unlike `python` it must always have a length defined at compile time and
+  cannot be constructed dynamically
+- You can also construct an array using [value; repetitions] instead of having
+  to write out each value if you have a repeating value.
 - For the type declaration the element type and count are separated by a
   semicolon and written between brackets
 
@@ -657,9 +658,9 @@ fn main() {
 
 <!-- prettier-ignore-end -->
 
-[ **Answer:** **No:** It needs a `;` on line 2 because the `if`
-expression returns a value which must be turned into statement
-with `};`]{.fragment data-fragment-index="1"}
+[ **Answer:** **No:** It needs a `;` on line 2 because the `if` expression
+returns a value which must be turned into statement with `};`]{.fragment
+data-fragment-index="1"}
 
 :::notes
 
