@@ -1,7 +1,0 @@
-filters:
-  - pandoc-include-files2.lua
-
-metadata:
-  include-auto: true
-  include-fail-if-read-error: true
-  include-paths-relative-to-cwd: false

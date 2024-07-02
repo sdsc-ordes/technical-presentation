@@ -5,7 +5,8 @@
 
 -- Module pandoc.path is required and was added in version 2.12
 
-local logging = require("logging")
+local logging = require("modules.logging")
+local strings = require("modules.strings")
 
 PANDOC_VERSION:must_be_at_least("2.12")
 
@@ -36,29 +37,6 @@ end
 
 --- Replace variables in code blocks
 local metaMap
-local function var_replace_codeblocks(cb)
-  --- Replace variable with values from environment
-  --- and meta data (stringifing).
-  local function replace(what, var)
-    local repl = nil
-    if what == "env" then
-      repl = env[var]
-    elseif what == "meta" then
-      local v = metaMap[var]
-      if v then
-        repl = utils.stringify(v)
-      end
-    end
-
-    if repl == nil then
-      logging.info("Could not replace variable in codeblock: '" .. var .. "'\n")
-    end
-
-    return repl
-  end
-
-  cb.text = cb.text:gsub("%${(%l+):([^}]+)}", replace)
-end
 
 --- Include/exclude by attribute
 --- `exclude-if-format='formatA;formatB;...'
@@ -84,7 +62,6 @@ local include_auto = false
 local default_format = nil
 local include_fail_if_read_error = false
 local include_relative_to_cwd = nil
-local include_rel_base_dir = "."
 
 function get_vars(meta)
   if meta["include-auto"] then
@@ -102,9 +79,6 @@ function get_vars(meta)
   -- An attribute "relative-to-current" can be used on include blocks, images, codeblock includes
   -- to to selectively choose if the include is relative to the current document.
   include_relative_to_cwd = meta["include-paths-relative-to-cwd"]
-
-  -- The include root directory to add to each non-absolute path, by default "."
-  include_rel_base_dir = meta["include-rel-base-dir"] ~= nil and utils.stringify(meta["include-rel-base-dir"]) or "."
 
   -- Save meta table for var_replace.
   metaMap = meta
@@ -133,6 +107,7 @@ local function update_contents(blocks, shift_by, include_path)
           and path.is_relative(image.src)
       then
         image.src = path.normalize(path.join({ include_path, image.src }))
+        logging.info("Updated image path: ", image.src)
       end
       return image
     end,
@@ -166,7 +141,7 @@ function transclude(cb)
   end
 
   -- Variable substitution.
-  var_replace_codeblocks(cb)
+  cb.text = strings.var_replace(cb.text, metaMap, env)
 
   local format = cb.attributes["format"]
   if not format then
@@ -208,10 +183,8 @@ function transclude(cb)
 
     -- Make relative include path relative to pandoc's working
     -- dir and make it absolute.
+    --
     if path.is_relative(line) then
-      -- Add base path
-      line = path.join({ include_rel_base_dir, line })
-
       if include_relative_to_cwd and not cb.classes:includes("relative-to-current") then
         line = path.normalize(path.join({ cwd, line }))
       end

@@ -16,7 +16,8 @@ highlightjs-keywords:
   bash: ["cargo", "rustc"]
 
 # Settings: `pandoc-include-files` filter
-include-rel-base-dir: src/presentations/presentation-1/
+# The base include dir inside the `build` dir.
+include-base-dir: presentations/presentation-1
 
 # Settings for RevealJS
 controls: true
@@ -40,17 +41,17 @@ hideMouseTime: 1000
 <!-- markdownlint-disable-file MD034 MD033 MD001 MD024 MD026 -->
 
 ```{.include}
-includes/intro.md
+${meta:include-base-dir}/includes/intro.md
 ```
 
 ```{.include}
-includes/1-foundation/first-project.md
+${meta:include-base-dir}/includes/1-foundation/first-project.md
 ```
 
 ```{.include}
-includes/1-foundation/basic-syntax.md
+${meta:include-base-dir}/includes/1-foundation/basic-syntax.md
 ```
 
-<!-- ```{.include} -->
-<!-- includes/1-foundation/move-semantics.md -->
-<!-- ``` -->
+```{.include}
+${meta:include-base-dir}/includes/1-foundation/move-semantics.md
+```

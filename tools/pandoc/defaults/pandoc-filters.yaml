@@ -1,0 +1,8 @@
+filters:
+  - pandoc-include-files.lua
+  - pandoc-include-dir-substitute.lua
+
+metadata:
+  include-auto: true
+  include-fail-if-read-error: true
+  include-paths-relative-to-cwd: true

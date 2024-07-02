@@ -41,16 +41,17 @@ watch:
     cd "{{root_dir}}"
 
     watch() {
-      watchman-wait -m 0 -t 0 "$1"
+      echo "Starting watchman ..."
+      watchman-wait -m 0 -t 0 "$@"
     }
 
     checksum_dir=build/.checksums
     mkdir -p "$checksum_dir"
 
-    watch src | (
+    watch src tools | (
       while true; do
         read -t 1 LINE && { echo "Watchman: $LINE"; } || continue
-        
+
         if [ ! -f "$LINE" ]; then
           continue
         fi
@@ -137,15 +138,27 @@ sync:
 
     just pandoc
 
-pandoc:
-    cd "{{root_dir}}" && \
-    data_dir="src/pandoc" && \
-    export LUA_PATH="$(pwd)/tools/pandoc/modules/?.lua;;" && \
-    pandoc \
-           --data-dir="$data_dir" \
-           --defaults=pandoc-dirs.yaml \
-           --defaults=pandoc-general.yaml \
-           --defaults=pandoc-revealjs.yaml \
-           --defaults=pandoc-filters.yaml \
-           -o build/index.html \
-           build/presentations/presentation-1/presentation.md || true
+pandoc presentation="presentation-1":
+    #!/usr/bin/env bash
+    set -eu
+
+    root_dir="{{root_dir}}"
+    build_dir="$root_dir/build"
+    presentation="{{presentation}}"
+    presentation_dir="$root_dir/build/presentations/$presentation"
+    lua_path="$(pwd)/tools/pandoc/lua/?.lua;;"
+    data_dir="$(pwd)/tools/pandoc"
+
+    # Execute pandoc in folder where the presentation should be built is.
+    cd "$build_dir" &&
+    LUA_PATH="$lua_path" \
+    PRESENTATION_ROOT="$presentation_dir" \
+    BUILD_ROOT="$build_dir" \
+      pandoc \
+         --data-dir="$data_dir" \
+         --defaults=pandoc-dirs.yaml \
+         --defaults=pandoc-general.yaml \
+         --defaults=pandoc-revealjs.yaml \
+         --defaults=pandoc-filters.yaml \
+         -o "$root_dir/build/index.html" \
+         "$presentation_dir/main.md" || true
