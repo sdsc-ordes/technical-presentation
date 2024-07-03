@@ -78,7 +78,6 @@ watch:
         just sync
       done
     )
-    )
 
 # Build the presentation.
 build:

@@ -391,8 +391,8 @@ fn main() {
 - Create an array by writing a comma-separated list of values inside brackets
 - Note unlike `python` it must always have a length defined at compile time and
   cannot be constructed dynamically
-- You can also construct an array using [value; repetitions] instead of having
-  to write out each value if you have a repeating value.
+- You can also construct an array using [value; repetitions] instead of having to
+  write out each value if you have a repeating value.
 - For the type declaration the element type and count are separated by a
   semicolon and written between brackets
 
@@ -400,14 +400,14 @@ fn main() {
 
 ---
 
-# Control Flow
+## Control Flow
 
 <!-- prettier-ignore-start -->
 
 :::::: {.columns}
 ::: {.column width="50%"}
 
-```rust {data-line-numbers="|3-10|4-9|8|13-16|18-20|"}
+```rust {data-line-numbers="|3-10|4-9|8|13-16|18-20|" style="font-size:14pt;"}
 fn main() {
     let mut x = 0;
     loop {
@@ -595,7 +595,7 @@ fn main() {
 - Control flow expressions as a statement do not <br> need to end with a
   semicolon if they return _unit_ (`()`).
 
-```rust {data-fragment-index="all|3-8|10-15" width="100%"}
+```rust {data-fragment-index="all|3-8|10-15" style="font-size:14pt;"}
 fn main() {
     let y = 11;
 
@@ -641,6 +641,9 @@ fn main() {
 
 ::: {.column width="50%"}
 
+Answer:
+
+::: {style="text-align:left;"}
 ```rust {data-line-numbers="" .fragment data-fragment-index="2"}
 fn main() {
     if 2 < 10 {
@@ -650,6 +653,7 @@ fn main() {
     };
 }
 ```
+:::
 
 :::
 
@@ -658,9 +662,9 @@ fn main() {
 
 <!-- prettier-ignore-end -->
 
-[ **Answer:** **No:** It needs a `;` on line 2 because the `if` expression
-returns a value which must be turned into statement with `};`]{.fragment
-data-fragment-index="1"}
+[ **Answer:** **No:** It needs a `;` on line 2 because the `if`
+expression returns a value which must be turned into statement
+with `};`]{.fragment data-fragment-index="1"}
 
 :::notes
 

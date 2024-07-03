@@ -1,6 +1,6 @@
 # Intro
 
-# What the Hack is Rust 🦀
+# What the Heck is Rust 🦀
 
 #### A Multi-Paradigm Language
 
@@ -10,7 +10,7 @@
 
 ---
 
-# What the Hack is Rust 🦀
+# What the Heck is Rust 🦀
 
 #### A **Compiled** Language Unlike Python
 

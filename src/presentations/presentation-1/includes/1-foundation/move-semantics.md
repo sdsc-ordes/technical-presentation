@@ -12,12 +12,12 @@
 :::::: {.columns}
 ::: {.column width="50%"}
 
-- Most of what we have seen so far is stack-based and small in size
+- Most of what we have seen so far is **stack-based** and small in size
 
-- All these primitive types are `Copy`: create a copy on the stack every time we need them somewhere else.
-- We don't want to pass a copy all the time
-- Large data that we do not want to copy
-- Modifying original data
+- All these primitive types are `Copy`: create a copy on the **stack** every time we need them somewhere else.
+- We don't want to pass a copy all the time.
+- Large data that we do not want to copy.
+- Modifying original data.
 - What about data structures with a variable size?
 
 :::
@@ -30,62 +30,65 @@
 
 <!-- prettier-ignore-end -->
 
-<!-- --- -->
-<!---->
-<!-- ## layout: default -->
-<!---->
-<!-- # Memory -->
-<!---->
-<!-- - A computer program consists of a set of instructions -->
-<!-- - Those instructions manipulate some memory -->
-<!-- - How does a program know what memory can be used? -->
-<!---->
-<!-- <!-- -->
-<!-- * A program is not just the code that is running, it is also the current state -->
-<!-- of that program (the memory). -->
-<!-- * But central here is the question: when does a program know when it can use -->
-<!-- a specific part of that memory, when is it available? -->
-<!-- --> -->
-<!---->
-<!-- --- -->
-<!---->
-<!-- # Fundamentals -->
-<!---->
-<!-- There are two mechanisms at play here, generally known as the stack and the heap -->
-<!---->
-<!-- <div class="grid grid-cols-2"> -->
-<!--     <div class="flex flex-col rounded-md p-1 bg-teal-100 text-center w-md h-250px"> -->
-<!--         <div class="bg-red-100 rounded-t-md flex flex-col"> -->
-<!--             <div class="bg-red-200 rounded-t-md p-1 border-red-500 border">Frame 1</div> -->
-<!--             <div class="bg-red-200 p-1 border-red-500 border border-t-0">Frame 2</div> -->
-<!--         </div> -->
-<!--         <div class="bg-blue-100 flex-1 align-middle flex flex-col"> -->
-<!--             <div class="text-gray-500 p-1">Free memory</div> -->
-<!--         </div> -->
-<!--         <div class="bg-yellow-100 rounded-b-md h-130px flex flex-col"> -->
-<!--             <div class="text-gray-500 p-2">Heap</div> -->
-<!--             <div class="bg-yellow-300 mb-3 h-7">Allocated</div> -->
-<!--             <div class="bg-yellow-300 mb-1 h-9"></div> -->
-<!--             <div class="bg-yellow-300 h-4"></div> -->
-<!--         </div> -->
-<!--     </div> -->
-<!--     <div> -->
-<!--         <div class="relative top-12 left-6">🠔 Stack pointer</div> -->
-<!--     </div> -->
-<!-- </div> -->
-<!---->
-<!-- <!-- -->
-<!-- * In this simplified view we see the stack mechanism and the heap mechanism -->
-<!-- * The stack is a growing stack of used memory, where the only way to remove -->
-<!-- memory from being used is by removing it from the top of the stack and the -->
-<!-- only way to add is to put it on top of the stack. -->
-<!-- * Somehow, as with a lot of CS stuff, we like to turn things around and think -->
-<!-- of stacks growing down instead of up in the real world. That is because they are -->
-<!-- at the end of the virtual memory address range. So if the stack grows, the stack -->
-<!-- pointer (to the current stack frame) is decreased. -->
-<!-- --> -->
-<!---->
-<!-- --- -->
+---
+
+## Memory
+
+- A computer program consists of a set of instructions.
+- Those instructions manipulate some memory.
+- How does a program know what memory can be used?
+
+:::notes
+
+- A program is not just the code that is running, it is also the current state
+  of that program (the memory).
+- But central here is the question: when does a program know when it can use a
+  specific part of that memory, when is it available?
+
+:::
+
+---
+
+## Fundamentals
+
+There are two mechanisms at play here, generally known as the stack and the heap
+
+<div class="grid grid-cols-2">
+  <div class="flex flex-col rounded-md p-1 bg-teal-100 text-center w-md h-250px">
+      <div class="bg-red-100 rounded-t-md flex flex-col">
+          <div class="bg-red-200 rounded-t-md p-1 border-red-500 border">Frame 1</div>
+          <div class="bg-red-200 p-1 border-red-500 border border-t-0">Frame 2</div>
+      </div>
+      <div class="bg-blue-100 flex-1 align-middle flex flex-col">
+          <div class="text-gray-500 p-1">Free memory</div>
+      </div>
+      <div class="bg-yellow-100 rounded-b-md h-130px flex flex-col">
+          <div class="text-gray-500 p-2">Heap</div>
+          <div class="bg-yellow-300 mb-3 h-7">Allocated</div>
+          <div class="bg-yellow-300 mb-1 h-9"></div>
+          <div class="bg-yellow-300 h-4"></div>
+      </div>
+  </div>
+  <div>
+      <div class="relative top-12 left-6">🠔 Stack pointer</div>
+  </div>
+</div>
+
+::: notes
+
+- In this simplified view we see the stack mechanism and the heap mechanism
+- The stack is a growing stack of used memory, where the only way to remove
+  memory from being used is by removing it from the top of the stack and the
+  only way to add is to put it on top of the stack.
+- Somehow, as with a lot of CS stuff, we like to turn things around and think of
+  stacks growing down instead of up in the real world. That is because they are
+  at the end of the virtual memory address range. So if the stack grows, the
+  stack pointer (to the current stack frame) is decreased.
+
+:::
+
+---
+
 <!---->
 <!-- # Fundamentals -->
 <!---->
