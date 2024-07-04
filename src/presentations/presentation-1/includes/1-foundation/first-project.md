@@ -31,37 +31,34 @@ Hello, world!
 
 ## First Project
 
-### Hello World!
+### Computing a Simple Sum
 
 ```rust {data-line-numbers="all|1-3|2|5-11|6-10|7,9|all"}
 fn main() {
-    println!("Hello, world! fib(6) = {}", fib(6));
+    println!("sum(4) = 4 + 3 + 2 + 1 = {}", sum(4));
 }
 
-fn fib(n: u64) -> u64 {
-    if n <= 1 {
-        n
+fn sum(n: u64) -> u64 {
+    if n != 0 {
+        n + sum(n-1)
     } else {
-        fib(n - 1) + fib(n - 2)
+        n
     }
 }
 ```
 
+**Output**:
+
 ```text
-Compiling hello-world v0.1.0 (/home/teach-rs/Projects/hello-world)
-Finished dev [unoptimized + debuginfo] target(s) in 0.28s
-Running `target/debug/hello-world`
-Hello, world! fib(6) = 8
+sum(10) = 4 + 3 + 2 + 1 = 10
 ```
 
 ::: notes
 
 - `fn main()` is the entrypoint of your program
 - `println!` (output something to `stdout`)
-- Note the call syntax `fib(6)` with comma separated parameters
-- exclamation mark is a macro (we'll see later)
+- Exclamation mark is a macro (we'll see later)
 - `fn` short for function, declare a function
-- we see our first types here, we'll see more about them later
 - `u64` unsigned integer types, all integers have an explicit size, 64 bits in
   this case
 - `if-else` is without parenthesis for the expression, but with required braces

@@ -6,30 +6,6 @@
 
 ---
 
-## Memory Management
-
-<!-- prettier-ignore-start -->
-:::::: {.columns}
-::: {.column width="50%"}
-
-- Most of what we have seen so far is **stack-based** and small in size
-
-- All these primitive types are `Copy`: create a copy on the **stack** every time we need them somewhere else.
-- We don't want to pass a copy all the time.
-- Large data that we do not want to copy.
-- Modifying original data.
-- What about data structures with a variable size?
-
-:::
-::: {.column width="50%"}
-
-![Memory Layout](${meta:include-base-dir}/assets/images/A1-memory-expanded.svg)
-
-:::
-::::::
-
-<!-- prettier-ignore-end -->
-
 ---
 
 ## Memory
@@ -49,37 +25,89 @@
 
 ---
 
-## Fundamentals
+## Program Execution
+
+<!-- prettier-ignore-start -->
+:::::: {.columns}
+::: {.column width="50%"}
+
+A binary (a executable file on your disk) will be loaded first into the memory.
+
+::: incremental
+
+- The machine instructions are loaded into the memory.
+
+- The static data in the binary (i.e. strings etc)
+  is also loaded into memory.
+
+- The CPU starts fetching the instructions
+  from the RAM and will start to execute the machine instructions.
+
+- Two memory mechanisms are at play when executing:
+  the **stack** and the **heap**
+:::
+
+:::
+::: {.column width="50%"}
+
+![Memory Layout](${meta:include-base-dir}/assets/images/A1-memory-expanded.svg)
+
+:::
+::::::
+
+<!-- prettier-ignore-end -->
+
+---
+
+## Stack
+
+<!-- prettier-ignore-start -->
+:::::: {.columns}
+::: {.column width="50%"}
+
+Continuous areas of memory for local variables
+in functions.
+
+::: incremental
+  - It is fixed in size.
+
+  - Stack grows and shrinks, it follows **function calls**.
+    Each function has its own stack frame for all its local variables.
+
+  - Values must have **fixed sizes known at compile time**.
+    (If the compiler doesn't know it cannot compute the stack frame size)
+
+  - Access is extremely fast: offset the **stack pointer**.
+
+  - Great memory locality -> CPU caches.
+:::
+
+
+:::
+::: {.column width="50%"}
+
+![Memory Layout](${meta:include-base-dir}/assets/images/A1-memory-expanded.svg)
+
+:::
+::::::
+<!-- prettier-ignore-end -->
+
+---
+
+## Fundamentals - Stack & Heap
 
 There are two mechanisms at play here, generally known as the stack and the heap
 
-<div class="grid grid-cols-2">
-  <div class="flex flex-col rounded-md p-1 bg-teal-100 text-center w-md h-250px">
-      <div class="bg-red-100 rounded-t-md flex flex-col">
-          <div class="bg-red-200 rounded-t-md p-1 border-red-500 border">Frame 1</div>
-          <div class="bg-red-200 p-1 border-red-500 border border-t-0">Frame 2</div>
-      </div>
-      <div class="bg-blue-100 flex-1 align-middle flex flex-col">
-          <div class="text-gray-500 p-1">Free memory</div>
-      </div>
-      <div class="bg-yellow-100 rounded-b-md h-130px flex flex-col">
-          <div class="text-gray-500 p-2">Heap</div>
-          <div class="bg-yellow-300 mb-3 h-7">Allocated</div>
-          <div class="bg-yellow-300 mb-1 h-9"></div>
-          <div class="bg-yellow-300 h-4"></div>
-      </div>
-  </div>
-  <div>
-      <div class="relative top-12 left-6">🠔 Stack pointer</div>
-  </div>
-</div>
+![TODO](Stack-image.svg)
 
 ::: notes
 
-- In this simplified view we see the stack mechanism and the heap mechanism
+- In this simplified view we see the stack mechanism and the heap mechanism.
+
 - The stack is a growing stack of used memory, where the only way to remove
   memory from being used is by removing it from the top of the stack and the
   only way to add is to put it on top of the stack.
+
 - Somehow, as with a lot of CS stuff, we like to turn things around and think of
   stacks growing down instead of up in the real world. That is because they are
   at the end of the virtual memory address range. So if the stack grows, the
@@ -89,181 +117,99 @@ There are two mechanisms at play here, generally known as the stack and the heap
 
 ---
 
-<!---->
-<!-- # Fundamentals -->
-<!---->
-<!-- There are two mechanisms at play here, generally known as the stack and the heap -->
-<!---->
-<!-- <div class="grid grid-cols-2"> -->
-<!--     <div class="flex flex-col rounded-md p-1 bg-teal-100 text-center w-md h-350px"> -->
-<!--         <div class="bg-red-100 rounded-t-md flex flex-col"> -->
-<!--             <div class="bg-red-200 rounded-t-md p-1 border-red-500 border">Frame 1</div> -->
-<!--             <div class="bg-red-200 p-1 border-red-500 border border-t-0">Frame 2</div> -->
-<!--             <div class="bg-red-200 p-1 border-red-500 border border-t-0">Frame 3</div> -->
-<!--         </div> -->
-<!--         <div class="bg-blue-100 flex-1 align-middle flex flex-col"> -->
-<!--             <div class="text-gray-500 p-1">Free memory</div> -->
-<!--         </div> -->
-<!--         <div class="bg-yellow-100 rounded-b-md h-130px flex flex-col"> -->
-<!--             <div class="text-gray-500 p-2">Heap</div> -->
-<!--             <div class="bg-yellow-300 mb-3 h-7">Allocated</div> -->
-<!--             <div class="bg-yellow-300 mb-1 h-9"></div> -->
-<!--             <div class="bg-yellow-300 h-4"></div> -->
-<!--         </div> -->
-<!--     </div> -->
-<!--     <div> -->
-<!--         <div class="relative top-19 left-6">🠔 Stack pointer</div> -->
-<!--         <div class="relative pl-7 top-20"> -->
-<!--             A stack frame is allocated for every function call. It contains exactly -->
-<!--             enough space for all local variables, arguments and stores where the -->
-<!--             previous stack frame starts. -->
-<!--         </div> -->
-<!--     </div> -->
-<!-- </div> -->
-<!---->
-<!-- <!-- -->
-<!-- * We create a new part of the stack, called stack frame, every time we enter a function, meanwhile -->
-<!-- we have a small special bit of memory, register, where the current top of the stack is -->
-<!-- recorded. -->
-<!-- --> -->
-<!---->
-<!-- --- -->
-<!---->
-<!-- # Fundamentals -->
-<!---->
-<!-- There are two mechanisms at play here, generally known as the stack and the heap -->
-<!---->
-<!-- <div class="grid grid-cols-2"> -->
-<!--     <div class="flex flex-col rounded-md p-1 bg-teal-100 text-center w-md h-250px"> -->
-<!--         <div class="bg-red-100 rounded-t-md flex flex-col"> -->
-<!--             <div class="bg-red-200 rounded-t-md p-1 border-red-500 border">Frame 1</div> -->
-<!--             <div class="bg-red-200 p-1 border-red-500 border border-t-0">Frame 2</div> -->
-<!--         </div> -->
-<!--         <div class="bg-blue-100 flex-1 align-middle flex flex-col"> -->
-<!--             <div class="text-gray-500 p-1">Free memory</div> -->
-<!--         </div> -->
-<!--         <div class="bg-yellow-100 rounded-b-md h-130px flex flex-col"> -->
-<!--             <div class="text-gray-500 p-2">Heap</div> -->
-<!--             <div class="bg-yellow-300 mb-3 h-7">Allocated</div> -->
-<!--             <div class="bg-yellow-300 mb-1 h-9"></div> -->
-<!--             <div class="bg-yellow-300 h-4"></div> -->
-<!--         </div> -->
-<!--     </div> -->
-<!--     <div> -->
-<!--         <div class="relative top-12 left-6">🠔 Stack pointer</div> -->
-<!--         <div class="relative pl-7 top-13"> -->
-<!--             Once a function call ends we just move back up, and everything below is -->
-<!--             available as free memory once more. -->
-<!--         </div> -->
-<!--     </div> -->
-<!-- </div> -->
-<!---->
-<!-- <!-- -->
-<!-- * And as we leave a function, we just put the stack pointer back down and we -->
-<!-- just act as if everything above it doesn't exist. -->
-<!-- * Also take a look at the heap memory instead, look at how there are many -->
-<!-- differently sized blocks of memory scattered across the heap. -->
-<!-- --> -->
-<!---->
-<!-- --- -->
-<!---->
-<!-- # Stack limitations -->
-<!---->
-<!-- The stack has limitations though, because it only grows as a result of a -->
-<!-- function call. -->
-<!---->
-<!-- - Size of items on stack frame must be known at compile time -->
-<!-- - If I don't know the size of a variable up front: What size should my stack -->
-<!--   frame be? -->
-<!-- - How can I handle arbitrary user input efficiently? -->
-<!---->
-<!-- <style> -->
-<!--     .footnotes-sep { -->
-<!--         margin-top: 45px; -->
-<!--     } -->
-<!---->
-<!--     .footnotes { -->
-<!--         @apply text-xs opacity-65; -->
-<!--     } -->
-<!---->
-<!--     .footnote-backref { -->
-<!--         display: none; -->
-<!--     } -->
-<!-- </style> -->
-<!---->
-<!-- <!-- -->
-<!-- * You can definitely do a lot with just a stack, but really there are some -->
-<!-- scenarios that aren't possible, or can only be done very inefficient when -->
-<!-- we can only ever push and pop from the top of the stack. -->
-<!-- * Because stack frames (at least for low level compiled languages such as Rust, -->
-<!-- C and C++) need to be known at compile time, we also have somewhat limited -->
-<!-- capabilities for dynamic variable sizes and dynamic user input -->
-<!-- * Note that stack based operations are very much a solved problem, and you can -->
-<!-- very safely use stack based variables in C and C++, because you don't have to -->
-<!-- worry about cleaning them up, there are no pointers. -->
-<!-- --> -->
-<!---->
-<!-- --- -->
-<!---->
-<!-- # The Heap -->
-<!---->
-<!-- If the lifetime of some data needs to outlive a certain scope, it can not be -->
-<!-- placed on the stack. We need another construct: the heap. -->
-<!---->
-<!-- It's all in the name, the heap is just one big pile of memory for you to store -->
-<!-- stuff in. But what part of the heap is in use? What part is available? -->
-<!---->
-<!-- - Data comes in all shapes and sizes -->
-<!-- - When a new piece of data comes in we need to find a place in the heap that -->
-<!--   still has a large enough chunk of data available -->
-<!-- - When is a piece of heap memory no longer needed? -->
-<!-- - Where does it start? Where does it end? -->
-<!-- - When can we start using it? -->
-<!---->
-<!-- <!-- -->
-<!-- * Meanwhile on the other side of our memory the heap is an unstructured pile -->
-<!-- of data just waiting to be used. But how do we know what to use, when to use, -->
-<!-- when to stop using? We can't keep on adding more and more memory or we would -->
-<!-- run into a runaway memory leak quickly. -->
-<!-- * Let's take a look how Rust solves working with the heap for us. -->
-<!-- --> -->
-<!---->
-<!-- --- -->
-<!---->
-<!-- # Variable scoping (recap) -->
-<!---->
-<!-- ```rust -->
-<!-- fn main() { // nothing in scope here -->
-<!--     let i = 10; // i is now in scope -->
-<!--     if i > 5 { -->
-<!--         let j = i; // j is now also in scope -->
-<!--         println!("i = {}, j = {}", i, j); -->
-<!--     } // j is no longer in scope, i still remains -->
-<!--     println!("i = {}", i); -->
-<!-- } // i is no longer in scope -->
-<!-- ``` -->
-<!---->
-<!-- <v-click> -->
-<!---->
-<!-- - `i` and `j` are examples containing a `Copy` type -->
-<!-- - What if copying is too expensive? -->
-<!---->
-<!-- </v-click> -->
-<!---->
-<!-- <!-- -->
-<!-- * When looking at how Rust solves working with the heap, we have to know a little -->
-<!-- bit about variable scoping. -->
-<!-- * In Rust, every variable has a scope, that is, a section of the code that that -->
-<!-- variable is valid for. Note that this isn't that much different to other -->
-<!-- programming languages. -->
-<!-- * In our example we have `i` and `j`. Note how we can just create a copy by -->
-<!-- assigning `i` to `j`. -->
-<!-- * Here the type of i and j is actually known as a `Copy` type -->
-<!-- * But sometimes there is data that would be way too much to Copy around every -->
-<!-- time, it would make our program slow. -->
-<!-- --> -->
-<!---->
-<!-- --- -->
+## Fundamentals - Stack & Heap
+
+There are two mechanisms at play here, generally known as the stack and the heap
+
+![TODO](Stack-image2.svg)
+
+::: notes
+
+- We create a new part of the stack, called stack frame, every time we enter a
+  function, meanwhile we have a small special bit of memory, register, where the
+  current top of the stack is recorded.
+
+:::
+
+---
+
+## Fundamentals - Stack & Heap
+
+![TODO](Stack-image3.svg)
+
+::: notes
+
+- And as we leave a function, we just put the stack pointer back down and we
+  just act as if everything above it doesn't exist.
+- Also take a look at the heap memory instead, look at how there are many
+  differently sized blocks of memory scattered across the heap.
+
+:::
+
+---
+
+# The Heap
+
+If you want memory (i.e. a local variable of function) to outlive the stack you
+need **the heap**.
+
+The **heap** is just one big pile of memory for dynamic memory allocation.
+
+- Allocation of memory on the heap is done by the OS.
+- Rust provides ways of allocating objects of any type on **the heap**.
+
+::: notes
+
+- Meanwhile on the other side of our memory the heap is an unstructured pile of
+  data just waiting to be used. But how do we know what to use, when to use,
+  when to stop using? We can't keep on adding more and more memory or we would
+  run into a runaway memory leak quickly.
+- Let's take a look how Rust solves working with the heap for us.
+
+:::
+
+---
+
+# Variable Scoping (recap)
+
+```rust
+fn main() {
+    // Enter stack frame.
+
+    let i = 10; // `i` points to stack memory `s1`.
+
+    if i > 5 {
+
+        // Copy `i` to `j` (`s2` on stack frame)
+        let j = i;
+    }  // `j` no longer in scope,
+
+    println!("i = {}", i);
+} // i is no longer in scope
+```
+
+:::notes
+
+- `i` and `j` are examples containing a `Copy` type.
+- What if copying is too expensive?
+
+:::
+
+<!--
+* When looking at how Rust solves working with the heap, we have to know a little
+bit about variable scoping.
+* In Rust, every variable has a scope, that is, a section of the code that that
+variable is valid for. Note that this isn't that much different to other
+programming languages.
+* In our example we have `i` and `j`. Note how we can just create a copy by
+assigning `i` to `j`.
+* Here the type of i and j is actually known as a `Copy` type
+* But sometimes there is data that would be way too much to Copy around every
+time, it would make our program slow.
+-->
+
+---
+
 <!---->
 <!-- ## layout: four-square -->
 <!---->
