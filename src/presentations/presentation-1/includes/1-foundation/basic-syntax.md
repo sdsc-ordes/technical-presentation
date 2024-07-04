@@ -38,7 +38,7 @@ error[E0384]: cannot assign twice to immutable variable `some_x`
 
 ## Variables
 
-```rust {data-line-numbers="2,4"}
+```rust {line-numbers="2,4"}
 fn main() {
     let mut some_x = 5;
     println!("some_x = {}", some_x);
@@ -313,7 +313,7 @@ fn main() {
 
 ```rust {style="font-size:15pt;" .fragment}
 fn main() {
-    let tup: (i32, f32, char) = (1, 2.0, 'a');
+  let tup: (i32, f32, char) = (1, 2.0, 'a');
 }
 ```
 
@@ -331,12 +331,12 @@ fn main() {
 
 ```rust {.fragment}
 fn main() {
-    let tup = (1, 2.0, 'Z');
-    let (a, b, c) = tup;
-    println!("({}, {}, {})", a, b, c);
+  let tup = (1, 2.0, 'Z');
+  let (a, b, c) = tup;
+  println!("({}, {}, {})", a, b, c);
 
-    let another_tuple = (true, 42);
-    println!("{}", another_tuple.1);
+  let another_tuple = (true, 42);
+  println!("{}", another_tuple.1);
 }
 ```
 
@@ -407,7 +407,7 @@ fn main() {
 :::::: {.columns}
 ::: {.column width="50%"}
 
-```rust {data-line-numbers="|3-10|4-9|8|13-16|18-20|" style="font-size:14pt;"}
+```rust {line-numbers="|3-10|4-9|8|13-16|18-20|" style="font-size:14pt;"}
 fn main() {
     let mut x = 0;
     loop {
@@ -555,7 +555,7 @@ let x = (let y = 10); // invalid
 
 :::
 
-```rust {data-line-numbers="all|2-5" data-fragment-index="1"}
+```rust {line-numbers="all|2-5" data-fragment-index="1"}
 fn main() {
     let y = {
         let x = 3;
@@ -627,7 +627,7 @@ fn main() {
 
 ::: {.column width="50%"}
 
-```rust {data-line-numbers=""}
+```rust {line-numbers=""}
 fn main() {
     if 2 < 10 {
         42
@@ -641,10 +641,8 @@ fn main() {
 
 ::: {.column width="50%"}
 
-Answer:
-
-::: {style="text-align:left;"}
-```rust {data-line-numbers="" .fragment data-fragment-index="2"}
+::: {.fragment}
+```rust {line-numbers=""}
 fn main() {
     if 2 < 10 {
         42
@@ -653,6 +651,11 @@ fn main() {
     };
 }
 ```
+
+**Answer:** [**No**]{.red} - It needs a `;` on line 2 because the `if`
+expression returns a value which must be turned into statement
+with `};`
+
 :::
 
 :::
@@ -662,10 +665,6 @@ fn main() {
 
 <!-- prettier-ignore-end -->
 
-[ **Answer:** **No:** It needs a `;` on line 2 because the `if`
-expression returns a value which must be turned into statement
-with `};`]{.fragment data-fragment-index="1"}
-
 :::notes
 
 Fix the thing on the last line. Not by adding ; to 42, 24.
@@ -674,10 +673,34 @@ Fix the thing on the last line. Not by adding ; to 42, 24.
 
 ---
 
+## Expression - Control Flow
+
+### Quiz: Does this compile?
+
+```rust {line-numbers=""}
+fn main() {
+    let a = if if 1 != 2 { 3 } else { 4 } == 4 {
+        2
+    } else {
+        1
+    };
+
+    println!("{}", a)
+}}
+```
+
+::: {.fragment}
+
+**Answer:** [**Yes**]{.green} - `a == 1`.
+
+:::
+
+---
+
 ## Scope (more)
 
-As soon as a scope ends, all variables for that scope can be removed from the
-stack
+When a scope ends, all variables for that scope become "extinct"
+(deallocated/removed from the stack).
 
 <!-- prettier-ignore-start -->
 
@@ -687,14 +710,14 @@ stack
 
 ```rust
 fn main() { // nothing in scope here
-    let i = 10; // i is now in scope
+  let i = 10; // i is now in scope
 
-    if i > 5 {
-        let j = 20; // j is now in scope
-        println!("i = {}, j = {}", i, j);
-    } // j is no longer in scope
+  if i > 5 {
+      let j = 20; // j is now in scope
+      println!("i = {}, j = {}", i, j);
+  } // j is no longer in scope
 
-    println!("i = {}", i);
+  println!("i = {}", i);
 } // i is no longer in scope
 ```
 :::

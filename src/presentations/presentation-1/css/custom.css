@@ -7,7 +7,7 @@
     background: #383838;
   }
 
-  /* Column divs */
+  /* Column Divs */
   .reveal .columns {
     gap: min(0.5vw, 1em);
   }
@@ -17,8 +17,8 @@
     max-height: initial;
   }
 
-  .reveal pre.smaller-code {
-    font-size: calc(0.9 * var(--r-code-font-size)) !important;
+  .reveal .column pre {
+    width: 100%;
   }
 
   .emph {
@@ -37,18 +37,30 @@
   .hljs-comment {
     color: #5e5e5e;
   }
-
+  /* Tweak keyword */
   .hljs-keyword {
     font-weight: 600;
   }
 
-
   .center-content {
-    max-width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
+  /* Some colors */
+  .reveal .red {
+    color: #C0392B;
+  }
+  .reveal .green {
+    color: #196F3D;
+  }
+  .reveal .green {
+    color: #196F3D;
+  }
+
+  .reveal pre, .reveal code {
+    scrollbar-width: none;
+  }
 
 </style>

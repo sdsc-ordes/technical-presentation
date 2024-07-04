@@ -6,8 +6,6 @@
 
 ---
 
----
-
 ## Memory
 
 - A computer program consists of a set of instructions.
@@ -29,15 +27,15 @@
 
 <!-- prettier-ignore-start -->
 :::::: {.columns}
-::: {.column width="50%"}
+::: {.column width="60%"}
 
-A binary (a executable file on your disk) will be loaded first into the memory.
+An executable **binary** (a file on your disk) will be loaded first into the memory.
 
 ::: incremental
 
-- The machine instructions are loaded into the memory.
+- The **machine instructions** are loaded into the memory.
 
-- The static data in the binary (i.e. strings etc)
+- The **static data** in the binary (i.e. strings etc)
   is also loaded into memory.
 
 - The CPU starts fetching the instructions
@@ -48,7 +46,7 @@ A binary (a executable file on your disk) will be loaded first into the memory.
 :::
 
 :::
-::: {.column width="50%"}
+::: {.column .center-content}
 
 ![Memory Layout](${meta:include-base-dir}/assets/images/A1-memory-expanded.svg)
 
@@ -63,7 +61,7 @@ A binary (a executable file on your disk) will be loaded first into the memory.
 
 <!-- prettier-ignore-start -->
 :::::: {.columns}
-::: {.column width="50%"}
+::: {.column width="60%"}
 
 Continuous areas of memory for local variables
 in functions.
@@ -79,12 +77,12 @@ in functions.
 
   - Access is extremely fast: offset the **stack pointer**.
 
-  - Great memory locality -> CPU caches.
+  - Great memory locality  CPU caches.
 :::
 
 
 :::
-::: {.column width="50%"}
+::: {.column .center-content}
 
 ![Memory Layout](${meta:include-base-dir}/assets/images/A1-memory-expanded.svg)
 
@@ -94,55 +92,46 @@ in functions.
 
 ---
 
-## Fundamentals - Stack & Heap
+## Stack - Example
 
-There are two mechanisms at play here, generally known as the stack and the heap
+```rust {data-line-numbers="|9-11|1-7|2-3|5-6||2,5|"}
+fn foo() { // Enter 2. stack frame.
+    let a: u32 = 10; // `a` points on the stack containing 10.
+    println!("a address: {:p}", &a);
 
-![TODO](Stack-image.svg)
+    let b: u32 = a;  // Copy `b` to `a`.
+    println!("b address: {:p}", &b;
+} // `a,b` out of scope, we leave the stack frame.
 
-::: notes
+fn main() { // Enter 1. stack frame.
+  foo()
+}
+```
 
-- In this simplified view we see the stack mechanism and the heap mechanism.
+Stack frame needs at least $2 \cdot 32$ bits = $2 \cdot 4$ bytes = $8$ bytes.
 
-- The stack is a growing stack of used memory, where the only way to remove
-  memory from being used is by removing it from the top of the stack and the
-  only way to add is to put it on top of the stack.
+```text
+a address: 0x7ffdb6f09c08
+b address: 0x7ffdb6f09c0c  // 08 + 4bytes = 0c
+```
 
-- Somehow, as with a lot of CS stuff, we like to turn things around and think of
-  stacks growing down instead of up in the real world. That is because they are
-  at the end of the virtual memory address range. So if the stack grows, the
-  stack pointer (to the current stack frame) is decreased.
+:::notes
 
-:::
+- First look at the execution flow of this program.
+- We enter the `main` function which calls `foo`.
+- We enter `foo`, the second stack frame.
+- We create a local variable with value `10` and print its memory address.
+- We create a local variable `b` by assigning `a` which copies the value from
+  `a` to `b`, and we print its memory address.
 
----
+- Lets look now from the compiler what it does.
 
-## Fundamentals - Stack & Heap
-
-There are two mechanisms at play here, generally known as the stack and the heap
-
-![TODO](Stack-image2.svg)
-
-::: notes
-
-- We create a new part of the stack, called stack frame, every time we enter a
-  function, meanwhile we have a small special bit of memory, register, where the
-  current top of the stack is recorded.
-
-:::
-
----
-
-## Fundamentals - Stack & Heap
-
-![TODO](Stack-image3.svg)
-
-::: notes
-
-- And as we leave a function, we just put the stack pointer back down and we
-  just act as if everything above it doesn't exist.
-- Also take a look at the heap memory instead, look at how there are many
-  differently sized blocks of memory scattered across the heap.
+- When the compiler compiles this program to machine instruction, it sees that
+  function `foo` needs two 32bit variables, so the machine code in function
+  `foo` will operate on a stack frame with exactly that size (namely 64 bits),
+  to store `a` and `b` essentially for the instructions on line
+- 2 and
+- 5
 
 :::
 
@@ -150,23 +139,69 @@ There are two mechanisms at play here, generally known as the stack and the heap
 
 # The Heap
 
-If you want memory (i.e. a local variable of function) to outlive the stack you
-need **the heap**.
+The **heap** is just one **big pile of memory** for dynamic memory allocation.
 
-The **heap** is just one big pile of memory for dynamic memory allocation.
+::: {.fragment}
 
-- Allocation of memory on the heap is done by the OS.
-- Rust provides ways of allocating objects of any type on **the heap**.
+### Usage
 
-::: notes
+:::incremental
 
-- Meanwhile on the other side of our memory the heap is an unstructured pile of
-  data just waiting to be used. But how do we know what to use, when to use,
-  when to stop using? We can't keep on adding more and more memory or we would
-  run into a runaway memory leak quickly.
-- Let's take a look how Rust solves working with the heap for us.
+- Memory which outlives the stack (when you leave the function).
+
+- Storing **big objects** in memory is done using **the heap**.
 
 :::
+
+:::
+
+---
+
+# The Heap
+
+The memory **management** on the **heap depends on the language** you write.
+
+<!-- prettier-ignore-start -->
+::: {.fragment}
+
+### Mechanics
+
+:::incremental
+
+- **Allocation/deallocation** on the heap is done by the operating system.
+  - Linux: Programs will call into `glibc` (`malloc` , etc.) which interacts
+    with the kernel.
+
+- **Depends on the language**:
+
+  :::::: {.columns}
+  ::: {.column width="50%"}
+  - [**Full Control**]{.red}: C, C++, Pascal,...:
+    - Programmer decides when to allocate and deallocate memory.
+    - Programmer ensures if some pointer still points to valid memory  🚀 vs. 💣🐞
+
+  :::
+  ::: {.column width="50%"}
+  - [**Full Safety**]{.green}: Java, Python, Go, Haskell, ...:
+    - A runtime system (**garbage collector**) ensures memory is deallocated at
+      the right time.  🐌 vs. 🦺
+  :::
+  ::::::
+
+:::
+:::
+
+<!-- prettier-ignore-end -->
+
+---
+
+### Mechanics - Rust
+
+- [**Full Control and Safety**]{.green}: **Rust** 🦀 - [Via compile
+  time enforcement of correct memory management.]{.emph}
+
+  - It does this with an explicit ownership concept.
+  - It tracks life times (of references).
 
 ---
 
@@ -174,128 +209,118 @@ The **heap** is just one big pile of memory for dynamic memory allocation.
 
 ```rust
 fn main() {
-    // Enter stack frame.
-
-    let i = 10; // `i` points to stack memory `s1`.
+    let i = 10; // `i` in scope.
 
     if i > 5 {
-
-        // Copy `i` to `j` (`s2` on stack frame)
         let j = i;
-    }  // `j` no longer in scope,
+    }  // `j` no longer in scope.
 
     println!("i = {}", i);
 } // i is no longer in scope
 ```
 
-:::notes
-
-- `i` and `j` are examples containing a `Copy` type.
+- Types of `i` and `j` are examples of a `Copy` types.
 - What if copying is too expensive?
+
+::: notes
+
+- When looking at how Rust solves working with the heap, we have to know a
+  little bit about variable scoping.
+- In Rust, every variable has a scope, that is, a section of the code that that
+  variable is valid for. Note that this is a bit different from python.
+- In our example we have `i` and `j`. Note how we can just create a copy by
+  assigning `i` to `j`.
+- Here the type of i and j is actually known as a `Copy` type.
+- But sometimes there is data that would be way too much to Copy around every
+  time, it would make our program slow.
 
 :::
 
-<!--
-* When looking at how Rust solves working with the heap, we have to know a little
-bit about variable scoping.
-* In Rust, every variable has a scope, that is, a section of the code that that
-variable is valid for. Note that this isn't that much different to other
-programming languages.
-* In our example we have `i` and `j`. Note how we can just create a copy by
-assigning `i` to `j`.
-* Here the type of i and j is actually known as a `Copy` type
-* But sometimes there is data that would be way too much to Copy around every
-time, it would make our program slow.
--->
-
 ---
 
-<!---->
-<!-- ## layout: four-square -->
-<!---->
-<!-- # Ownership -->
-<!---->
-<!-- ::topleft:: -->
-<!---->
-<!-- ```rust -->
-<!-- let x = 5; -->
-<!-- let y = x; -->
-<!-- println!("{}", x); -->
-<!-- ``` -->
-<!---->
-<!-- ::topright:: -->
-<!---->
-<!-- <div class="no-line-numbers"> -->
-<!---->
-<!-- <v-click> -->
-<!---->
-<!-- ```text -->
-<!-- Compiling playground v0.0.1 (/playground) -->
-<!-- Finished dev [unoptimized + debuginfo] target(s) in 4.00s -->
-<!-- Running `target/debug/playground` -->
-<!-- 5 -->
-<!-- ``` -->
-<!---->
-<!-- </v-click> -->
-<!---->
-<!-- </div> -->
-<!---->
-<!-- ::bottomleft:: -->
-<!---->
-<!-- <v-click> -->
-<!---->
-<!-- ```rust -->
-<!-- // Create an owned, heap allocated string -->
-<!-- let s1 = String::from("hello"); -->
-<!-- let s2 = s1; -->
-<!-- println!("{}, world!", s1); -->
-<!-- ``` -->
-<!---->
-<!-- </v-click> -->
-<!---->
-<!-- <v-click at="4"> -->
-<!---->
-<!-- Strings store their data on the heap because they can grow -->
-<!---->
-<!-- </v-click> -->
-<!---->
-<!-- ::bottomright:: -->
-<!---->
-<!-- <v-click at="3"> -->
-<!---->
-<!-- <div class="no-line-numbers"> -->
-<!---->
-<!-- ```text -->
-<!-- Compiling playground v0.0.1 (/playground) -->
-<!-- error[E0382]: borrow of moved value: `s1` -->
-<!-- --> src/main.rs:4:28 -->
-<!--   | -->
-<!-- 2 |     let s1 = String::from("hello"); -->
-<!--   |         -- move occurs because `s1` has type `String`, which does not implement the `Copy` trait -->
-<!-- 3 |     let s2 = s1; -->
-<!--   |              -- value moved here -->
-<!-- 4 |     println!("{}, world!", s1); -->
-<!--   |                            ^^ value borrowed here after move -->
-<!-- ``` -->
-<!---->
-<!-- </div> -->
-<!---->
-<!-- </v-click> -->
-<!---->
-<!-- <!-- -->
-<!-- * Let's take the previous example and get rid of some scopes, instead we are -->
-<!-- just going to assign x to y, and then print both x and y. What do we think -->
-<!-- is going to happen? -->
-<!-- * Now the same example again, but now with a String, "hello", we are just going -->
-<!-- to assign it to another variable and then print both s1 and s2. What do we -->
-<!-- think is going to happen now? -->
-<!-- * See how this time the compiler doesn't even let us run the program. Hold on, -->
-<!-- what's going on here? -->
-<!-- * Actually, in Rust strings can grow, that means that we can no longer store -->
-<!-- them on the stack, and we can no longer just copy them around by re-assigning -->
-<!-- them somewhere else. -->
-<!-- --> -->
-<!---->
+## Ownership
+
+:::::: {.columns}
+
+::: {.column width="50%"}
+
+```rust
+let x = 5;
+let y = x;
+println!("{}", x);
+```
+
+Some local variables allocated on the stack.
+
+![](${meta:include-base-dir}/assets/images/A1-string-stack.svg)
+
+:::
+
+::: {.column width="50%"}
+
+```rust
+// Create an owned, heap allocated string
+let s1 = String::from("hello");
+let s2 = s1;
+println!("{}, world!", s1);
+```
+
+Strings store their data on the heap because they can grow
+
+![](${meta:include-base-dir}/assets/images/A1-string-stack.svg)
+
+:::
+
+:::::
+
+:::::: {.columns}
+
+::: {.column width="50%"}
+
+```text
+Running `target/debug/playground`
+5
+```
+
+:::
+
+::: {.column width="50%" }
+
+```text {style="font-size:12pt;"}
+error[E0382]: borrow of moved value: `s1`
+--> src/main.rs:4:28
+  |
+2 |     let s1 = String::from("hello");
+  |         -- move occurs because `s1`
+  |            has type `String`, which
+  |            does not implement the `Copy` trait
+3 |     let s2 = s1;
+  |              -- value moved here
+4 |     println!("{}, world!", s1);
+  |                            ^^ value borrowed here
+  |                               after move
+```
+
+:::
+
+::::::
+
+::: notes
+
+- Let's take the previous example and get rid of some scopes, instead we are
+  just going to assign x to y, and then print both x and y. What do we think is
+  going to happen?
+- Now the same example again, but now with a String, "hello", we are just going
+  to assign it to another variable and then print both s1 and s2. What do we
+  think is going to happen now?
+- See how this time the compiler doesn't even let us run the program. Hold on,
+  what's going on here?
+- Actually, in Rust strings can grow, that means that we can no longer store
+  them on the stack, and we can no longer just copy them around by re-assigning
+  them somewhere else.
+
+:::
+
 <!-- --- -->
 <!---->
 <!-- <LightOrDark> -->

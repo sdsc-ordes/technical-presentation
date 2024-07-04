@@ -8,7 +8,7 @@
 local logging = require("modules.logging")
 local strings = require("modules.strings")
 
-PANDOC_VERSION:must_be_at_least("2.12")
+PANDOC_VERSION:must_be_at_least("3.1")
 
 local List = require("pandoc.List")
 local path = require("pandoc.path")

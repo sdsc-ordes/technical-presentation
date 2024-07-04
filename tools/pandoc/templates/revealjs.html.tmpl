@@ -300,21 +300,11 @@ $if(maxScale)$
         maxScale: $maxScale$,
 $endif$
 $if(mathjax)$
-
-        math: {
+        mathjax3: {
           mathjax: '$mathjaxurl$',
-          config: 'TeX-AMS_HTML-full',
-          tex2jax: {
+          tex: {
             inlineMath: [['\\(','\\)']],
             displayMath: [['\\[','\\]']],
-            balanceBraces: true,
-            processEscapes: false,
-            processRefs: true,
-            processEnvironments: true,
-            preview: 'TeX',
-            skipTags: ['script','noscript','style','textarea','pre','code'],
-            ignoreClass: 'tex2jax_ignore',
-            processClass: 'tex2jax_process'
           },
         },
 $endif$
@@ -328,7 +318,8 @@ $endif$
           RevealNotes,
           RevealSearch,
           RevealZoom,
-          RevealHighlight
+          RevealHighlight,
+          RevealMath.MathJax3
         ]
       }).then(() => {
           moveDataAttributesToCodeElement()

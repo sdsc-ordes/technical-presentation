@@ -33,7 +33,7 @@ Hello, world!
 
 ### Computing a Simple Sum
 
-```rust {data-line-numbers="all|1-3|2|5-11|6-10|7,9|all"}
+```rust {line-numbers="all|1-3|2|5-11|6-10|7,9|all"}
 fn main() {
     println!("sum(4) = 4 + 3 + 2 + 1 = {}", sum(4));
 }

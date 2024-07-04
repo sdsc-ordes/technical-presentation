@@ -103,9 +103,9 @@ def grow() -> List[Apple]:
 
 ### What Rust Promises 🤚
 
-<div class="center-content">
-
 ::: incremental
+
+:::{.center-content}
 
 1. **Pedal to the metal**
 2. **Comes with a warranty**
@@ -114,7 +114,7 @@ def grow() -> List[Apple]:
 
 :::
 
-</div>
+:::
 
 ---
 
