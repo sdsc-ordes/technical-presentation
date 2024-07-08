@@ -5,15 +5,15 @@
 
 -- Module pandoc.path is required and was added in version 2.12
 
+PANDOC_VERSION:must_be_at_least("3.1")
+
 local logging = require("modules.logging")
 local strings = require("modules.strings")
-
-PANDOC_VERSION:must_be_at_least("3.1")
+local utils = require("modules.utils")
 
 local List = require("pandoc.List")
 local path = require("pandoc.path")
 local system = require("pandoc.system")
-local utils = require("pandoc.utils")
 local cs = PANDOC_STATE
 
 -- Save env. variables and root working dir.
@@ -58,30 +58,26 @@ local function is_included(cb)
 end
 
 --- Get default settings
-local include_auto = false
+local META_KEY = "include-files"
+local meta = nil
+local auto_header_shift = false
 local default_format = nil
-local include_fail_if_read_error = false
-local include_relative_to_cwd = nil
+local fail_if_read_error = false
+local relative_to_cwd = false
 
-function get_vars(meta)
-  if meta["include-auto"] then
-    include_auto = true
-  end
+function get_meta(mt)
+  local default_meta = utils.load_default_meta(META_KEY)
+  logging.info(default_meta)
 
-  if meta["include-fail-if-read-error"] then
-    include_fail_if_read_error = true
-  end
+  meta = utils.get_meta(mt, default_meta, META_KEY)
 
-  -- If this is nil, markdown is used as a default format.
-  default_format = meta["include-format"]
-
-  -- If all relative include paths are treated relative to the current working directory.
-  -- An attribute "relative-to-current" can be used on include blocks, images, codeblock includes
-  -- to to selectively choose if the include is relative to the current document.
-  include_relative_to_cwd = meta["include-paths-relative-to-cwd"]
+  auto_header_shift = meta["auto-header-shift"]
+  default_format = meta["default-format"]
+  fail_if_read_error = meta["fail-if-read-error"]
+  relative_to_cwd = meta["paths-relative-to-cwd"]
 
   -- Save meta table for var_replace.
-  metaMap = meta
+  metaMap = mt
 end
 
 --- Keep last heading level found.
@@ -102,10 +98,7 @@ local function update_contents(blocks, shift_by, include_path)
     end,
     -- If image paths are relative then prepend include file path.
     Image = function(image)
-      if
-          (not include_relative_to_cwd or image.classes:includes("relative-to-current"))
-          and path.is_relative(image.src)
-      then
+      if (not relative_to_cwd or image.classes:includes("relative-to-current")) and path.is_relative(image.src) then
         image.src = path.normalize(path.join({ include_path, image.src }))
         logging.info("Updated image path: ", image.src)
       end
@@ -114,7 +107,7 @@ local function update_contents(blocks, shift_by, include_path)
     -- Update path for include-code-files.lua filter style CodeBlocks
     CodeBlock = function(cb)
       if
-          (not include_relative_to_cwd or cb.classes:includes("relative-to-current"))
+          (not relative_to_cwd or cb.classes:includes("relative-to-current"))
           and cb.attributes.include
           and path.is_relative(cb.attributes.include)
       then
@@ -159,7 +152,7 @@ function transclude(cb)
   if shift_input then
     shift_heading_level_by = math.tointeger(shift_input)
   else
-    if include_auto then
+    if auto_header_shift then
       -- Auto shift headings.
       shift_heading_level_by = last_heading_level
     end
@@ -185,7 +178,7 @@ function transclude(cb)
     -- dir and make it absolute.
     --
     if path.is_relative(line) then
-      if include_relative_to_cwd and not cb.classes:includes("relative-to-current") then
+      if relative_to_cwd and not cb.classes:includes("relative-to-current") then
         line = path.normalize(path.join({ cwd, line }))
       end
     end
@@ -193,7 +186,7 @@ function transclude(cb)
     local fh = io.open(line)
     if not fh then
       local msg = "Cannot find include file: '" .. line .. "', curr. working dir: '" .. cwd .. "'"
-      if include_fail_if_read_error then
+      if fail_if_read_error then
         logging.error(msg .. " | error\n")
         error("Abort due to include failure")
       else
@@ -231,6 +224,6 @@ function transclude(cb)
 end
 
 return {
-  { Meta = get_vars },
+  { Meta = get_meta },
   { Header = update_last_level, CodeBlock = transclude },
 }

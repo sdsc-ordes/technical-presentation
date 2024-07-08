@@ -63,6 +63,8 @@
 
           watchman
           python312Packages.pywatchman
+
+          svgbob
         ];
       in
         with pkgs; {

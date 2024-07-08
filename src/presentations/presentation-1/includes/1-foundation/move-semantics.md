@@ -137,7 +137,7 @@ b address: 0x7ffdb6f09c0c  // 08 + 4bytes = 0c
 
 ---
 
-# The Heap
+## The Heap (1)
 
 The **heap** is just one **big pile of memory** for dynamic memory allocation.
 
@@ -157,7 +157,7 @@ The **heap** is just one **big pile of memory** for dynamic memory allocation.
 
 ---
 
-# The Heap
+## The Heap (2)
 
 The memory **management** on the **heap depends on the language** you write.
 
@@ -195,9 +195,9 @@ The memory **management** on the **heap depends on the language** you write.
 
 ---
 
-### Mechanics - Rust
+### Mechanics 🦀
 
-- [**Full Control and Safety**]{.green}: **Rust** 🦀 - [Via compile
+- [**Full Control and Safety**]{.green}: **Rust** - [Via compile
   time enforcement of correct memory management.]{.emph}
 
   - It does this with an explicit ownership concept.
@@ -205,7 +205,7 @@ The memory **management** on the **heap depends on the language** you write.
 
 ---
 
-# Variable Scoping (recap)
+## Variable Scoping (recap)
 
 ```rust
 fn main() {
@@ -252,7 +252,7 @@ println!("{}", x);
 
 Some local variables allocated on the stack.
 
-![](${meta:include-base-dir}/assets/images/A1-string-stack.svg)
+![](${meta:include-base-dir}/assets/images/A1-string-stack.svgbob){.svgbob}
 
 :::
 

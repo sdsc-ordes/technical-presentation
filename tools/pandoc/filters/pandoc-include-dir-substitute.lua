@@ -7,7 +7,7 @@ PANDOC_VERSION:must_be_at_least("3.1")
 
 local metaMap
 -- Save meta table for var_replace.
-function get_vars(meta)
+local function get_vars(meta)
   metaMap = meta
 end
 
@@ -15,8 +15,10 @@ return {
   { Meta = get_vars },
   {
     Image = function(image)
-      image.src = strings.var_replace(image.src, metaMap, env, true)
-      logging.info("Replace vars in image '" .. image.src .. "'")
+      local src = strings.var_replace(image.src, metaMap, env, true)
+      logging.info(string.format("Replaced vars in image '%s' to '%s'", image.src, src))
+
+      image.src = src
       return image
     end,
   },

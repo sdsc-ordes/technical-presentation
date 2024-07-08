@@ -18,6 +18,7 @@ html-math-method:
 
 standalone: true
 embed-resources: false
+slide-level: 2
 
 # self-contained: false
 

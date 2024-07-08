@@ -6,7 +6,7 @@
 
 ---
 
-## Variables
+## Variables (1)
 
 ```rust
 fn main() {
@@ -36,7 +36,7 @@ error[E0384]: cannot assign twice to immutable variable `some_x`
 
 ---
 
-## Variables
+## Variables (2)
 
 ```rust {line-numbers="2,4"}
 fn main() {
@@ -74,11 +74,7 @@ fn main() {
 
 ---
 
-# Primitive Types
-
----
-
-## Integers
+## Primitives: Integers
 
 <!-- prettier-ignore-start -->
 
@@ -129,7 +125,7 @@ need to have a specific size for your platform.
 
 ---
 
-## Floating Points Numbers
+## Primitives: Floating Points Numbers
 
 ```rust
 fn main() {
@@ -197,7 +193,7 @@ fn main() {
 
 ---
 
-## Booleans and Boolean Operations
+## Primitives: Booleans and Operations
 
 ```rust
 fn main() {
@@ -246,7 +242,7 @@ fn main() {
 
 ---
 
-## Characters
+## Primitives: Characters
 
 ```rust
 fn main() {
@@ -304,7 +300,7 @@ fn main() {
 
 ---
 
-## Tuples
+## Primitives: Tuples
 
 <!-- prettier-ignore-start -->
 
@@ -363,7 +359,7 @@ fn main() {
 
 ---
 
-## Arrays
+## Primitives: Arrays
 
 ```rust
 fn main() {

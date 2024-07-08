@@ -24,8 +24,7 @@ $headingColorSub: $companyBlue;
 $headingTextTransform: none;
 
 $mainFont: "Museo", "Palatino Linotype", "Book Antiqua", "Palatino", serif;
-$headingFont: "Museo Sans", "Palatin Linotype", "Book Antiqua", "Palatino",
-  serif;
+$headingFont: "Museo", "Palatin Linotype", "Book Antiqua", "Palatino", serif;
 $linkColor: $companyBlueLight;
 $linkColorHover: lighten($companyBlueLight, 20%);
 
@@ -100,6 +99,11 @@ $codeFontSize: 16pt;
       padding-left: 2ex;
       padding-right: 2ex;
     }
+  }
+
+  // Menu (Plugin)
+  .slide-menu-button {
+    bottom: 50px !important;
   }
 
   // Schriftgrössen

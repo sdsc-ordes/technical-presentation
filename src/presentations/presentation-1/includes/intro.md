@@ -1,10 +1,10 @@
-# Intro
+# Why Rust
 
 ---
 
-# What the Heck is Rust 🦀
+## What the Heck is Rust 🦀
 
-#### A Multi-Paradigm Language
+### A Multi-Paradigm Language
 
 - procedural like Python, i.e. _functions_ 󰊕, _loops_ 󰑙, ...
 - functional aspects, i.e. _iterators_ 🏃, _lambdas_ 󰡱 ...
@@ -12,7 +12,7 @@
 
 ---
 
-# What the Heck is Rust 🦀
+## What the Heck is Rust 🦀
 
 #### A **Compiled** Language Unlike Python
 
@@ -30,9 +30,7 @@ following.
 
 ---
 
-# Why Rust
-
-## Benefits you get when going on the 🦀 - Journey
+## Benefits You Get on the 🦀 Journey
 
 A few selling points for `python` programmers.
 
@@ -95,7 +93,7 @@ def grow() -> List[Apple]:
 
 ---
 
-# But Why?
+## But Why?
 
 <h3>
   More reasons why you should learn a <em class="emph">compiled, statically typed</em> </span>language...
@@ -120,7 +118,7 @@ def grow() -> List[Apple]:
 
 ---
 
-# Pedal to The Metal
+## Pedal to The Metal
 
 ::: incremental
 
@@ -215,12 +213,14 @@ variables bind to memory</small>)
 
 - Enables
   [compiler driven development](https://www.youtube.com/watch?v=Kdpfhj3VM04).
+
 - 100% code coverage:
-  <!-- prettier-ignore-start -->
 
   :::::: {.columns}
 
-  ::: {.column width="50%"}
+  ::: {.column width="50%" .fragment}
+
+  Python:
 
   ```python {.smaller-code}
   def get_float(num: str | float):
@@ -233,7 +233,9 @@ variables bind to memory</small>)
 
   :::
 
-  ::: {.column width="50%"}
+  ::: {.column width="50%" .fragment}
+
+  Rust:
 
   ```rust {.smaller-code}
   enum StrOrFloat {
@@ -252,12 +254,6 @@ variables bind to memory</small>)
 
   ::::::
 
-<!-- prettier-ignore-end -->
-
-- No invalid syntax.
-- Guaranteed thread safety.
-- Model your business logic with `struct` and `enums`.
-
 :::
 
 ::: notes
@@ -270,6 +266,17 @@ responsibility. Python is very dynamic, but this duck-typing and non-strictness
 results often in a mess.
 
 :::
+
+---
+
+## Rust Comes with a Warranty
+
+**Experience: <span class="emph">_"♥️ If it compiles, it is more often correct.
+♥️"_</span>**
+
+- No invalid syntax.
+- Guaranteed thread safety.
+- Model your business logic with `struct` and `enums`.
 
 ---
 
