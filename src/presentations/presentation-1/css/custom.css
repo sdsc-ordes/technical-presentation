@@ -33,6 +33,28 @@
     width: 100%
   }
 
+  /* No paragraph margin after `.p-no-margin`*/
+  .reveal .p-no-margin p,
+  .reveal .p-no-margin img {
+    margin: 0;
+  }
+
+  /* Image border */
+
+  .reveal img.border-light {
+    border: 3pt;
+    border-radius:3pt;
+    border-color: #cbcbcb   ;
+    border-style: solid;
+  }
+
+  .reveal img.border-dark {
+    border: 3pt;
+    border-radius:3pt;
+    border-color: var(--r-heading-color);
+    border-style: solid;
+  }
+
   /* Tweak comments color */
   .hljs-comment {
     color: #5e5e5e;

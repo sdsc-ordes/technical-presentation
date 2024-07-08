@@ -238,236 +238,314 @@ fn main() {
 
 ---
 
-## Ownership
+## Ownership (1)
 
 :::::: {.columns}
 
-::: {.column width="50%"}
+::: {.column width="50%" }
 
-```rust
-let x = 5;
-let y = x;
-println!("{}", x);
+```rust {line-numbers=}
+// Create two variables on the stack.
+let a = 5;
+println!("{}", a);
 ```
 
-Some local variables allocated on the stack.
+Local integer `a` allocated on the <br> **stack**.
+
+![](${meta:include-base-dir}/assets/images/A1-int-stack.svgbob){.svgbob}
+
+:::
+
+::: {.column width="50%"}
+
+```rust {line-numbers=}
+// Create an owned, heap allocated string
+let a = String::from("hello");
+println!("{}, world!", a);
+```
+
+Strings (`a`) store data on the **heap** because they **can grow**.
 
 ![](${meta:include-base-dir}/assets/images/A1-string-stack.svgbob){.svgbob}
 
 :::
 
-::: {.column width="50%"}
+:::::
 
-```rust
-// Create an owned, heap allocated string
-let s1 = String::from("hello");
-let s2 = s1;
-println!("{}, world!", s1);
+---
+
+### Ownership (2)
+
+<!-- prettier-ignore-start -->
+
+:::::: {.columns}
+::: {.column width="50%" }
+
+```rust {line-numbers=}
+fn foo() {
+  let a = 5;
+  let b = a;
+  println!("{}", a);
+}
 ```
 
-Strings store their data on the heap because they can grow
+Assignment of `a` to `b` **copies** `a` to `b`.
 
-![](${meta:include-base-dir}/assets/images/A1-string-stack.svg)
+:::{.center-content .p-no-margin}
+![](${meta:include-base-dir}/assets/images/A1-int-stack-copy.svgbob){.svgbob style="margin:0;"}
+:::
+
+:::
+::: {.column width="50%" .fragment}
+
+```rust {line-numbers=}
+fn foo() {
+  let a = String::from("hello");
+  let b = a;
+  println!("{}, world!", a);
+}
+```
+
+Assignment of `a` to `b` transfers ownership.
+
+:::{.center-content .p-no-margin}
+![](${meta:include-base-dir}/assets/images/A1-string-stack-copy.svgbob){.svgbob style="margin:0;"}
+:::
+
+- When `a` out of scope: nothing happens.
+- When `b` goes out of scope: the string **data is deallocated**.
+
+:::
+:::::
+
+<!-- prettier-ignore-end -->
+
+---
+
+### Ownership (3)
+
+<!-- prettier-ignore-start -->
+
+:::::: {.columns}
+::: {.column width="50%" }
+```rust {line-numbers=}
+fn foo() {
+  let a = String::from("hello");
+  let b = a;
+  println!("{}, world!", a);
+  //                     ^--- Nope!! ❌
+}
+```
+:::
+::: {.column width="50%" }
+
+```text
+error[E0382]: borrow of moved value: `a`
+--> src/main.rs:4:28
+  |
+2 |     let a = String::from("hello");
+  |         - move occurs because `a`
+  |           has type `String`, which
+  |           does not implement the `Copy`
+  |           trait
+  |
+3 |     let b = a;
+  |             - value moved here
+4 |     println!("{}, world!", a);
+  |                            ^
+  |            value borrowed here
+  |            after move
+```
+
+:::
+::::::
+
+<!-- prettier-ignore-end -->
+
+---
+
+## Ownership - The Rules
+
+::: incremental
+
+- There is always **ever only one owner** of a stack value.
+
+- Once the owner goes out of scope (and is removed from the stack), any
+  associated values on **the heap** will be deallocated.
+
+- Rust **transfers ownership** for non-copy types: **move semantics**.
 
 :::
 
-:::::
+:::{.center-content .p-no-margin}
+
+![](${meta:include-base-dir}/assets/images/A1-i-own-this-light-mod.png)
+
+:::
+
+::: notes
+
+- What we've just seen is the Rust ownership system in action.
+- In Rust, every part of memory in use always has an owner variable. That
+  variable must always be the only owner, there can't be multiple owners.
+- Once a scope that contains a variable ends we don't just pop the top from the
+  stack, but we also clean up any associated values on the heap.
+- We can safely do this because we just said that this variable was the only
+  owner of that part of memory.
+- Assigning a variable to another one actually moves ownership to the other
+  variable and removes it from the first variable, instead of aliasing it (which
+  is what C and C++ do)
+
+:::
+
+---
+
+## Ownership - Move into Function
+
+<!-- prettier-ignore-start -->
 
 :::::: {.columns}
+::: {.column width="50%" }
 
+```rust {line-numbers=}
+fn main() {
+  let a = String::from("hello");
+
+  let len = calculate_length(a);
+  println!("Length of '{}' is {}.",
+           a, len);
+}
+
+fn calculate_length(s: String) -> usize {
+  s.len()
+}
+```
+
+:::
 ::: {.column width="50%"}
 
 ```text
-Running `target/debug/playground`
-5
+error[E0382]: borrow of moved value: `a`
+--> src/main.rs:4:43
+  |
+2 | let a = String::from("hello");
+  |     - move occurs because `a`
+  |       has type `String`,
+  |       which does not implement the
+  |       `Copy` trait
+  |
+3 | let len = calculate_length(a);
+  |           value moved here -
+  |
+4 | println!("Length of '{}' is {}.",
+  |          a, len);
+  |          ^
+  |          value borrowed here after move
 ```
+:::
+::::::
+
+<!--prettier-ignore-end -->
+
+::: notes
+
+- Moving also works when calling a function, the function takes ownership of the
+  variable that is passed to it
+- That means that when the function ends it will go out of scope and should be
+  cleaned up
+- What do you think that will happen in this case when we try and print the
+  string and the length of the string after the function call.
 
 :::
 
-::: {.column width="50%" }
+---
 
-```text {style="font-size:12pt;"}
-error[E0382]: borrow of moved value: `s1`
---> src/main.rs:4:28
-  |
-2 |     let s1 = String::from("hello");
-  |         -- move occurs because `s1`
-  |            has type `String`, which
-  |            does not implement the `Copy` trait
-3 |     let s2 = s1;
-  |              -- value moved here
-4 |     println!("{}, world!", s1);
-  |                            ^^ value borrowed here
-  |                               after move
+## Ownership - Moving Out of Function
+
+We can return a value to move it out of the function
+
+```rust
+fn main() {
+    let a = String::from("hello");
+    let (len, a) = calculate_length(a);
+
+    println!("Length of '{}' is {}.", a, len);
+}
+
+fn calculate_length(s: String) -> (usize, String) {
+    (s.len(), s)
+}
 ```
+
+```text {.fragment}
+Compiling playground v0.0.1 (/playground)
+Finished dev [unoptimized + debuginfo] target(s) in 5.42s
+Running `target/debug/playground`
+
+Length of 'hello' is 5.
+```
+
+::: notes
+
+- But what if we move a value into a function and we still want to use it
+  afterwards, we could choose to move it back at the end of the function, but it
+  really doesn't make for very nice code
+- Note that Rust allows us to return multiple values from a function with this
+  syntax.
+
+:::
+
+---
+
+## Clone
+
+:::::: {.columns}
+
+::: {.column style="width:80%; align-content:center;"}
+
+- Many types in Rust are `Clone`-able.
+
+::: incremental
+
+- Use `clone()` to create an **explicit** clone.
+  - In contrast to `Copy` which creates an **implicit** copy.
+- ⏱️ Clones can be expensive and could take a long time, so be careful.
+- 🐌 Not very efficient if a clone is short-lived like in this example .
+
+:::
+
+:::
+
+:::{.column style="width:20%; align-content:center;" .p-no-margin}
+
+<!-- prettier-ignore-start-->
+[![](${meta:include-base-dir}/assets/images/A1-clone.svg){.border-dark}]{.center-content style="width:100%;"}
+<!-- prettier-ignore-end -->
 
 :::
 
 ::::::
 
+```rust
+fn main() {
+    let x = String::from("hellothisisaverylongstring...");
+    let len = get_length(x.clone());
+    println!("{}: {}", x, len);
+}
+
+fn get_length(arg: String) -> usize {
+    arg.len()
+}
+```
+
 ::: notes
 
-- Let's take the previous example and get rid of some scopes, instead we are
-  just going to assign x to y, and then print both x and y. What do we think is
-  going to happen?
-- Now the same example again, but now with a String, "hello", we are just going
-  to assign it to another variable and then print both s1 and s2. What do we
-  think is going to happen now?
-- See how this time the compiler doesn't even let us run the program. Hold on,
-  what's going on here?
-- Actually, in Rust strings can grow, that means that we can no longer store
-  them on the stack, and we can no longer just copy them around by re-assigning
-  them somewhere else.
+- There is something else in Rust
+- Many types implement a way to create an explicit copy, such types are
+  clone-able. But note how we have to very explicitly say that we want a clone.
+- Such a clone is a full deep copy clone and can of course take a long time,
+  which is why Rust wants you to be explicit.
+- Also in this example this is a really inefficient usage of our clone, because
+  it gets destroyed almost immediately after creation
 
 :::
-
-<!-- --- -->
-<!---->
-<!-- <LightOrDark> -->
-<!--   <template #dark> -->
-<!--     <img src="/images/A1-i-own-this-dark.png" class="pl-30 h-90 float-right" /> -->
-<!--   </template> -->
-<!--   <template #light> -->
-<!--     <img src="/images/A1-i-own-this-light.png" class="pl-30 h-90 float-right" /> -->
-<!--   </template> -->
-<!-- </LightOrDark> -->
-<!---->
-<!-- # Ownership -->
-<!---->
-<!-- - There is always ever only one owner of a stack value -->
-<!-- - Once the owner goes out of scope (and is removed from the stack), any -->
-<!--   associated values on the heap will be cleaned up as well -->
-<!-- - Rust transfers ownership for non-copy types: _move semantics_ -->
-<!---->
-<!-- <!-- -->
-<!-- * What we've just seen is the Rust ownership system in action. -->
-<!-- * In Rust, every part of memory in use always has an owner variable. That -->
-<!-- variable must always be the only owner, there can't be multiple owners. -->
-<!-- * Once a scope that contains a variable ends we don't just pop the top from the -->
-<!-- stack, but we also clean up any associated values on the heap. -->
-<!-- * We can safely do this because we just said that this variable was the only -->
-<!-- owner of that part of memory. -->
-<!-- * Assigning a variable to another one actually moves ownership to the other -->
-<!-- variable and removes it from the first variable, instead of aliasing it -->
-<!-- (which is what C and C++ do) -->
-<!-- --> -->
-<!---->
-<!-- --- -->
-<!---->
-<!-- ```rust -->
-<!-- fn main() { -->
-<!--     let s1 = String::from("hello"); -->
-<!--     let len = calculate_length(s1); -->
-<!--     println!("The length of '{}' is {}.", s1, len); -->
-<!-- } -->
-<!---->
-<!-- fn calculate_length(s: String) -> usize { -->
-<!--     s.len() -->
-<!-- } -->
-<!-- ``` -->
-<!---->
-<!-- <v-click> -->
-<!---->
-<!-- <div class="no-line-numbers"> -->
-<!---->
-<!-- ```text -->
-<!-- Compiling playground v0.0.1 (/playground) -->
-<!-- error[E0382]: borrow of moved value: `s1` -->
-<!-- --> src/main.rs:4:43 -->
-<!--   | -->
-<!-- 2 | let s1 = String::from("hello"); -->
-<!--   |     -- move occurs because `s1` has type `String`, which does not implement the `Copy` trait -->
-<!-- 3 | let len = calculate_length(s1); -->
-<!--   |                            -- value moved here -->
-<!-- 4 | println!("The length of '{}' is {}.", s1, len); -->
-<!--   |                                       ^^ value borrowed here after move -->
-<!-- ``` -->
-<!---->
-<!-- </div> -->
-<!---->
-<!-- </v-click> -->
-<!---->
-<!-- <!-- -->
-<!-- * Moving also works when calling a function, the function takes ownership of -->
-<!-- the variable that is passed to it -->
-<!-- * That means that when the function ends it -->
-<!-- will go out of scope and should be cleaned up -->
-<!-- * What do you think that will happen in this case when we try and print the -->
-<!-- string and the length of the string after the function call. -->
-<!-- --> -->
-<!---->
-<!-- --- -->
-<!---->
-<!-- # Moving out of a function -->
-<!---->
-<!-- We can return a value to move it out of the function -->
-<!---->
-<!-- ```rust -->
-<!-- fn main() { -->
-<!--     let s1 = String::from("hello"); -->
-<!--     let (len, s1) = calculate_length(s1); -->
-<!--     println!("The length of '{}' is {}.", s1, len); -->
-<!-- } -->
-<!---->
-<!-- fn calculate_length(s: String) -> (usize, String) { -->
-<!--     (s.len(), s) -->
-<!-- } -->
-<!-- ``` -->
-<!---->
-<!-- <v-click> -->
-<!---->
-<!-- <div class="no-line-numbers"> -->
-<!---->
-<!-- ```text -->
-<!-- Compiling playground v0.0.1 (/playground) -->
-<!-- Finished dev [unoptimized + debuginfo] target(s) in 5.42s -->
-<!-- Running `target/debug/playground` -->
-<!-- The length of 'hello' is 5. -->
-<!-- ``` -->
-<!---->
-<!-- </div> -->
-<!---->
-<!-- </v-click> -->
-<!---->
-<!-- <!-- -->
-<!-- * But what if we move a value into a function and we still want to use it -->
-<!-- afterwards, we could choose to move it back at the end of the function, but -->
-<!-- it really doesn't make for very nice code -->
-<!-- * Note that Rust allows us to return multiple values from a function with -->
-<!-- this syntax. -->
-<!-- --> -->
-<!---->
-<!-- --- -->
-<!---->
-<!-- # Clone -->
-<!---->
-<!-- <img src="/images/A1-clone.jpg" class="float-right w-40" /> -->
-<!---->
-<!-- - Many types in Rust are `Clone`-able -->
-<!-- - Use can use clone to create an explicit clone (in contrast to `Copy` which -->
-<!--   creates an implicit copy). -->
-<!-- - Creating a clone can be expensive and could take a long time, so be careful -->
-<!-- - Not very efficient if a clone is short-lived like in this example -->
-<!---->
-<!-- ```rust -->
-<!-- fn main() { -->
-<!--     let x = String::from("hellothisisaverylongstring..."); -->
-<!--     let len = get_length(x.clone()); -->
-<!--     println!("{}: {}", x, len); -->
-<!-- } -->
-<!---->
-<!-- fn get_length(arg: String) -> usize { -->
-<!--     arg.len() -->
-<!-- } -->
-<!-- ``` -->
-<!---->
-<!-- <!-- -->
-<!-- * There is something else in Rust -->
-<!-- * Many types implement a way to create an explicit copy, such types are -->
-<!-- clone-able. But note how we have to very explicitly say that we want a -->
-<!-- clone. -->
-<!-- * Such a clone is a full deep copy clone and can of course take a long -->
-<!-- time, which is why Rust wants you to be explicit. -->
-<!-- * Also in this example this is a really inefficient usage of our clone, -->
-<!-- because it gets destroyed almost immediately after creation -->
-<!-- --> -->

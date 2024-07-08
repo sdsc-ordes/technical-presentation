@@ -46,13 +46,5 @@ ${meta:include-base-dir}/includes/intro.md
 ```
 
 ```{.include}
-${meta:include-base-dir}/includes/1-foundation/basic-syntax.md
-```
-
-```{.include}
-${meta:include-base-dir}/includes/1-foundation/first-project.md
-```
-
-```{.include}
-${meta:include-base-dir}/includes/1-foundation/move-semantics.md
+${meta:include-base-dir}/includes/1-foundation/main.md
 ```
