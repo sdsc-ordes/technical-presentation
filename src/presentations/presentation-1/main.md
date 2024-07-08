@@ -21,6 +21,7 @@ include-base-dir: presentations/presentation-1
 
 # Settings for RevealJS
 controls: true
+navigationMode: linear
 progress: true
 history: true
 center: true
@@ -43,7 +44,6 @@ hideMouseTime: 1000
 ```{.include}
 ${meta:include-base-dir}/includes/intro.md
 ```
-
 
 ```{.include}
 ${meta:include-base-dir}/includes/1-foundation/basic-syntax.md

@@ -1,5 +1,7 @@
 # Intro
 
+---
+
 # What the Heck is Rust 🦀
 
 #### A Multi-Paradigm Language
