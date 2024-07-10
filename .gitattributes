@@ -62,6 +62,8 @@
 # Fonts
 *.[Tt][Tt][Ff] filter=lfs diff=lfs merge=lfs -text
 *.[Oo][Tt][Ff] filter=lfs diff=lfs merge=lfs -text
+*.[Ww][Oo][Ff][Ff] filter=lfs diff=lfs merge=lfs -text
+*.[Ww][Oo][Ff][Ff]2 filter=lfs diff=lfs merge=lfs -text
 
 # Data Zips
 *.[Zz][Ii][Pp] filter=lfs diff=lfs merge=lfs -text
