@@ -94,7 +94,6 @@ $body$
 
   <script src="dist/reveal.js"></script>
 
-
   <!-- reveal.js plugins -->
   <script src="plugin/markdown/markdown.js"></script>
   <script src="plugin/highlight/highlight.js"></script>
@@ -105,6 +104,7 @@ $body$
   <script src="plugin/menu/menu.js"></script>
 
   <script>
+      moveDataAttributesToCodeElement()
 
       // Full list of configuration options available at:
       // https://revealjs.com/config/
@@ -452,7 +452,6 @@ $endif$
           RevealMenu
         ]
       }).then(() => {
-          moveDataAttributesToCodeElement()
 
           const keywords = new Map([
             $for(highlightjs-keywords/pairs)$[ "$it.key$", [ $for(it.value)$"$it$"${sep},$endfor$ ] ]${ sep },$endfor$

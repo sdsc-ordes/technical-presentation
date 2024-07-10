@@ -8,6 +8,7 @@
 @import url("./fonts/museo-sans/museo-sans.css");
 @import url("./fonts/fira-code/fira-code.css");
 @import url("./fonts/fira-sans/fira-sans.css");
+@import url("./fonts/jetbrains-mono/jetbrains-mono.css");
 
 // Company Colors
 $companyBlueLight: #5561a6;
@@ -39,7 +40,7 @@ $heading3Size: 40pt;
 $heading4Size: 30pt;
 
 // Code
-$codeFont: "Fira Code";
+$codeFont: "JetbrainsMono NFM";
 $codeFontSize: 16pt;
 
 // Theme template ------------------------------
@@ -83,6 +84,11 @@ $codeFontSize: 16pt;
     padding: 0.01ex;
     padding-left: 0.3ex;
     padding-right: 0.3ex;
+  }
+
+  // Highlight lines should only grey out a little.
+  code.has-highlights tr:not(.highlight-line) {
+    opacity: 0.8 !important;
   }
 
   // Block Code
@@ -135,4 +141,14 @@ $codeFontSize: 16pt;
   h6 {
     color: $companyBlueLight;
   }
+
+  // Set spacing for elements which do not have margin.
+  ul + h2,
+  ul + h3,
+  ul + h4,
+  ul + h5,
+  ul + h6
+    margin-top: var(--r-block-margin);
+  }
+
 }

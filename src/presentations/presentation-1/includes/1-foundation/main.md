@@ -11,5 +11,5 @@ ${meta:include-base-dir}/includes/1-foundation/move-semantics.md
 ```
 
 ```{.include}
-${meta:include-base-dir}/includes/1-foundation/ownership-and-barrowing.md
+${meta:include-base-dir}/includes/1-foundation/ownership-and-borrowing.md
 ```
