@@ -72,8 +72,7 @@ def calculate_length(s: str) -> int {
 }
 ```
 
-[**Question:** To what memory does `s` refer to? Is it a copy?]{.fragment
-fragment-index="2"}
+[**Question:** To what memory does `s` refer to? Is it a copy?]{.fragment fragment-index="2"}
 
 ---
 
@@ -337,33 +336,45 @@ try `rustc --explain E0502`.
 **Question: Does the following work?**
 [Link](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=c26cf791529a35d2c105c1d5c55022bd)
 
+::::::{.columns}
+
+:::{.column width="40%" }
+
 ```rust
 fn give_me_a_ref() -> &String {
-    let s = String::from("Hello, world!");
-    &s
+  let s = String::from("Ups");
+  &s
 }
 ```
 
-[**❗Note: Returning a reference to a stack value (e.g. `s`) is not
-possible.**]{ .fragment }
+:::
 
-```text {line-numbers="" style="font-size=14pt" .fragment}
+:::{.column width="70%" }
+
+```text {line-numbers="|13-15" style="font-size=14pt" .fragment}
 error[E0106]: missing lifetime specifier
 1 | fn give_me_a_ref() -> &String {
-  |                       ^ expected named lifetime parameter
-  |
-  = help: this function's return type contains a borrowed value,
+  |                       ^ expected named
+  |                         lifetime parameter
+  = help: this function's return type
+        contains a borrowed value,
           but there is no value for it to be borrowed from
-  |
-help: consider using the `'static` lifetime, but this is
-      uncommon unless you're returning a borrowed value from a `const` or a `static`
-  |
+help: consider using the `'static` lifetime,
+      but this is uncommon unless you're returning a
+      borrowed value from a `const` or a `static`
 1 | fn give_me_a_ref() -> &'static String {
   |                        +++++++
-help: instead, you are more likely to want to return an owned value
-  |
+help: instead, you are more likely
+      to want to return an owned value
 1 | fn give_me_a_ref() -> String {
 ```
+
+:::
+
+::::::
+
+[**❗Note: Returning a reference to a stack value (e.g. `s`) is
+not possible.**]{ .fragment }
 
 ---
 
@@ -390,7 +401,7 @@ fn give_me_a_ref(input: &(String, i32)) -> &String {
 }
 ```
 
-- Rust annotates each reference with a lifetime.
+- Rust annotates each reference with a **lifetime**.
 - How to use lifetimes? -> later!
 
 :::notes

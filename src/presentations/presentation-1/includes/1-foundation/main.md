@@ -13,3 +13,7 @@ ${meta:include-base-dir}/includes/1-foundation/move-semantics.md
 ```{.include}
 ${meta:include-base-dir}/includes/1-foundation/ownership-and-borrowing.md
 ```
+
+```{.include}
+${meta:include-base-dir}/includes/1-foundation/composite-types.md
+```

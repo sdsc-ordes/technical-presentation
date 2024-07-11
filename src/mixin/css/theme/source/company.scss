@@ -147,8 +147,7 @@ $codeFontSize: 16pt;
   ul + h3,
   ul + h4,
   ul + h5,
-  ul + h6
+  ul + h6 {
     margin-top: var(--r-block-margin);
   }
-
 }
