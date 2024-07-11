@@ -16,7 +16,10 @@ function moveDataAttributesToCodeElement() {
     console.log(pre)
 
     Array.from(pre.attributes).forEach((attr) => {
-      if (attr.name.startsWith("data-")) {
+      if (
+        attr.name.startsWith("data-") ||
+        attr.name.startsWith("contenteditable")
+      ) {
         code.setAttribute(attr.name, attr.value)
         pre.removeAttribute(attr.name)
       }

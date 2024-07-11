@@ -17,3 +17,11 @@ ${meta:include-base-dir}/includes/1-foundation/ownership-and-borrowing.md
 ```{.include}
 ${meta:include-base-dir}/includes/1-foundation/composite-types.md
 ```
+
+```{.include}
+${meta:include-base-dir}/includes/1-foundation/pattern-matching.md
+```
+
+```{.include}
+${meta:include-base-dir}/includes/1-foundation/impl-blocks.md
+```

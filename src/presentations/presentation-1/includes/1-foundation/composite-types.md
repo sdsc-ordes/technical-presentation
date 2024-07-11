@@ -26,8 +26,8 @@ We have seen so far:
 
 Rust has two important ways to structure data
 
-- `struct`
-- `enum`s
+- `struct` : **product type**
+- `enum`s : **sum type**
 - ~~unions~~
 
 ::: notes
@@ -117,7 +117,7 @@ fn main() {
 
 ## Enumerations
 
-One other powerful type is the `enum`:
+One other powerful type is the `enum`. It is a **sum type**:
 
 ::::::{.columns}
 
@@ -154,9 +154,7 @@ fn main() {
 
 ---
 
-## Enumeration
-
-### Mechanics
+## Enumeration - Mechanics
 
 ```rust {line-numbers=}
 enum Fruit {
@@ -179,7 +177,7 @@ enum Fruit {
 
 ---
 
-## Enumerations
+## Enumerations - Data (1)
 
 `Enum`s are very powerful: each variant can have associated data
 
@@ -223,3 +221,54 @@ fn main() {
 :::
 
 ::::::
+
+---
+
+## Mix Sum and Product Types
+
+Combining **sum-type** with a **product-type**:
+
+```rust {line-numbers="|2,6,11"}
+struct Color {
+  rgb: (bool, bool, bool)
+}
+
+enum Fruit {
+  Banana(Color),
+  Apple(bool, bool)
+}
+
+fn main() {
+  let 🍌 = Fruit::Banana(Color{rgb: (false,true,false)});
+  let 🍎 = Fruit::Apple(false, true);
+}
+```
+
+The type `Fruit` has $(2\cdot 2 \cdot 2) + (2\cdot 2) = 32$ possible states.
+
+---
+
+## Enumerations - Discriminant
+
+You can control the discriminant like:
+
+```rust
+#[repr(u32)]
+enum Bar {
+    A, // 0
+    B = 10000,
+    C, // 10001
+}
+
+fn main() {
+    println!("A: {}", Bar::A as u32);
+    println!("B: {}", Bar::B as u32);
+    println!("C: {}", Bar::C as u32);
+}
+```
+
+:::notes
+
+- See the explicitness of the cast!
+
+:::
