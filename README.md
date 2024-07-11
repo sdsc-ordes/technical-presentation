@@ -29,7 +29,7 @@ Current [`revealjs`](https://github.com/hakimel/reveal.js) version: `4.6.1`
 You can enter a development shell with
 
 ```shell
-nix develop ./nix#default
+nix develop ./tools/nix#default
 ```
 
 where all requirements are installed to start working on your first

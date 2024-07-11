@@ -8,7 +8,7 @@ container_mgr := "podman"
 
 # Enter a `nix` development shell.
 nix-develop:
-    nix develop ./nix#default
+    nix develop ./tools/nix#default
 
 # Clean the build folder.
 clean:
