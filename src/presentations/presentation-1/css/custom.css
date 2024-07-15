@@ -12,6 +12,10 @@
     gap: min(0.5vw, 1em);
   }
 
+  .reveal pre {
+    box-shadow: none !important
+  }
+
   /* Some how code blocks are only 400px max size */
   .reveal pre code {
     max-height: initial;

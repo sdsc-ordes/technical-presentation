@@ -70,45 +70,57 @@ fn main() {
 
 ---
 
-## The `self` and `Self`
+## The `self` & `Self`: Implementation
 
-- `Self` type: A shorthand for the type of current implementation.
-- `self` parameter: Defines how the method can be used.
+- `self` parameter: the **_receiver_** on which a function is defined.
+- `Self` type: **_shorthand for the type_** of current implementation.
 
-```rust {line-numbers="all|4-6|8-10|12-14"}
+:::::: {.columns}
+
+::: {.column width="55%"}
+
+```rust {line-numbers="all|4|6-8|11|14-16" style="font-size:14pt"}
 struct Banana { size: f64; }
 
 impl Banana {
-  fn new(i: f64) -> Self {
-    return Self(10);
-  }
+  fn new(i: f64) -> Self { Self(10) }
 
   fn consume(self) -> Self {
-    return Self::new(self.size + 5)
+    Self::new(self.size + 5)
   }
 
-  fn borrow(&self) -> &f64 { // Take read reference of `Banana` instance.
-    return &self.size;
-  }
+  // Take read reference of `Banana` instance.
+  fn borrow(&self) -> &f64 { &self.size }
 
-  fn borrow_mut(&mut self) -> &mut f64 { // Take write reference of `Banana` instance.
-    return &mut self.size;
+  // Take write reference of `Banana` instance.
+  fn borrow_mut(&mut self) -> &mut f64 {
+    &mut self.size;
   }
 }
 ```
 
----
+:::
 
-## The `self` Parameter
+::: {.column style="width:45%; align-content:center;"}
 
-The `self` parameter is called the **_receiver_**.
+::: incremental
 
+- Absence of a `self` parameter means its an **_associated function_** on that
+  type (e.g. `new`).
 - `self` is always first argument and its always the type on which `impl` is
   defined (type not needed).
 - Prepend `&` or `&mut ` to `self` to indicate that we take a value by
   reference.
-- Absence of a `self` parameter means its an **_associated function_** on that
-  type.
+
+:::
+
+:::
+
+::::::
+
+---
+
+## The `self` & `Self`: Application
 
 ```rust
 fn main () {
