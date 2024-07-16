@@ -16,6 +16,19 @@
     box-shadow: none !important
   }
 
+  /* Border color for non-compiling stuff */
+  .reveal pre.no-compile code {
+    border-top: none;
+    border-inline: 0.4rem solid red;
+    border-right: none;
+  }
+
+  .reveal pre.does-compile code {
+    border-top: none;
+    border-inline: 0.4rem solid green;
+    border-right: none;
+  }
+
   /* Some how code blocks are only 400px max size */
   .reveal pre code {
     max-height: initial;
@@ -27,6 +40,10 @@
 
   .emph {
     color: #6d7dd8;
+  }
+
+  .small {
+    font-size: smaller;
   }
 
   /* Highlight the lines */

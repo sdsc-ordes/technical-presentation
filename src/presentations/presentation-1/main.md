@@ -37,6 +37,7 @@ maxScale: 2
 pdfSeparateFragments: false
 hideInactiveMouse: true
 hideMouseTime: 1000
+hash: true
 ---
 
 <!-- markdownlint-disable-file MD034 MD033 MD001 MD024 MD026 -->

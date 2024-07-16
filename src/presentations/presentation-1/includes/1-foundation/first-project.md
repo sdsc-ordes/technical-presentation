@@ -1,7 +1,5 @@
 <!-- markdownlint-disable-file MD034 MD033 MD001 MD024 MD026-->
 
----
-
 # Your First Project
 
 ---
