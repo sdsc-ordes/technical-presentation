@@ -451,9 +451,9 @@ Its possible to get only a part of a string. But what is it?
 
 ---
 
-## `String` or `str`
+## `String` or `str` ?
 
-When do we use `String` and when do we use `str`?
+When to use `String` and when `str`?
 
 :::::: {.columns .fragment}
 
@@ -481,8 +481,8 @@ fn string_len1(data: &str) -> usize {
 
 ::: incremental
 
-- Prefer `&str` over `String` whenever possible. <br> **Reason:** `&str` gives
-  more freedom to the caller  🚀
+- [**Prefer `&str` over `String` whenever possible.**]{.emph} <br> Reason: `&str`
+  gives more freedom to the caller  🚀
 
 - To mutate a string use: `&mut str`, but you cannot change a slice's length.
 
