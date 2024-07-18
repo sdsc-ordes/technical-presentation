@@ -19,6 +19,7 @@ $companyHipsterBlack: #1a1a1a;
 $backgroundColor: #fff;
 
 $mainFontSize: 20pt;
+$figCaptionFontSize: 16pt;
 $mainColor: $companyHipsterBlack;
 $headingColor: $companyBlueDark;
 $headingColorSub: $companyBlue;
@@ -149,5 +150,11 @@ $codeFontSize: 16pt;
   ul + h5,
   ul + h6 {
     margin-top: var(--r-block-margin);
+  }
+
+  // Figure Caption
+  figcaption {
+    font-size: $figCaptionFontSize;
+    font-style: italic;
   }
 }

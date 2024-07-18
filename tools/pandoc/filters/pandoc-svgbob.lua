@@ -39,7 +39,7 @@ local function render_svgbob(img)
   end
 
   local content = io.open(source_file, "rb"):read("a")
-  local hash = pandoc.utils.sha1(content)
+  local hash = pandoc.utils.sha1(content .. stringify(meta))
   dest_file = path.join({ path.directory(dest_file), "convert", hash .. ".svg" })
 
   img.classes = img.classes:filter(function(it)
@@ -56,6 +56,9 @@ local function render_svgbob(img)
   local font_size = stringify(meta["font-size"])
   local scale = stringify(meta["scale"])
   local stroke_width = stringify(meta["stroke-width"])
+  local stroke_color = stringify(meta["stroke-color"])
+  local fill_color = stringify(meta["fill-color"])
+  local background = stringify(meta["background"])
 
   pandoc.pipe("svgbob", {
     source_file,
@@ -67,6 +70,12 @@ local function render_svgbob(img)
     scale,
     "--stroke-width",
     stroke_width,
+    "--stroke-color",
+    stroke_color,
+    "--fill-color",
+    fill_color,
+    "--background",
+    background,
     "-o",
     dest_file,
   }, "")

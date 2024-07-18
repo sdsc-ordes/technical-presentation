@@ -15,11 +15,20 @@ highlightjs-theme: railscasts
 highlightjs-keywords:
   bash: ["cargo", "rustc"]
 
-# Settings: `pandoc-include-files` filter
+# Filter: pandoc-crossref
+figureTitle: |
+  Fig.
+
+# Filter: pandoc-svgbob
+svgbob:
+  font-size: 20
+  scale: 1.5
+
+# Filter: `pandoc-include-files` filter
 # The base include dir inside the `build` dir.
 include-base-dir: presentations/presentation-1
 
-# Settings for RevealJS
+# Output Writer Settings: RevealJS
 controls: true
 navigationMode: linear
 progress: true

@@ -2,6 +2,7 @@ filters:
   - pandoc-include-files.lua
   - pandoc-include-dir-substitute.lua
   - pandoc-svgbob.lua
+  # - pandoc-crossref
 
 metadata:
   include-files:

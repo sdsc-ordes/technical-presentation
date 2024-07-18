@@ -8,4 +8,5 @@ ${meta:include-base-dir}/includes/1-foundation/pattern-matching.md
 ${meta:include-base-dir}/includes/1-foundation/impl-blocks.md
 ${meta:include-base-dir}/includes/1-foundation/optionals-and-errors.md
 ${meta:include-base-dir}/includes/1-foundation/slices.md
+${meta:include-base-dir}/includes/1-foundation/smart-pointers.md
 ```
