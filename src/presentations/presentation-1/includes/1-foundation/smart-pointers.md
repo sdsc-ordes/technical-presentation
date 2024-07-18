@@ -68,10 +68,3 @@ Reasons to box a type `T` on the heap:
   generally always have a limited size
 
 :::
-
----
-
-## To Do
-
-Issue:
-[tweedegolf/teach-rs#68](https://github.com/tweedegolf/teach-rs/issues/68)
