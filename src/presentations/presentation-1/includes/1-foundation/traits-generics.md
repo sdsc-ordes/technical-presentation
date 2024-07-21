@@ -42,9 +42,9 @@ Or, in plain English:
 
 ::: incremental
 
-- `<T>` means "let `T` be a type".
-- `a: T` means "let `a` be of type `T`"
-- `-> T` means "let `T` be the return type of this function"
+- `<T>` : _"let `T` be a type"_.
+- `a: T` : _"let `a` be of type `T`"_.
+- `-> T` : _"let `T` be the return type of this function"_.
 
 :::
 
@@ -75,7 +75,7 @@ We need to provide information to the compiler:
 
 ## The `trait` Keyword
 
-Describe what the type can do **but not specifying what data is has**:
+Describe what the type can do **but not specifying what data it has**:
 
 ```rust
 trait Add {
@@ -210,31 +210,45 @@ We can now add a `u16` to a `u32`.
 
 ## Defining Output of `Add`
 
+::: incremental
+
 - Addition of two given types always yields one **specific type of output**.
 - Add _associated type_ for addition output.
 
-```rust {line-numbers="all|2-3|7-9|6-20"}
+:::
+
+::::::{.columns}
+
+:::{.column width="50%" .fragment}
+
+**Declaration**
+
+```rust {line-numbers="all|2-3"}
 trait Add<O> {
-    type Output;
-    fn add(&self, other: &O) -> Self::Output;
-}
-
-impl Add<u16> for u32 {
-    type Output = u64;
-
-    fn add(&self, other: &u16) -> Self::Output {
-      *self as u64 + (*other as u64)
-    }
-}
-
-impl Add<u32> for u32 {
-    type Output = u32;
-
-    fn add(&self, other: &u32) -> Self::Output {
-      *self + *other
-    }
+  type Out;
+  fn add(&self, other: &O) -> Self::Out;
 }
 ```
+
+:::
+
+:::{.column width="50%" .fragment}
+
+**Implementation**
+
+```rust {line-numbers="all|1,9|4-6"}
+impl Add<u16> for u32 {
+  type Out = u64;
+
+  fn add(&self, other: &u16) -> Self::Out) {
+    *self as u64 + (*other as u64)
+  }
+}
+```
+
+:::
+
+::::::
 
 ---
 
@@ -274,7 +288,7 @@ fn main() {
 }
 ```
 
-What's the type of `res`?
+**Quiz:** What's the type of `res`? [ `BigNumber(u64)`]{.fragment}
 
 ---
 
@@ -296,7 +310,7 @@ fn main() {
 }
 ```
 
-What's the type of `res`?
+**Quiz:** What's the type of `res`? [ `u128`]{.fragment}
 
 ---
 
@@ -304,30 +318,31 @@ What's the type of `res`?
 
 :::::: {.columns}
 
-::: {.column}
+::: {.column width="50%"}
 
 #### Type Parameter
 
 _if trait can be implemented for many combinations of types_
 
 ```rust
-// We can add both a u32 value and a u32 reference to a u32
+// We can add both a u32 value and
+// a u32 reference to a u32
 impl Add<u32> for u32 {/* */}
 impl Add<&u32> for u32 {/* */}
 ```
 
 :::
 
-:::{.column}
+:::{.column width="50%"}
 
 #### Associated Type
 
-_to define a type for a single implementation_
+_to define a type for a single <br> implementation_
 
 ```rust
 impl Add<u32> for u32 {
   // Addition of two u32's is always u32
-  type Output = u32;
+  type MyBananaOut = u32;
 }
 ```
 
@@ -337,10 +352,10 @@ impl Add<u32> for u32 {
 
 ---
 
-## Derive a `trait`
+## Derive a Trait
 
 ```rust
-##[derive(Clone)]
+#[derive(Clone, Debug)]
 struct Dolly {
   num_legs: u32,
 }
@@ -348,39 +363,58 @@ struct Dolly {
 fn main() {
   let dolly = Dolly { num_legs: 4 };
   let second_dolly = dolly.clone();
-  assert_eq!(dolly.num_legs, second_dolly.num_legs);
+
+  println!("Dolly: {:?}", second_dolly)
 }
 ```
 
-- Some traits are trivial to implement
-- Derive to quickly implement a trait
-- For `Clone`: derived `impl` calls `clone` on each field
+::: incremental
+
+- Some traits are trivial to implement.
+- Use `#[derive(...)]` to quickly implement a trait.
+- For `Clone`: derived `impl` calls `clone` on each field.
+- `Debug`: provide a debug implementation for string formatting.
+
+:::
 
 ---
 
-## layout: default
-
-## Orphan rule
+## Orphan Rule
 
 _Coherence: There must be **at most one** implementation of a trait for any
 given type_
 
+::: {.fragment}
+
+#### Rule
+
 Trait can be implemented for a type **iff**:
 
-- Either your crate defines the trait
-- Or your crate defines the type
+::: incremental
 
-Or both, of course
+- Either your crate (library) defines the trait
+- or your crate (library) defines the type
+- or both.
+
+:::
+
+::: incremental
+
+<br>
+
+- **You cannot implement a foreign trait for a foreign type.**
+
+:::
+
+:::
 
 ---
 
-## layout: default
-
-## Compiling generic functions
+## Compiling Generic Functions
 
 ```rust
-impl Add for i32 {/* - snip - */}
-impl Add for f32 {/* - snip - */}
+impl Add for i32 {/* ... */}
+impl Add for f32 {/* ... */}
 
 fn add_values<T: Add>(a: &T, b: &T) -> T
 {
@@ -389,14 +423,16 @@ fn add_values<T: Add>(a: &T, b: &T) -> T
 
 fn main() {
   let sum_one = add_values(&6, &8);
-  assert_eq!(sum_one, 14);
   let sum_two = add_values(&6.5, &7.5);
-  println!("Sum two: {}", sum_two); // 14
 }
 ```
 
-Code is <em>monomorphized</em>:
+Code is **monomorphized**:
 
-- Two versions of `add_values` end up in binary
-- Optimized separately and very fast to run (static dispatch)
-- Slow to compile and larger binary
+::: incremental
+
+- Two versions of `add_values` end up in binary.
+- Optimized separately and very fast to run (static dispatch).
+- Slow to compile and larger binary.
+
+:::
