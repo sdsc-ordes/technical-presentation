@@ -60,6 +60,11 @@
     margin: 0;
   }
 
+  /* No margin in code blocks */
+  .reveal pre.code-no-margin {
+    margin: 0 !important;
+  }
+
   /* Image border */
 
   .reveal img.border-light {
