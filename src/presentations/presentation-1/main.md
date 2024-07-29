@@ -53,8 +53,5 @@ hash: true
 
 ```{.include}
 ${meta:include-base-dir}/includes/intro.md
-```
-
-```{.include}
 ${meta:include-base-dir}/includes/1-foundation/main.md
 ```

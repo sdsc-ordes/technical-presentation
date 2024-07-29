@@ -51,6 +51,7 @@ $codeFontSize: 16pt;
 // Export some missing variables to CSS.
 :root {
   --r-code-font-size: #{$codeFontSize};
+  --r-code-font: #{$codeFont};
 }
 
 // Logo

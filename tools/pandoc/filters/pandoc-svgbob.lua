@@ -31,7 +31,11 @@ local function render_svgbob(img)
 
   -- Remove svgbob class
   local source_file = img.src
-  local dest_file, ext = path.split_extension(source_file)
+  local dest_dir = os.getenv("IMAGE_CONVERT_ROOT")
+  if not dest_dir then
+    logging.error("Env. variable IMAGE_CONVERT_ROOT not set.")
+    os.exit(1)
+  end
 
   if not utils.file_exists(source_file) then
     logging.error(string.format(NOT_FOUND, source_file))
@@ -40,7 +44,7 @@ local function render_svgbob(img)
 
   local content = io.open(source_file, "rb"):read("a")
   local hash = pandoc.utils.sha1(content .. stringify(meta))
-  dest_file = path.join({ path.directory(dest_file), "convert", hash .. ".svg" })
+  dest_file = path.join({ dest_dir, hash .. ".svg" })
 
   img.classes = img.classes:filter(function(it)
     return not it ~= "svgbob"

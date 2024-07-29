@@ -144,7 +144,9 @@ pandoc presentation="presentation-1":
     root_dir="{{root_dir}}"
     build_dir="$root_dir/build"
     presentation="{{presentation}}"
-    presentation_dir="$root_dir/build/presentations/$presentation"
+    presentation_dir_rel="presentations/$presentation"
+    presentation_dir="$root_dir/build/$presentation_dir_rel"
+    image_convert_dir="$presentation_dir_rel/assets/images/convert"
     lua_path="$(pwd)/tools/pandoc/lua/?.lua;;"
     data_dir="$(pwd)/tools/pandoc"
 
@@ -152,6 +154,7 @@ pandoc presentation="presentation-1":
     cd "$build_dir" &&
     LUA_PATH="$lua_path" \
     PRESENTATION_ROOT="$presentation_dir" \
+    IMAGE_CONVERT_ROOT="$image_convert_dir" \
     BUILD_ROOT="$build_dir" \
       pandoc \
          --data-dir="$data_dir" \
@@ -160,4 +163,7 @@ pandoc presentation="presentation-1":
          --defaults=pandoc-revealjs.yaml \
          --defaults=pandoc-filters.yaml \
          -o "$root_dir/build/index.html" \
-         "$presentation_dir/main.md" || true
+         "$presentation_dir/main.md" &&
+      echo "Pandoc converted successfully." || {
+      echo "Pandoc failed!"
+    }

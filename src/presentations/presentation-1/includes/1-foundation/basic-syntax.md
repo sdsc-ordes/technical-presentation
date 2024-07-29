@@ -736,6 +736,30 @@ def main():
 
 **Note**: This is very **different** from `python`.
 
-:::notes
+---
 
-:::
+## Printing & Formatting Values
+
+With the `format!` or `println!` macros (later) you can format or print
+variables to `stdout` of your application:
+
+```rust
+fn main() {
+  let x = 130;
+  let y = 50;
+
+  println!("{} + {}", x, y);
+  println!("{x} + {y}");
+
+  let s: String = format!("{x:04} + {0:>10}", y);
+  println!("{s}")
+}
+```
+
+**Output:**
+
+```
+130 + 50
+130 + 50
+0130 +         50
+```

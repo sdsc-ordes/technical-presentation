@@ -65,6 +65,7 @@
           python312Packages.pywatchman
 
           svgbob
+          mermaid-cli
         ];
       in
         with pkgs; {

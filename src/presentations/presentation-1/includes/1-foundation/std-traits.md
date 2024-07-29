@@ -250,3 +250,18 @@ fn drop<T>(_x: T) {}
 - TODO: Whats the rules how drop gets sequenced, same as C++ (AFAIK)
 
 :::
+
+---
+
+## More Std-Traits
+
+There is more:
+
+- [Comparision](https://google.github.io/comprehensive-rust/std-traits/comparisons.html)
+  `PartialEq` and `Eq` etc.
+- [`Read` and `BufRead`](https://google.github.io/comprehensive-rust/std-traits/read-and-write.html)
+  for abstraction over `u8` sources.
+- [`Display`](https://doc.rust-lang.org/std/fmt/trait.Display.html) and
+  [`Debug`](https://doc.rust-lang.org/std/fmt/trait.Debug.html) to format types.
+- [Iterator](https://doc.rust-lang.org/std/iter/trait.Iterator.html) to provide
+  an iterator for your type.
