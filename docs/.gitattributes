@@ -1,1 +1,3 @@
+# Since GH pages does not work with Git LFS.
+# Disable it in this folder completely.
 gh-pages/** -filter -merge -diff -merge
