@@ -7,6 +7,7 @@ ROOT_DIR=$(git rev-parse --show-toplevel)
 
 cd "$ROOT_DIR"
 just init
+just sync
 rm -rf build/node_modules
 rm -rf docs/
-mv build docs
+cp build docs
