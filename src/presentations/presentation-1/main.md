@@ -51,7 +51,18 @@ hash: true
 
 <!-- markdownlint-disable-file MD034 MD033 MD001 MD024 MD026 -->
 
+> The Rust programming language absolutely positively sucks
+> <sub>[Reedit](https://www.reddit.com/r/rust/comments/12b7p2p/the_rust_programming_language_absolutely)</sub>
+
+::: {.center-content .p-no-margin }
+
+![](${meta:include-base-dir}/assets/images/rust-muscle-crab.jpg){style="width:300px"
+.border-dark}
+
+:::
+
 ```{.include}
+${meta:include-base-dir}/includes/links.md
 ${meta:include-base-dir}/includes/intro.md
 ${meta:include-base-dir}/includes/1-foundation/main.md
 ```

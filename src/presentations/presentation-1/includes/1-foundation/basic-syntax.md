@@ -763,3 +763,29 @@ fn main() {
 130 + 50
 0130 +         50
 ```
+
+---
+
+## Exercise Time
+
+Approx. Time: 20-45 min.
+
+Do the following exercises:
+
+- `basic-syntax`: 01-07, 08 (optional)
+
+  **Build/Run/Test:**
+
+  ```bash
+  just build basic-syntax --bin 01
+  just run basic-syntax --bin 01
+  just test basic-syntax --bin 01
+  ```
+
+  **Continuously evaluate with `cargo-watch`:**
+
+  ```bash
+  just watch build basic-syntax --bin 01
+  just watch run basic-syntax --bin 01
+  just watch test basic-syntax --bin 01
+  ```

@@ -9,4 +9,5 @@ cd "$ROOT_DIR"
 just init
 rm -rf build/node_modules
 rm -rf docs/
-mv build docs
+mkdir -p docs/rust-workshop
+mv build docs/rust-workshop

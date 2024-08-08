@@ -3,6 +3,7 @@ filters:
   - pandoc-include-dir-substitute.lua
   - pandoc-svgbob.lua
   - pandoc-diagram.lua
+  - pandoc-links.lua
   # - pandoc-crossref
 
 metadata:

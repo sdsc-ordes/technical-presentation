@@ -1,6 +1,6 @@
 ```{.include}
-${meta:include-base-dir}/includes/1-foundation/basic-syntax.md
 ${meta:include-base-dir}/includes/1-foundation/first-project.md
+${meta:include-base-dir}/includes/1-foundation/basic-syntax.md
 ${meta:include-base-dir}/includes/1-foundation/move-semantics.md
 ${meta:include-base-dir}/includes/1-foundation/ownership-and-borrowing.md
 ${meta:include-base-dir}/includes/1-foundation/composite-types.md

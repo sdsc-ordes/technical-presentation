@@ -547,3 +547,29 @@ fn get_length(arg: String) -> usize {
   it gets destroyed almost immediately after creation
 
 :::
+
+---
+
+## Exercise Time
+
+Approx. Time: 20-45 min.
+
+Do the following exercises:
+
+- `move-semantics`: 01-04
+
+  **Build/Run/Test:**
+
+  ```bash
+  just build move-semantics --bin 01
+  just run move-semantics --bin 01
+  just test move-semantics --bin 01
+  ```
+
+  **Continuously evaluate with `cargo-watch`:**
+
+  ```bash
+  just watch build move-semantics --bin 01
+  just watch run move-semantics --bin 01
+  just watch test move-semantics --bin 01
+  ```
