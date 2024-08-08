@@ -52,7 +52,19 @@
 
           nodePackages_latest.npm
           nodePackages_latest.yarn
-          inotify-tools
+
+          pandoc
+          pandoc-include
+          haskellPackages.citeproc
+          haskellPackages.pandoc-crossref
+
+          python312
+
+          watchman
+          python312Packages.pywatchman
+
+          svgbob
+          mermaid-cli
         ];
       in
         with pkgs; {

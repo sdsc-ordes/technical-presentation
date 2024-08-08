@@ -7,19 +7,20 @@ cool:
 - Style with SCSS (CSS).
 - Use Code Highlighting and Animation.
 - Versionize the presentation in Git.
+- Use a `pandoc` first tooling approach which gives you lots of powers.
 - and much more...
 
 Note: These are speaker notes.
 
 ---
 
-# Smart Presentation
-
 ## Smart Presentation
 
 ### Smart Presentation
 
 #### Smart Presentation
+
+##### Smart Presentation
 
 ---
 
@@ -37,37 +38,55 @@ void foo(int a){
 
 ### Markdown
 
+::: incremental
+
 - _Carpe Diem_
 - **b**) This is good.
 - Inline Code `asd`
 - [Links](http://coliru.stacked-crooked.com/)
-- **Code**:
-  ```cpp
-  void foo(int a) {
-      std::cout << "Hello. click!" << std::endl;
-      std::vector<int>; v{1,2,4};
-  }
-  ```
-- **Editable Code:**
-  ```cpp
-  int a = 3;
-  void foo(int a) {
-      std::cout << "Hello. click!" << 1 != 3 std::endl;
-      std::vector<int>; v{1,2,4};
-  }
-  ```
-- Cool.
-  <!-- .element: class="fragment" -->
+
+:::
+
+<br>
+
+#### Code {.fragment}
+
+::::::{.columns}
+
+:::{.column width="50%" .fragment}
+
+Normal:
+
+```cpp
+void foo(int a) {
+  std::cout << "Hello. click!" << std::endl;
+  std::vector<int>; v{1,2,4};
+}
+```
+
+:::
+
+:::{.column width="50%" .fragment}
+
+Editable:
+
+```cpp {contenteditable="true" line-numbers="|3-4|8-10" fragment-index="1,2"}
+int a = 3;
+void foo(int a) {
+  std::cout << "Hello. click!" << 1 != 3 std::endl;
+  std::vector<int>; v{1,2,4};
+}
+```
+
+:::
+
+::::::
 
 ---
 
 ### Code Focus
 
-<pre>
-  <code class="language-cpp stretch"
-           data-trim contenteditable=true
-           data-line-numbers="|3-4|8-10"
-           data-fragment-index="1,2">
+```cpp {line-numbers="1,2|3-8|all"}
 int a = 3;
 int a;
 enum class C {A, B, C} b;
@@ -78,14 +97,15 @@ int const * & const d;
 using FuncPointer  = int (*)(float); // Type: Pointer to function.
 using FuncReferenz = int (&)(float); // Type: Reference to function.
 using Func =             int(float); // Type: Function.
-  </code>
-</pre>
+```
+
+::: incremental
 
 - [Link 1](#/3/0/0)
-- This is important.
-  <!-- .element: class="fragment" data-fragment-index="1" -->
+- This is [important.]{.fragment}
 - This is now important.
-  <!-- .element: class="fragment" data-fragment-index="2" -->
+
+:::
 
 ---
 

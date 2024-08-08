@@ -1,0 +1,32 @@
+to: revealjs
+
+template: revealjs.html.tmpl
+variables:
+  revealjs-url: https://unpkg.com/reveal.js@5.1.0
+  highlight-url: https://unpkg.com/highlight.js@11.9.0
+
+# When set to `null` you are using highlight.js
+highlight-style: null
+
+metadata:
+  highlightjs-theme: railscasts
+  # highlightjs-keywords:
+
+html-math-method:
+  method: mathjax
+  url: https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js
+
+standalone: true
+embed-resources: false
+slide-level: 2
+
+# self-contained: false
+
+# cite-method: citeproc
+
+# html-q-tags: true
+
+# RevealJS variables
+#
+
+eol: lf

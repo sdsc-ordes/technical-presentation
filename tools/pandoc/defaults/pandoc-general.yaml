@@ -1,0 +1,5 @@
+from: markdown+auto_identifiers+fenced_code_attributes+fenced_code_blocks+fenced_divs+bracketed_spans+link_attributes+backtick_code_blocks+inline_code_attributes+raw_html-native_divs
+
+verbosity: INFO
+
+extract-media: ${IMAGE_CONVERT_ROOT}
