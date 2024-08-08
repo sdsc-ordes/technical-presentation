@@ -16,7 +16,8 @@ just sync "$presentation"
 
 rm -rf build/node_modules
 rm -rf "$target" || true
-mkdir -p ""
-cp build "$target"
+mkdir -p "$pages_dir"
+cp -r build "$target"
 
-echo "Create a PR to branch 'publish' to merge only changes in '$pages_dir'."
+echo "Create a PR to branch 'publish' to merge only THE changes in '$pages_dir'."
+echo "Execute 'git add -f '$target' to add the files."

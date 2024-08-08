@@ -100,21 +100,26 @@ pdf:
 package file="presentation.zip": pdf
     "{{root_dir}}/tools/package-presentation.sh" "{{container_mgr}}" "{{file}}"
 
+# Prepare a folder `name`
+# to make later a PR to branch `publish`
+# to serve your presentation.
+publish name presentation="presentation-1":
+    "{{root_dir}}/tools/prepare-gh-pages.sh" "{{name}}" "{{presentation}}"
 
 # Bake the logo into the style-sheets.
 bake-logo mime="svg":
-  cd "{{root_dir}}" && \
-  	tools/bake-logo.sh "{{mime}}"
+    cd "{{root_dir}}" && \
+      tools/bake-logo.sh "{{mime}}"
 
 # Build the container for `.devcontainer`.
 build-dev-container *args:
-  cd "{{root_dir}}" && \
-    "{{container_mgr}}" build \
-    --build-arg "REPOSITORY_COMMIT_SHA=$(git rev-parse --short=11 HEAD)" \
-    -f nix/devcontainer/Containerfile \
-    -t technical-presentation:latest \
-    "$@" \
-    nix/
+    cd "{{root_dir}}" && \
+      "{{container_mgr}}" build \
+      --build-arg "REPOSITORY_COMMIT_SHA=$(git rev-parse --short=11 HEAD)" \
+      -f nix/devcontainer/Containerfile \
+      -t technical-presentation:latest \
+      "$@" \
+      nix/
 
 [private]
 sync presentation="presentation-1":
