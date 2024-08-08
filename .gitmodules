@@ -1,3 +1,6 @@
 [submodule "external/reveal.js"]
 	path = external/reveal.js
 	url = https://github.com/hakimel/reveal.js.git
+[submodule "external/pandoc-diagram"]
+	path = external/pandoc-diagram
+	url = https://github.com/pandoc-ext/diagram.git

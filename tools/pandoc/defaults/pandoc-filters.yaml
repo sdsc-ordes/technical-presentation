@@ -1,0 +1,13 @@
+filters:
+  - pandoc-include-files.lua
+  - pandoc-include-dir-substitute.lua
+  - pandoc-svgbob.lua
+  - pandoc-diagram.lua
+  - pandoc-links.lua
+  # - pandoc-crossref
+
+metadata:
+  include-files:
+    auto-header-shift: true
+    fail-if-read-error: true
+    paths-relative-to-cwd: true

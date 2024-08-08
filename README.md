@@ -28,7 +28,7 @@ Current [`revealjs`](https://github.com/hakimel/reveal.js) version: `4.6.1`
 You can enter a development shell with
 
 ```shell
-nix develop ./nix#default
+nix develop './tools/nix#default'
 ```
 
 where all requirements are installed to start working on your first
@@ -36,8 +36,9 @@ presentation.
 
 ### DevContainer
 
-There is a [`.devcontainer`](.devcontainer) which lets you run `code` or CLI run
-the project inside. First build the container:
+There is a [`.devcontainer`](.devcontainer) to be run over `code` or the
+[devcontainer](https://github.com/devcontainers/cli) CLI. First build the
+container:
 
 ```shell
 just build-dev-container
@@ -56,7 +57,7 @@ You need the following tools:
 - `bash`
 - `just`
 - `rsync`
-- `inotifywait`
+- `watchman`
 - `npm`
 - `yarn`
 

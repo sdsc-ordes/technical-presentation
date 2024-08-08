@@ -1,0 +1,1 @@
+../../../external/pandoc-diagram/diagram.lua

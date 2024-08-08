@@ -8,24 +8,27 @@
 @import url("./fonts/museo-sans/museo-sans.css");
 @import url("./fonts/fira-code/fira-code.css");
 @import url("./fonts/fira-sans/fira-sans.css");
+@import url("./fonts/jetbrains-mono/jetbrains-mono.css");
 
 // Company Colors
-$companyBlue: #00acd1;
-$companyBlueDark: rgb(0, 108, 133);
+$companyBlueLight: #5561a6;
+$companyBlue: #4640a8;
+$companyBlueDark: #26235c;
 $companyHipsterBlack: #1a1a1a;
 
 $backgroundColor: #fff;
 
 $mainFontSize: 20pt;
+$figCaptionFontSize: 16pt;
 $mainColor: $companyHipsterBlack;
-$headingColor: $companyBlue;
+$headingColor: $companyBlueDark;
+$headingColorSub: $companyBlue;
 $headingTextTransform: none;
 
 $mainFont: "Museo", "Palatino Linotype", "Book Antiqua", "Palatino", serif;
-$headingFont: "Museo Sans", "Palatin Linotype", "Book Antiqua", "Palatino",
-  serif;
-$linkColor: $companyBlueDark;
-$linkColorHover: $companyBlue;
+$headingFont: "Museo", "Palatin Linotype", "Book Antiqua", "Palatino", serif;
+$linkColor: $companyBlueLight;
+$linkColorHover: lighten($companyBlueLight, 20%);
 
 // Image
 $imgBorderSize: 0;
@@ -38,12 +41,18 @@ $heading3Size: 40pt;
 $heading4Size: 30pt;
 
 // Code
-$codeFont: "Fira Code";
+$codeFont: "JetbrainsMono NFM";
 $codeFontSize: 16pt;
 
 // Theme template ------------------------------
 @import "../template/theme";
 // ---------------------------------------------
+
+// Export some missing variables to CSS.
+:root {
+  --r-code-font-size: #{$codeFontSize};
+  --r-code-font: #{$codeFont};
+}
 
 // Logo
 .backgrounds {
@@ -72,21 +81,37 @@ $codeFontSize: 16pt;
 
   // Inline Code
   code {
-    border-radius: 2pt;
-    background: #ebebeb;
+    border-radius: 7pt;
+    background: #ededed;
+    padding: 0ex;
+    padding-left: 0.3ex;
+    padding-right: 0.3ex;
+  }
+
+  // Highlight lines should only grey out a little.
+  code.has-highlights tr:not(.highlight-line) {
+    opacity: 0.8 !important;
   }
 
   // Block Code
   pre {
     border-radius: 4pt;
+    font-size: $codeFontSize;
+    width: fit-content;
     code {
-      font-size: $codeFontSize;
+      font-size: inherit;
       line-height: normal;
+      color: #e6e6e6;
       background: #232323;
-      padding: 0.5ex;
-      padding-left: 1ex;
-      padding-right: 1ex;
+      padding: 1ex;
+      padding-left: 2ex;
+      padding-right: 2ex;
     }
+  }
+
+  // Menu (Plugin)
+  .slide-menu-button {
+    bottom: 50px !important;
   }
 
   // Schriftgrössen
@@ -110,5 +135,27 @@ $codeFontSize: 16pt;
   .slide-number {
     border-top-left-radius: 2pt;
     border-top-right-radius: 2pt;
+  }
+
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: $companyBlueLight;
+  }
+
+  // Set spacing for elements which do not have margin.
+  ul + h2,
+  ul + h3,
+  ul + h4,
+  ul + h5,
+  ul + h6 {
+    margin-top: var(--r-block-margin);
+  }
+
+  // Figure Caption
+  figcaption {
+    font-size: $figCaptionFontSize;
+    font-style: italic;
   }
 }

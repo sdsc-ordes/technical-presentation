@@ -8,7 +8,7 @@ container_mgr := "podman"
 
 # Enter a `nix` development shell.
 nix-develop:
-    nix develop ./nix#default
+    nix develop './tools/nix#default'
 
 # Clean the build folder.
 clean:
@@ -26,7 +26,7 @@ init:
 
     echo "Init pinned reveal.js folder to 'build'..."
     git submodule update --init
-    rsync -avv "external/reveal.js/" "build/"
+    rsync -a "external/reveal.js/" "build/"
 
     just sync
 
@@ -35,21 +35,48 @@ init:
 
 
 # Watch the files in `src` and synchronize them into the `build` folder.
-watch:
+watch presentation="presentation-1":
     #!/usr/bin/env bash
     set -eu
     cd "{{root_dir}}"
 
-    EVENTS="CREATE,DELETE,MODIFY,MOVED_FROM,MOVED_TO"
     watch() {
-      inotifywait -e "$EVENTS" -m -r --format '%:e %f' "$1"
+      echo "Starting watchman ..."
+      watchman-wait -m 0 -t 0 "$@"
     }
 
-    watch src | (
-        while true ; do
-          read -t 1 LINE &&
-            just sync
-        done
+    checksum_dir=build/.checksums
+    mkdir -p "$checksum_dir"
+
+    watch src tools | (
+      while true; do
+        read -t 1 LINE && { echo "Watchman: $LINE"; } || continue
+
+        if [ ! -f "$LINE" ]; then
+          continue
+        fi
+
+        # Ignore some stupid files.
+        if echo "$LINE" | grep ".temp.pandoc-include"; then
+          continue
+        fi
+
+        key=$(echo "$LINE" | sha1sum | cut -f 1 -d ' ')
+        current_hash=$(sha1sum "$LINE" | cut -f 1 -d ' ')
+
+        if [ -f "$checksum_dir/$key" ]; then
+          if [ "$(cat "$checksum_dir/$key")" = "$current_hash" ]; then
+            echo "No changes detected."
+            continue
+          fi
+        fi
+
+        # Store file hash.
+        echo "$current_hash" > "$checksum_dir/$key"
+
+        echo "File: '$LINE' changes"
+        just sync "{{presentation}}"
+      done
     )
 
 # Build the presentation.
@@ -90,13 +117,13 @@ build-dev-container *args:
     nix/
 
 [private]
-sync:
+sync presentation="presentation-1":
     #!/usr/bin/env bash
     set -eu
     cd "{{root_dir}}"
 
     sync() {
-      rsync --checksum -avv "$@"
+      rsync --checksum -a "$@"
     }
 
     echo "Add additional 'npm' scripts."
@@ -106,4 +133,36 @@ sync:
     echo "Add additional files (styles, themes, etc.) ..."
     sync src/presentations/ build/presentations/
     sync src/mixin/ build/
-    sync src/index.html build/index.html
+
+    just pandoc "{{presentation}}"
+
+pandoc presentation="presentation-1":
+    #!/usr/bin/env bash
+    set -eu
+
+    root_dir="{{root_dir}}"
+    build_dir="$root_dir/build"
+    presentation="{{presentation}}"
+    presentation_dir_rel="presentations/$presentation"
+    presentation_dir="$root_dir/build/$presentation_dir_rel"
+    image_convert_dir="$presentation_dir_rel/assets/images/convert"
+    lua_path="$(pwd)/tools/pandoc/lua/?.lua;;"
+    data_dir="$(pwd)/tools/pandoc"
+
+    # Execute pandoc in folder where the presentation should be built is.
+    cd "$build_dir" &&
+    LUA_PATH="$lua_path" \
+    PRESENTATION_ROOT="$presentation_dir" \
+    IMAGE_CONVERT_ROOT="$image_convert_dir" \
+    BUILD_ROOT="$build_dir" \
+      pandoc \
+         --data-dir="$data_dir" \
+         --defaults=pandoc-dirs.yaml \
+         --defaults=pandoc-general.yaml \
+         --defaults=pandoc-revealjs.yaml \
+         --defaults=pandoc-filters.yaml \
+         -o "$root_dir/build/index.html" \
+         "$presentation_dir/main.md" &&
+      echo "Pandoc converted successfully." || {
+      echo "Pandoc failed!"
+    }
