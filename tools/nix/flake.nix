@@ -52,7 +52,6 @@
 
           nodePackages_latest.npm
           nodePackages_latest.yarn
-          inotify-tools
 
           pandoc
           pandoc-include

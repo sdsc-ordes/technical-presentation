@@ -8,7 +8,7 @@ container_mgr := "podman"
 
 # Enter a `nix` development shell.
 nix-develop:
-    nix develop ./tools/nix#default
+    nix develop './tools/nix#default'
 
 # Clean the build folder.
 clean:
@@ -35,7 +35,7 @@ init:
 
 
 # Watch the files in `src` and synchronize them into the `build` folder.
-watch:
+watch presentation="presentation-1":
     #!/usr/bin/env bash
     set -eu
     cd "{{root_dir}}"
@@ -75,7 +75,7 @@ watch:
         echo "$current_hash" > "$checksum_dir/$key"
 
         echo "File: '$LINE' changes"
-        just sync
+        just sync "{{presentation}}"
       done
     )
 
@@ -100,24 +100,29 @@ pdf:
 package file="presentation.zip": pdf
     "{{root_dir}}/tools/package-presentation.sh" "{{container_mgr}}" "{{file}}"
 
+# Prepare a folder `name`
+# to make later a PR to branch `publish`
+# to serve your presentation.
+publish name presentation="presentation-1":
+    "{{root_dir}}/tools/prepare-gh-pages.sh" "{{name}}" "{{presentation}}"
 
 # Bake the logo into the style-sheets.
 bake-logo mime="svg":
-  cd "{{root_dir}}" && \
-  	tools/bake-logo.sh "{{mime}}"
+    cd "{{root_dir}}" && \
+      tools/bake-logo.sh "{{mime}}"
 
 # Build the container for `.devcontainer`.
 build-dev-container *args:
-  cd "{{root_dir}}" && \
-    "{{container_mgr}}" build \
-    --build-arg "REPOSITORY_COMMIT_SHA=$(git rev-parse --short=11 HEAD)" \
-    -f nix/devcontainer/Containerfile \
-    -t technical-presentation:latest \
-    "$@" \
-    nix/
+    cd "{{root_dir}}" && \
+      "{{container_mgr}}" build \
+      --build-arg "REPOSITORY_COMMIT_SHA=$(git rev-parse --short=11 HEAD)" \
+      -f nix/devcontainer/Containerfile \
+      -t technical-presentation:latest \
+      "$@" \
+      nix/
 
 [private]
-sync:
+sync presentation="presentation-1":
     #!/usr/bin/env bash
     set -eu
     cd "{{root_dir}}"
@@ -133,9 +138,8 @@ sync:
     echo "Add additional files (styles, themes, etc.) ..."
     sync src/presentations/ build/presentations/
     sync src/mixin/ build/
-    sync src/index.html build/index.html
 
-    just pandoc
+    just pandoc "{{presentation}}"
 
 pandoc presentation="presentation-1":
     #!/usr/bin/env bash
