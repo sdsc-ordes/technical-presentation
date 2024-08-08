@@ -357,3 +357,24 @@ fn can_fail() -> Result<i64, DivideError> {
   - **on** `Ok(v)`  the value `v` is extracted and it contiues.
 
   :::
+
+---
+
+## Exercise Time
+
+Approx. Time: 20-1.5h min.
+
+Do the following exercises:
+
+- `options` (short)
+- `error-handling` (longer)
+- `error-propagation` (longer)
+
+**Build/Run/Test:**
+
+```bash
+just build <exercise> --bin 01
+just run <exercise> --bin 01
+just test <exercise> --bin 01
+just watch [build|run|test|watch] <exercise> --bin 01
+```

@@ -120,6 +120,7 @@ fn change(s: &String) {
     s.push_str(", world");
 }
 ```
+
 :::
 ::: {.column width="50%"}
 
@@ -408,3 +409,22 @@ We will later see how these work if we have to use them to help the compiler in
 certain cases.
 
 :::
+
+---
+
+## Exercise Time
+
+Approx. Time: 20-30 min.
+
+Do the following exercises:
+
+- `borrowing`: all
+
+**Build/Run/Test:**
+
+```bash
+just build <exercise> --bin 01
+just run <exercise> --bin 01
+just test <exercise> --bin 01
+just watch [build|run|test|watch] <exercise> --bin 01
+```

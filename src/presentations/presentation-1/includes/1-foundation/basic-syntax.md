@@ -772,20 +772,13 @@ Approx. Time: 20-45 min.
 
 Do the following exercises:
 
-- `basic-syntax`: 01-07, 08 (optional)
+- `basic-syntax`: all, 08 (optional)
 
-  **Build/Run/Test:**
+**Build/Run/Test:**
 
-  ```bash
-  just build basic-syntax --bin 01
-  just run basic-syntax --bin 01
-  just test basic-syntax --bin 01
-  ```
-
-  **Continuously evaluate with `cargo-watch`:**
-
-  ```bash
-  just watch build basic-syntax --bin 01
-  just watch run basic-syntax --bin 01
-  just watch test basic-syntax --bin 01
-  ```
+```bash
+just build <exercise> --bin 01
+just run <exercise> --bin 01
+just test <exercise> --bin 01
+just watch [build|run|test|watch] <exercise> --bin 01
+```

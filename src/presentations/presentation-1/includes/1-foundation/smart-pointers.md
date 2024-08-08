@@ -68,3 +68,22 @@ Reasons to box a type `T` on the heap:
   generally always have a limited size
 
 :::
+
+---
+
+## Exercise Time
+
+Approx. Time: 40-50 min.
+
+Do the following exercises:
+
+- exercise: `boxed-data`: all
+
+**Build/Run/Test:**
+
+```bash
+just build <exercise> --bin 01
+just run <exercise> --bin 01
+just test <exercise> --bin 01
+just watch [build|run|test|watch] <exercise> --bin 01
+```

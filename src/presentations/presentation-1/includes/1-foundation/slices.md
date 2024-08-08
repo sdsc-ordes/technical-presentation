@@ -489,3 +489,22 @@ fn string_len1(data: &str) -> usize {
 - Use `String` or `&mut String` if you need to fully mutate the string.
 
 :::
+
+---
+
+## Exercise Time
+
+Approx. Time: 30-50 min
+
+Do the following exercises:
+
+- `slices`:
+
+**Build/Run/Test:**
+
+```bash
+just build <exercise> --bin 01
+just run <exercise> --bin 01
+just test <exercise> --bin 01
+just watch [build|run|test|watch] <exercise> --bin 01
+```

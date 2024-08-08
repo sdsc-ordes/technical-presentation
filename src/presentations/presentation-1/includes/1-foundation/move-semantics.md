@@ -552,24 +552,17 @@ fn get_length(arg: String) -> usize {
 
 ## Exercise Time
 
-Approx. Time: 20-45 min.
+Approx. Time: 20-30 min.
 
 Do the following exercises:
 
-- `move-semantics`: 01-04
+- `move-semantics`: all
 
-  **Build/Run/Test:**
+**Build/Run/Test:**
 
-  ```bash
-  just build move-semantics --bin 01
-  just run move-semantics --bin 01
-  just test move-semantics --bin 01
-  ```
-
-  **Continuously evaluate with `cargo-watch`:**
-
-  ```bash
-  just watch build move-semantics --bin 01
-  just watch run move-semantics --bin 01
-  just watch test move-semantics --bin 01
-  ```
+```bash
+just build <exercise> --bin 01
+just run <exercise> --bin 01
+just test <exercise> --bin 01
+just watch [build|run|test|watch] <exercise> --bin 01
+```

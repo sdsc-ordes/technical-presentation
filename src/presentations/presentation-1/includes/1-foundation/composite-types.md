@@ -270,3 +270,22 @@ fn main() {
 - See the explicitness of the cast!
 
 :::
+
+---
+
+## Exercise Time
+
+Approx. Time: 20-30 min.
+
+Do the following exercises:
+
+- `composite-types`: all
+
+**Build/Run/Test:**
+
+```bash
+just build <exercise> --bin 01
+just run <exercise> --bin 01
+just test <exercise> --bin 01
+just watch [build|run|test|watch] <exercise> --bin 01
+```
