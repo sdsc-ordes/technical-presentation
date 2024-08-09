@@ -117,8 +117,8 @@ fn longer<'l>(a: &'l str, b: &'l str) -> &'l str {
 
 ::: {.fragment}
 
-**❗: [Annotations do NOT change the lifetime of variables! Their scopes
-do!]{.emph}**<br> They just provide information for the borrow checker.
+**❗: [Annotations do NOT change the lifetime of variables! Their
+scopes do!]{.emph}**<br> They just provide information for the borrow checker.
 
 :::
 
@@ -261,4 +261,23 @@ fn frob(s: &str, t: &str) -> &str;                      // ILLEGAL (why?)
 
 fn get_mut(&mut self) -> &mut T;                        // elided
 fn get_mut<'a>(&'a mut self) -> &'a mut T;              // expanded
+```
+
+---
+
+## Exercise Time
+
+Approx. Time: 15-30 min.
+
+Do the following exercises:
+
+- `lifetimes`: all
+
+**Build/Run/Test:**
+
+```bash
+just build <exercise> --bin 01
+just run <exercise> --bin 01
+just test <exercise> --bin 01
+just watch [build|run|test|watch] <exercise> --bin 01
 ```

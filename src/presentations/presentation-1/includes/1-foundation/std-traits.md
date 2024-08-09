@@ -265,3 +265,53 @@ There is more:
   [`Debug`](https://doc.rust-lang.org/std/fmt/trait.Debug.html) to format types.
 - [Iterator](https://doc.rust-lang.org/std/iter/trait.Iterator.html) to provide
   an iterator for your type.
+
+---
+
+## Std-Traits and the Orphan Rule
+
+When you **provide a type**, always implement the basic traits\*\* from the
+standard if they are appropriate, e.g.
+
+::: incremental
+
+- `Default` : Initialize the type with default values.
+- `Debug` : Format trait for the debug format specifier `{:?}`
+- `Display` : Format trait for the empty format specifier `{}`.
+- `Clone`: Cloning the type.
+- `Copy`: _Marker_ trait: The type can be bitwise copied.
+
+:::
+
+Other traits for later:
+
+- `Send` : _Auto_ trait: A value `T` can safely be send across thread boundary.
+- `Sync` : _Auto_ trait: A value `T` can safely be shared between threads.
+- `Sized` : _Marker_ trait to denote that type `T` is known at compile time
+
+::: notes
+
+Marker traits do not need an implementation. Auto traits are auto implemented if
+the types fulfills the conditions.
+
+:::
+
+---
+
+## Exercise Time
+
+Approx. Time: 40-50 min.
+
+Do the following exercises:
+
+- `extension-traits`: a very good one!
+- `local-storage-vec`: ⚠️ Hardcore exercise (spare for later)
+
+**Build/Run/Test:**
+
+```bash
+just build <exercise> --bin 01
+just run <exercise> --bin 01
+just test <exercise> --bin 01
+just watch [build|run|test|watch] <exercise> --bin 01
+```

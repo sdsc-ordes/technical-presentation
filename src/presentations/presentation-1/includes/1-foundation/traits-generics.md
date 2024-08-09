@@ -446,13 +446,12 @@ Approx. Time: 40-50 min.
 Do the following exercises:
 
 - `generics`: all
-- `local-storage-vec`: ⚠️ Hardcore exercise (spare for later)
 
 **Build/Run/Test:**
 
 ```bash
-just build generics --bin 01
-just run generics --bin 01
-just test generics --bin 01
-just watch [build|run|test|watch] generics --bin 01
+just build <exercise> --bin 01
+just run <exercise> --bin 01
+just test <exercise> --bin 01
+just watch [build|run|test|watch] <exercise> --bin 01
 ```
