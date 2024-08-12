@@ -11,9 +11,7 @@ pages_dir="docs/gh-pages"
 target="$pages_dir/$name"
 
 cd "$ROOT_DIR"
-just init
-just sync
-just pandoc "$presentation"
+just presentation="$presentation" init sync pandoc
 
 rm -rf build/node_modules build/presentations
 rm -rf "$target" || true
