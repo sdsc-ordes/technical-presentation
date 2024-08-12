@@ -680,7 +680,7 @@ fn main() {
     };
 
     println!("{}", a)
-}}
+}
 ```
 
 ::: {.fragment}
