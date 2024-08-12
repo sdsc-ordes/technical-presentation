@@ -40,7 +40,7 @@ init:
 
 
 # Watch the files in `src` and synchronize them into the `build` folder.
-watch presentation="{{presentation}}":
+watch:
     #!/usr/bin/env bash
     set -eu
     cd "{{root_dir}}"
@@ -80,7 +80,8 @@ watch presentation="{{presentation}}":
         echo "$current_hash" > "$checksum_dir/$key"
 
         echo "File: '$LINE' changes"
-        just presentation="{{presentation}}" sync
+        just sync
+        just presentation="{{presentation}}" pandoc
       done
     )
 
