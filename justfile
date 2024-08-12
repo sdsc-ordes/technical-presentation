@@ -100,9 +100,7 @@ pdf:
 package file="presentation.zip": pdf
     "{{root_dir}}/tools/package-presentation.sh" "{{container_mgr}}" "{{file}}"
 
-# Prepare a folder `name`
-# to make later a PR to branch `publish`
-# to serve your presentation.
+# Prepare a folder `name` to make later a PR to branch `publish` to serve your presentation.
 publish name presentation="presentation-1":
     "{{root_dir}}/tools/prepare-gh-pages.sh" "{{name}}" "{{presentation}}"
 
