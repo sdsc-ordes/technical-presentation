@@ -14,4 +14,5 @@ ${meta:include-base-dir}/includes/1-foundation/traits-generics.md
 ${meta:include-base-dir}/includes/1-foundation/std-traits.md
 ${meta:include-base-dir}/includes/1-foundation/lifetime-annotations.md
 ${meta:include-base-dir}/includes/1-foundation/closures.md
+${meta:include-base-dir}/includes/1-foundation/trait-objects.md
 ```

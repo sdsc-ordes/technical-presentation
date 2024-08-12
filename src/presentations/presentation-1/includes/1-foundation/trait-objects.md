@@ -1,88 +1,108 @@
 <!-- markdownlint-disable-file MD034 MD033 MD001 MD024 MD026-->
 
-# Trait objects & dynamic dispatch
+# Trait Objects & Dynamic Dispatch
 
 ---
 
-## layout: default
+## Trait... Object?
 
-# Trait... Object?
-
-- We learned about traits in module A3
-- We learned about generics and `monomorphization`
+- We learned about [traits](#traits-and-generics).
+- We learned about generics and `monomorphization`.
 
 There's more to this story though...
 
-_Question: What was monomorphization again?_
+**Question**: What was monomorphization again?
 
 ---
 
-## layout: default
+## Monomorphization (recap)
 
-# Monomorphization: recap
+::::::{.columns}
+
+:::{.column width="50%"}
 
 ```rust
-impl MyAdd for i32 {/* - snip - */}
-impl MyAdd for f32 {/* - snip - */}
+impl MyAdd for i32 {/* ... */}
+impl MyAdd for f32 {/* ... */}
 
-fn add_values<T: MyAdd>(left: &T, right: &T) -> T
+fn add_values<T: MyAdd>(l: &T, r: &T) -> T
 {
-  left.my_add(right)
+  l.my_add(r)
 }
 
 fn main() {
   let sum_one = add_values(&6, &8);
-  assert_eq!(sum_one, 14);
   let sum_two = add_values(&6.5, &7.5);
-  println!("Sum two: {}", sum_two); // 14
 }
 ```
 
+:::
+
+:::{.column width="50%"}
+
 Code is <em>monomorphized</em>:
 
-- Two versions of `add_values` end up in binary
-- Optimized separately and very fast to run (static dispatch)
-- Slow to compile and larger binary
+::: incremental
+
+- Two versions of `add_values` end up in binary.
+- Optimized separately and very fast to run (static dispatch).
+- Slow to compile and larger binary.
+
+:::
+
+:::
+
+::::::
 
 ---
 
-## layout: default
-
-# Dynamic dispatch
+## Dynamic Dispatch
 
 _What if don't know the concrete type implementing the trait at compile time?_
 
-```rust{all|1-8|10-12|14-23|17-20}
+::::::{.columns}
+
+:::{.column width="48%"}
+
+```rust {line-numbers="all|1-8|10-12|14-23|17-20" style="font-size:14pt"}
 use std::io::Write;
 use std::path::PathBuf;
 
 struct FileLogger { log_path: PathBuf }
-impl Write for FileLogger { /* - snip -*/}
+impl Write for FileLogger { /* ... */}
 
 struct StdOutLogger;
-impl Write for StdOutLogger { /* - snip -*/}
+impl Write for StdOutLogger { /* ... */}
 
-fn log<L: Write>(entry: &str, logger: &mut L) {
-    write!(logger, "{}", entry);
-}
-
-fn main() {
-    let log_file: Option<PathBuf> =
-        todo!("read args");
-    let mut logger = match log_file {
-        Some(log_path) => FileLogger { log_path },
-        None => StdOutLogger,
-    };
-
-    log("Hello, world!🦀", &mut logger);
+fn log<L: Write>(logger: &mut L, msg: &str) {
+  write!(logger, "{}", msg);
 }
 ```
 
+:::
+
+:::{.column width="50%"}
+
+```rust {line-numbers="all|2|4-7|9" style="font-size:14pt"}
+fn main() {
+  let file: Option<PathBuf> = // args parsing...
+
+  let mut logger = match file {
+      Some(f) => FileLogger { log_file: f },
+      None => StdOutLogger,
+  };
+
+  log(&mut logger, "Hello, world!🦀");
+}
+```
+
+:::
+
+::::::
+
 ---
 
-## layout: default
-
-# Error!
+## Error!
 
 ```txt
 error[E0308]: `match` arms have incompatible types
@@ -91,9 +111,12 @@ error[E0308]: `match` arms have incompatible types
 17 |       let mut logger = match log_file {
    |  ______________________-
 18 | |         Some(log_path) => FileLogger { log_path },
-   | |                           ----------------------- this is found to be of type `FileLogger`
+   | |                           -----------------------
+   | |                           this is found to be of
+   | |                           type `FileLogger`
 19 | |         None => StdOutLogger,
-   | |                 ^^^^^^^^^^^^ expected struct `FileLogger`, found struct `StdOutLogger`
+   | |                 ^^^^^^^^^^^^ expected struct `FileLogger`,
+   | |                              found struct `StdOutLogger`
 20 | |     };
    | |_____- `match` arms have incompatible types
 ```
@@ -102,28 +125,36 @@ _What's the type of `logger`?_
 
 ---
 
-## layout: default
-
-# Heterogeneous collections
+## Heterogeneous Collections
 
 _What if we want to create collections of different types implementing the same
 trait?_
 
-```rust{all|1-13|15-21}
+::::::{.columns}
+
+:::{.column width="50%"}
+
+```rust {line-numbers="all|1-13|15-21"}
 trait Render {
     fn paint(&self);
 }
 
 struct Circle;
 impl Render for Circle {
-    fn paint(&self) { /* - snip - */ }
+    fn paint(&self) { /* ... */ }
 }
 
 struct Rectangle;
 impl Render for Rectangle {
-    fn paint(&self) { /* - snip - */ }
+    fn paint(&self) { /* ... */ }
 }
+```
 
+:::
+
+:::{.column width="50%"}
+
+```rust
 fn main() {
     let mut shapes = Vec::new();
     let circle = Circle;
@@ -134,11 +165,15 @@ fn main() {
 }
 ```
 
+:::
+
+::::::
+
 ---
 
-## layout: default
+### layout: default
 
-# Error again!
+## Error again!
 
 ```txt
    Compiling playground v0.0.1 (/playground)
@@ -161,9 +196,9 @@ _What is the type of `shapes`?_
 
 ---
 
-## layout: default
+### layout: default
 
-# Trait objects to the rescue
+## Trait objects to the rescue
 
 - Opaque type that implements a set of traits
 - Type description: `dyn T: !Sized` where `T` is a `trait`
@@ -185,9 +220,9 @@ fn main() {
 
 ---
 
-## layout: two-cols
+### layout: two-cols
 
-# Layout of trait objects
+## Layout of trait objects
 
 ```rust
 /// Same code as last slide
@@ -217,9 +252,9 @@ fn main() {
 
 ---
 
-## layout: default
+### layout: default
 
-# Fixing dynamic logger
+## Fixing dynamic logger
 
 - Trait objects `&dyn T`, `Box<dyn T>`, ... implement `T`!
 
@@ -246,9 +281,9 @@ And all is well!
 
 ---
 
-## layout: default
+### layout: default
 
-# Forcing dynamic dispatch
+## Forcing dynamic dispatch
 
 Sometimes you want to enforce API users (or colleagues) to use dynamic dispatch
 
@@ -273,9 +308,9 @@ fn main() {
 
 ---
 
-## layout: default
+### layout: default
 
-# Fixing the renderer
+## Fixing the renderer
 
 ```rust
 fn main() {
@@ -306,9 +341,9 @@ All set! </v-click>
 
 ---
 
-## layout: default
+### layout: default
 
-# Trait object limitations
+## Trait object limitations
 
 - Pointer indirection cost
 - Harder to debug
@@ -319,9 +354,9 @@ _Traits need to be 'Object Safe'_
 
 ---
 
-## layout: default
+### layout: default
 
-# Object safety
+## Object safety
 
 In order for a trait to be object safe, these conditions need to be met:
 
@@ -341,9 +376,9 @@ Read them!
 
 ---
 
-## layout: default
+### layout: default
 
-# So far...
+## So far...
 
 - Trait objects allow for dynamic dispatch and heterogeneous
 - Trait objects introduce pointer indirection

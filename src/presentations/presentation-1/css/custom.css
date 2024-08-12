@@ -9,7 +9,7 @@
 
   /* Column Divs */
   .reveal .columns {
-    gap: min(0.5vw, 1em);
+    gap: min(2vw, 1em);
   }
 
   .reveal pre {
