@@ -431,7 +431,7 @@ fn main() {
 - A loop or if condition must always evaluate to a boolean type, so no `if 1`.
 
 - Use `break` to break out of a loop, also works with `for` and `while`,
-  continue to skip to the next iteration.
+  `continue` to skip to the next iteration.
 
 :::
 ::::::
