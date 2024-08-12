@@ -18,8 +18,8 @@
 
 #### A **Compiled** Language Unlike Python
 
-- The Rust compiler `rustc` 🦀 will convert your code to machine-code ⚙️. Python
-  is an interpreter.
+- The Rust compiler `rustc` 🦀 will convert your code to machine-code ⚙️. <br>
+  Python is an interpreter.
 
 - It has a **strong type system** ([algebraic types](TODO): sum types, product
   types).
@@ -130,7 +130,7 @@ def grow() -> List[Apple]:
 
 - No garbage collector (GC) getting in the way of execution.
 
-  ```python
+  ```python {line-numbers=}
   def run():
     d = { "a":1, "b":2 } # Memory is allocated on the heap.
 
@@ -225,7 +225,7 @@ variables bind to memory</small>)
   Python:
 
   ```python {.smaller-code}
-  def get_float(num: str | float):
+  def get_float(num: str | float) -> float:
     match (num):
         case str(num):
             return float(num)
@@ -294,7 +294,8 @@ results often in a mess.
 - Rust is **concurrent** ⇉ by design _(safe-guarded by the ownership model)_.
 
   - Python has an [interpreter lock (GIL)](https://realpython.com/python-gil/)
-    which prohibits proper threading.
+    which prohibits proper threading
+    ([it gets removed](https://www.lesinskis.com/python-GIL-removal.html)).
 
 :::
 
@@ -306,7 +307,7 @@ results often in a mess.
 
 - Learning a new language teaches you new tricks:
 
-  - You will also write better Python code!
+  - You will also write better code (also in Python)!
 
 - Rust is a young, but a quickly growing platform:
   - You can help shape its future.

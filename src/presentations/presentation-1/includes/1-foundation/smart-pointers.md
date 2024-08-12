@@ -71,7 +71,7 @@ Reasons to box a type `T` on the heap:
 
 ---
 
-## Exercise Time
+## Exercise Time (7)
 
 Approx. Time: 40-50 min.
 

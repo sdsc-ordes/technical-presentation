@@ -273,7 +273,7 @@ fn main() {
 
 ---
 
-## Exercise Time
+## Exercise Time (4)
 
 Approx. Time: 20-30 min.
 

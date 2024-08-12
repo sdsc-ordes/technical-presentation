@@ -67,7 +67,8 @@ fn main() {
 ```
 
 - Rust is strongly and strictly typed.
-- Variables use _type inference_, so no need to specify a type.
+- Variables use _type inference_, so no need to specify a type
+  ([Henly-Millner Type System](https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system)).
 - We can be explicit in our types (and sometimes have to be).
 
 ---
@@ -208,6 +209,10 @@ fn main() {
 
 ## Comparison Operators
 
+::::::{.columns}
+
+:::{.column width="50%"}
+
 ```rust
 fn main() {
     let x = 10;
@@ -221,12 +226,9 @@ fn main() {
 }
 ```
 
-::: notes
-
-As with numerical operators, you cannot compare different integer and float
-types with each other
-
 :::
+
+:::{.column width="50%"}
 
 ```rust
 fn main() {
@@ -235,8 +237,23 @@ fn main() {
 }
 ```
 
-- Boolean operators short-circuit: i.e. if in `a && b`, `a` is already false,
-  then the code for `b` is not executed.
+:::
+
+::::::
+
+::: incremental
+
+- **Boolean operators short-circuit**: i.e. if in `a && b`, `a` is already
+  false, then the code for `b` is not executed.
+
+:::
+
+::: notes
+
+As with numerical operators, you cannot compare different integer and float
+types with each other
+
+:::
 
 ---
 
@@ -442,6 +459,10 @@ fn main() {
 
 ## Functions
 
+::::::{.columns}
+
+:::{.column width="50%"}
+
 ```rust
 fn add(a: i32, b: i32) -> i32 {
     a + b // or: `return a+b`
@@ -456,6 +477,10 @@ fn also_returns_nothing() {
 }
 ```
 
+:::
+
+:::{.column width="50%"}
+
 :::incremental
 
 - The function signature must be annotated with types.
@@ -465,6 +490,10 @@ fn also_returns_nothing() {
   write `return expr`).
 
 :::
+
+:::
+
+::::::
 
 :::notes
 
@@ -486,7 +515,7 @@ fn also_returns_nothing() {
   value**.
 - A definition of any kind (function definition etc.)
 - The `let var = expr;` statement.
-- Almost everything else is an _expression_.
+- Almost everything else is an **expression**.
 
 <br>
 
@@ -549,7 +578,7 @@ let x = (let y = 10); // invalid
 
 :::
 
-```rust {line-numbers="all|2-5" data-fragment-index="1"}
+```rust {line-numbers="all|2-5" data-fragment-index="0"}
 fn main() {
     let y = {
         let x = 3;
@@ -592,7 +621,6 @@ fn main() {
 ```rust {data-fragment-index="all|3-8|10-15" style="font-size:14pt;"}
 fn main() {
     let y = 11;
-
     // if as an expression
     let x = if y < 10 {
         42    // missing ;
@@ -702,7 +730,7 @@ When a scope ends, all variables for that scope become "extinct"
 
 ::: {.column width="50%"}
 
-```rust
+```rust {line-numbers="1|2|4|5|6|7|9"}
 fn main() { // nothing in scope here
   let i = 10; // i is now in scope
 
@@ -716,9 +744,9 @@ fn main() { // nothing in scope here
 ```
 :::
 
-::: {.column width="50%"}
+::: {.column width="50%" .fragment}
 
-```python {.fragment}
+```python {line-numbers=}
 def main():
   i = 10;
 
@@ -740,8 +768,9 @@ def main():
 
 ## Printing & Formatting Values
 
-With the `format!` or `println!` macros (later) you can format or print
-variables to `stdout` of your application:
+With the
+[`format!` or `println!` macros](https://doc.rust-lang.org/std/fmt/index.html)
+(later) you can format or print variables to `stdout` of your application:
 
 ```rust
 fn main() {
@@ -766,7 +795,7 @@ fn main() {
 
 ---
 
-## Exercise Time
+## Exercise Time (1)
 
 Approx. Time: 20-45 min.
 

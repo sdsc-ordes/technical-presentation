@@ -439,7 +439,7 @@ Code is **monomorphized**:
 
 ---
 
-## Exercise Time
+## Exercise Time (8)
 
 Approx. Time: 40-50 min.
 

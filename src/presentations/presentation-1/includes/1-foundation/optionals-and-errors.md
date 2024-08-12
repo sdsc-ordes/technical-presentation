@@ -360,7 +360,7 @@ fn can_fail() -> Result<i64, DivideError> {
 
 ---
 
-## Exercise Time
+## Exercise Time (5)
 
 Approx. Time: 20-1.5h min.
 

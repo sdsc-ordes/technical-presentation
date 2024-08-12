@@ -19,7 +19,7 @@ cargo run
 ```
 
 ```text
-Compiling hello-world v0.1.0 (/home/teach-rs/Projects/hello-world)
+Compiling hello-world v0.1.0
 Finished dev [unoptimized + debuginfo] target(s) in 0.74s
 Running `target/debug/hello-world`
 Hello, world!
@@ -27,9 +27,7 @@ Hello, world!
 
 ---
 
-## First Project
-
-### Computing a Simple Sum
+## Computing a Simple Sum
 
 ```rust {line-numbers="all|1-3|2|5-11|6-10|7,9|all"}
 fn main() {
@@ -43,6 +41,7 @@ fn sum(n: u64) -> u64 {
         n
     }
 }
+// Note: avoid recursion as you always can :)
 ```
 
 **Output**:

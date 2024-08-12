@@ -108,7 +108,7 @@ Create a **read-only** reference `&`:
 :::::: {.columns}
 ::: {.column width="50%"}
 
-```rust {line-numbers="|3,8"}
+```rust {line-numbers="2|3|8|5"}
 fn main() {
     let s = String::from("hello");
     change(&s);
@@ -122,20 +122,18 @@ fn change(s: &String) {
 ```
 
 :::
-::: {.column width="50%"}
+::: {.column width="50%" .fragment}
 
-```text {.fragment}
+```text
 error[E0596]:
     cannot borrow `*s` as mutable,
     as it is behind a `&` reference
  --> src/main.rs:8:5
-  |
 8 | fn change(s: &String) {
   |              -------
   |     help: consider changing this to
   |            be a mutable reference:
   |           `&mut String`
-  |
 9 |     s.push_str(", world");
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |     `s` is a `&` reference, so the data
@@ -230,7 +228,7 @@ To any value, you can either have **at the same time**:
 
 **OR**
 
-- **Many read** references `&mut T` 📑
+- **Many read** references `&mut T` 📑 📑 📑
 
 :::
 
@@ -264,12 +262,10 @@ To any value, you can either have **at the same time**:
 
 ## Borrowing and Memory Safety
 
-The ownership model does guarantee the following error do **not** occur:
+- The ownership model does guarantee **no**: <br> null pointer dereferences,
+  data races, dangling pointers, use after free.
 
 - 🦺 Rust is memory safe without any runtime garbage collector.
-
-  - Memory bugs such as: null pointer dereferences, data races, dangling
-    pointers, use after free.
 
 - 🚀 Performance of a language that would normally let you manage memory
   manually.
@@ -301,7 +297,7 @@ fn main() {
 
 :::
 
-:::{.column width="50%" }
+:::{.column width="50%" .fragment}
 
 ```text
 error[E0502]: cannot borrow `s` as mutable
@@ -401,7 +397,7 @@ fn give_me_a_ref(input: &(String, i32)) -> &String {
 ```
 
 - Rust annotates each reference with a **lifetime**.
-- How to use lifetimes? -> later!
+- How to use lifetimes?  later!
 
 :::notes
 
@@ -412,7 +408,7 @@ certain cases.
 
 ---
 
-## Exercise Time
+## Exercise Time (3)
 
 Approx. Time: 20-30 min.
 

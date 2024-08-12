@@ -492,7 +492,7 @@ fn string_len1(data: &str) -> usize {
 
 ---
 
-## Exercise Time
+## Exercise Time (6)
 
 Approx. Time: 30-50 min
 

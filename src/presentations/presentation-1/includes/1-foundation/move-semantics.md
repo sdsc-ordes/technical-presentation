@@ -97,7 +97,7 @@ fn foo() { // Enter 2. stack frame.
     let a: u32 = 10; // `a` points on the stack containing 10.
     println!("a address: {:p}", &a);
 
-    let b: u32 = a;  // Copy `b` to `a`.
+    let b: u32 = a;  // Copy `a` to `b`.
     println!("b address: {:p}", &b;
 } // `a,b` out of scope, we leave the stack frame.
 
@@ -106,7 +106,8 @@ fn main() { // Enter 1. stack frame.
 }
 ```
 
-Stack frame needs at least $2 \cdot 32$ bits = $2 \cdot 4$ bytes = $8$ bytes.
+Stack frame for `foo` needs at least $2 \cdot 32$ bits = $2 \cdot 4$ bytes = $8$
+bytes.
 
 ```text
 a address: 0x7ffdb6f09c08
@@ -245,7 +246,6 @@ fn main() {
 ```rust {line-numbers=}
 // Create two variables on the stack.
 let a = 5;
-println!("{}", a);
 ```
 
 Local integer `a` allocated on the <br> **stack**.
@@ -254,12 +254,11 @@ Local integer `a` allocated on the <br> **stack**.
 
 :::
 
-::: {.column width="50%"}
+::: {.column width="50%" .fragment}
 
 ```rust {line-numbers=}
 // Create an owned, heap allocated string
 let a = String::from("hello");
-println!("{}, world!", a);
 ```
 
 Strings (`a`) store data on the **heap** because they **can grow**.
@@ -283,7 +282,6 @@ Strings (`a`) store data on the **heap** because they **can grow**.
 fn foo() {
   let a = 5;
   let b = a;
-  println!("{}", a);
 }
 ```
 
@@ -300,11 +298,10 @@ Assignment of `a` to `b` **copies** `a` to `b`.
 fn foo() {
   let a = String::from("hello");
   let b = a;
-  println!("{}, world!", a);
 }
 ```
 
-Assignment of `a` to `b` transfers ownership.
+Assign. `a` to `b` transfers ownership (**move**).
 
 :::{.center-content .p-no-margin}
 ![](${meta:include-base-dir}/assets/images/A1-string-stack-copy.svgbob){.svgbob style="margin:0;"}
@@ -405,7 +402,7 @@ error[E0382]: borrow of moved value: `a`
 :::::: {.columns}
 ::: {.column width="50%" }
 
-```rust {line-numbers=}
+```rust {line-numbers="2|4|9-11|5"}
 fn main() {
   let a = String::from("hello");
 
@@ -420,7 +417,7 @@ fn calculate_length(s: String) -> usize {
 ```
 
 :::
-::: {.column width="50%"}
+::: {.column width="50%" .fragment}
 
 ```text
 error[E0382]: borrow of moved value: `a`
@@ -462,6 +459,10 @@ error[E0382]: borrow of moved value: `a`
 
 We can return a value to move it out of the function
 
+::::::{.columns}
+
+:::{.column width="60%"}
+
 ```rust
 fn main() {
     let a = String::from("hello");
@@ -475,13 +476,21 @@ fn calculate_length(s: String) -> (usize, String) {
 }
 ```
 
+:::
+
+:::{.column width="40%"}
+
 ```text {.fragment}
-Compiling playground v0.0.1 (/playground)
-Finished dev [unoptimized + debuginfo] target(s) in 5.42s
+Compiling playground v0.0.1
+Finished dev ...
 Running `target/debug/playground`
 
 Length of 'hello' is 5.
 ```
+
+:::
+
+::::::
 
 ::: notes
 
@@ -550,7 +559,7 @@ fn get_length(arg: String) -> usize {
 
 ---
 
-## Exercise Time
+## Exercise Time (2)
 
 Approx. Time: 20-30 min.
 

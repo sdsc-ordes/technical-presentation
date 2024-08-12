@@ -298,7 +298,7 @@ the types fulfills the conditions.
 
 ---
 
-## Exercise Time
+## Exercise Time (9)
 
 Approx. Time: 40-50 min.
 
