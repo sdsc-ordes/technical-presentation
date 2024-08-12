@@ -6,6 +6,9 @@ root_dir := justfile_directory()
 # You can chose either "podman" or "docker"
 container_mgr := "podman"
 
+# The presentation to render.
+presentation := "presentation-1"
+
 # Enter a `nix` development shell.
 nix-develop:
     nix develop './tools/nix#default'
@@ -33,9 +36,11 @@ init:
     echo "Install node packages in 'build' ..."
     (cd build && yarn install && npm run build)
 
+    just presentation="{{presentation}}" pandoc
+
 
 # Watch the files in `src` and synchronize them into the `build` folder.
-watch presentation="presentation-1":
+watch:
     #!/usr/bin/env bash
     set -eu
     cd "{{root_dir}}"
@@ -75,7 +80,8 @@ watch presentation="presentation-1":
         echo "$current_hash" > "$checksum_dir/$key"
 
         echo "File: '$LINE' changes"
-        just sync "{{presentation}}"
+        just sync
+        just presentation="{{presentation}}" pandoc
       done
     )
 
@@ -101,7 +107,7 @@ package file="presentation.zip": pdf
     "{{root_dir}}/tools/package-presentation.sh" "{{container_mgr}}" "{{file}}"
 
 # Prepare a folder `name` to make later a PR to branch `publish` to serve your presentation.
-publish name presentation="presentation-1":
+publish name:
     "{{root_dir}}/tools/prepare-gh-pages.sh" "{{name}}" "{{presentation}}"
 
 # Bake the logo into the style-sheets.
@@ -120,7 +126,7 @@ build-dev-container *args:
       nix/
 
 [private]
-sync presentation="presentation-1":
+sync:
     #!/usr/bin/env bash
     set -eu
     cd "{{root_dir}}"
@@ -137,9 +143,8 @@ sync presentation="presentation-1":
     sync src/presentations/ build/presentations/
     sync src/mixin/ build/
 
-    just pandoc "{{presentation}}"
 
-pandoc presentation="presentation-1":
+pandoc:
     #!/usr/bin/env bash
     set -eu
 
