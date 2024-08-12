@@ -6,6 +6,8 @@ root_dir := justfile_directory()
 # You can chose either "podman" or "docker"
 container_mgr := "podman"
 
+presentation_default := "presentation-1"
+
 # Enter a `nix` development shell.
 nix-develop:
     nix develop './tools/nix#default'
@@ -33,9 +35,11 @@ init:
     echo "Install node packages in 'build' ..."
     (cd build && yarn install && npm run build)
 
+    just pandoc "{{presentation_default}}"
+
 
 # Watch the files in `src` and synchronize them into the `build` folder.
-watch presentation="presentation-1":
+watch presentation="{{presentation_default}}":
     #!/usr/bin/env bash
     set -eu
     cd "{{root_dir}}"
@@ -75,7 +79,7 @@ watch presentation="presentation-1":
         echo "$current_hash" > "$checksum_dir/$key"
 
         echo "File: '$LINE' changes"
-        just sync "{{presentation}}"
+        just sync
       done
     )
 
@@ -120,7 +124,7 @@ build-dev-container *args:
       nix/
 
 [private]
-sync presentation="presentation-1":
+sync:
     #!/usr/bin/env bash
     set -eu
     cd "{{root_dir}}"
@@ -137,9 +141,8 @@ sync presentation="presentation-1":
     sync src/presentations/ build/presentations/
     sync src/mixin/ build/
 
-    just pandoc "{{presentation}}"
 
-pandoc presentation="presentation-1":
+pandoc presentation="{{presentation_default}}":
     #!/usr/bin/env bash
     set -eu
 
