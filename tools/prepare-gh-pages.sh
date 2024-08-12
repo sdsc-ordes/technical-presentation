@@ -14,7 +14,7 @@ cd "$ROOT_DIR"
 just init
 just sync "$presentation"
 
-rm -rf build/node_modules
+rm -rf build/node_modules build/presentations
 rm -rf "$target" || true
 mkdir -p "$pages_dir"
 cp -r build "$target"
