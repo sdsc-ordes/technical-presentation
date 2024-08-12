@@ -12,7 +12,8 @@ target="$pages_dir/$name"
 
 cd "$ROOT_DIR"
 just init
-just sync "$presentation"
+just sync
+just pandoc "$presentation"
 
 rm -rf build/node_modules build/presentations
 rm -rf "$target" || true
