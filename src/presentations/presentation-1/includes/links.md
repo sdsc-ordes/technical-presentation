@@ -23,8 +23,11 @@
   library to search for common functionality.
 
 - [**Rust Book**](https://doc.rust-lang.org/book): The extensive Rust book
-  explaining topics in more detail (some times too much prosa 🐒).
+  explaining topics in more (stm. too much) detail.
 
 - [**Rust By Example**](https://doc.rust-lang.org/rust-by-example): A summary
   about different Rust topics by small examples. This is good to get a first
   grasp of it.
+
+- [**Rustling**](https://rustlings.cool/): More exercises. We also use some of
+  these in our exercises.

@@ -137,7 +137,7 @@ def grow() -> List[Apple]:
   run()
   ```
 
-  **Question:** Does the memory of `d` still exist at `run()`?
+  **Question:** Does the memory of `d` still exist after `run()`?
 
   [ We don't know 🤷]{.fragment}
 
