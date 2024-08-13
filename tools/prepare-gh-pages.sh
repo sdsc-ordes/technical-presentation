@@ -64,10 +64,13 @@ if is_ci; then
     # Commit onto publish.
     echo "Cherry-pick onto publish..."
     git checkout publish
+    rm -rf "$target" || true
+    git add -f "$target" &&
+        git commit -a -m "fix: remove old version"
     git cherry-pick -X theirs "$temp"
 
     echo "Reset files in '$target'."
-    (cd "$target" && git clean -dfX .)
+    cd "$target" && git clean -dfX
 
     echo "Push 'publish' branch..."
     git push publish
