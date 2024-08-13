@@ -102,6 +102,7 @@ Without further ado, lets dive in.
 :::
 
 ```{.include}
+${meta:include-base-dir}/includes/help.md
 ${meta:include-base-dir}/includes/acknowledgement.md
 ${meta:include-base-dir}/includes/links.md
 ${meta:include-base-dir}/includes/intro.md
