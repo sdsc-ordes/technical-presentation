@@ -801,7 +801,7 @@ Approx. Time: 20-45 min.
 
 Do the following exercises:
 
-- `basic-syntax`: all, 08 (optional)
+- `basic-syntax`: all, 09 (optional: macros, read here: https://doc.rust-lang.org/book/ch19-06-macros.html)
 
 **Build/Run/Test:**
 

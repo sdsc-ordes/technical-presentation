@@ -98,7 +98,7 @@ fn foo() { // Enter 2. stack frame.
     println!("a address: {:p}", &a);
 
     let b: u32 = a;  // Copy `a` to `b`.
-    println!("b address: {:p}", &b;
+    println!("b address: {:p}", &b);
 } // `a,b` out of scope, we leave the stack frame.
 
 fn main() { // Enter 1. stack frame.
