@@ -185,14 +185,14 @@ enum Fruit {
 
 ```rust
 enum Fruit {
-  Banana(u16),     // discriminant: 0
+  Banana(u16, u16), // discriminant: 0
   Apple(f32, f32), // discriminant: 1
 }
 ```
 
 ```rust {.fragment}
 fn main() {
-  let 🍌 = Fruit::Banana(3);
+  let 🍌 = Fruit::Banana(3, 2);
   let 🍎 = Fruit::Apple(3.0, 4.);
 }
 ```
