@@ -4,7 +4,7 @@ filters:
   - pandoc-svgbob.lua
   - pandoc-diagram.lua
   - pandoc-links.lua
-  - pandoc-crossref
+  # - pandoc-crossref
 
 metadata:
   include-files:
