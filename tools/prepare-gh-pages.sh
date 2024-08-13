@@ -13,6 +13,12 @@ target="$pages_dir/$name"
 current=$(git branch --show)
 temp="$current-pub-temp"
 
+function cleanup() {
+    if git rev-parse "$temp" &>/dev/null; then
+        git branch -D "$temp" || true
+    fi
+}
+
 function is_ci() {
     [ "${CI:-}" = "true" ] && return 0
     return 1
@@ -22,6 +28,8 @@ if ! git diff --quiet --exit-code; then
     echo "You are not in clean Git state."
     exit 1
 fi
+
+trap cleanup EXIT
 
 if is_ci; then
     if ! git rev-parse "$temp"; then
@@ -54,6 +62,9 @@ if is_ci; then
     echo "Cherry-pick onto publish..."
     git checkout publish
     git cherry-pick -X theirs "$temp"
+
+    echo "Reset some hook changes..."
+    git reset --hard HEAD
 
     echo "Push 'publish' branch..."
     git checkout publish
