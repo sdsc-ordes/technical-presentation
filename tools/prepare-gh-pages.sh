@@ -62,18 +62,20 @@ if is_ci; then
     git commit -m "feat: publish '$name'"
 
     # Commit onto publish.
-    echo "Cherry-pick onto publish..."
+    echo "Removing old version from 'publish'..."
     git checkout publish
     rm -rf "$target" || true
     git add -f "$target" &&
         git commit -a -m "fix: remove old version"
-    git cherry-pick -X theirs "$temp"
+
+    echo "Cherry-pick onto 'publish'..."
+    git cherry-pick --allow-empty -X theirs "$temp"
 
     echo "Reset files in '$target'."
     cd "$target" && git clean -dfX
 
     echo "Push 'publish' branch..."
-    git push publish
+    git push origin publish
 
     echo "Committed and pushed changes onto 'publish'."
 fi
