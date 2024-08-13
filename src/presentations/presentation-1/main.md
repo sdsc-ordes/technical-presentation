@@ -8,7 +8,7 @@ author:
 
 lang: en
 
-date: July 15, 2024
+date: Augist 14, 2024
 
 css: presentations/presentation-1/css/custom.css
 highlightjs-theme: railscasts
