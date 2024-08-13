@@ -223,8 +223,6 @@ fn main() {
 
 ---
 
-## Layout of Trait Objects
-
 ::::::{.columns}
 
 :::{.column width="50%"}
@@ -291,8 +289,6 @@ And all is well!
 
 ---
 
-### layout: default
-
 ## Forcing dynamic dispatch
 
 Sometimes you want to enforce API users (or colleagues) to use dynamic dispatch
@@ -317,8 +313,6 @@ fn main() {
 ```
 
 ---
-
-### layout: default
 
 ## Fixing the renderer
 
@@ -351,8 +345,6 @@ All set! </v-click>
 
 ---
 
-### layout: default
-
 ## Trait object limitations
 
 - Pointer indirection cost
@@ -363,8 +355,6 @@ All set! </v-click>
 _Traits need to be 'Object Safe'_
 
 ---
-
-### layout: default
 
 ## Object safety
 
@@ -385,8 +375,6 @@ Read them!
 \*These seem to be compiler limitations
 
 ---
-
-### layout: default
 
 ## So far...
 
