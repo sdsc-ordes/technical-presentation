@@ -69,7 +69,7 @@ if is_ci; then
     echo "Reset some hook changes (if any)"
     git reset --hard HEAD
     echo "Reset files in '$target'."
-    cd "$target" && git clean -dfX
+    (cd "$target" && git clean -dfX .)
 
     echo "Push 'publish' branch..."
     git checkout publish
