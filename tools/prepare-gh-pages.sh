@@ -66,13 +66,10 @@ if is_ci; then
     git checkout publish
     git cherry-pick -X theirs "$temp"
 
-    echo "Reset some hook changes (if any)"
-    git reset --hard HEAD
     echo "Reset files in '$target'."
     (cd "$target" && git clean -dfX .)
 
     echo "Push 'publish' branch..."
-    git checkout publish
     git push publish
 
     echo "Committed and pushed changes onto 'publish'."
