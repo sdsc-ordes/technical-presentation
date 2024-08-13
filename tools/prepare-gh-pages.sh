@@ -13,6 +13,9 @@ target="$pages_dir/$name"
 current=$(git branch --show)
 temp="$current-pub-temp"
 
+# Dont run Githooks while doing all of this.
+export GITHOOKS_DISABLE=1
+
 function cleanup() {
     if git rev-parse "$temp" &>/dev/null; then
         git branch -D "$temp" || true
@@ -63,8 +66,10 @@ if is_ci; then
     git checkout publish
     git cherry-pick -X theirs "$temp"
 
-    echo "Reset some hook changes..."
+    echo "Reset some hook changes (if any)"
     git reset --hard HEAD
+    echo "Reset files in '$target'."
+    cd "$target" && git clean -dfX
 
     echo "Push 'publish' branch..."
     git checkout publish
