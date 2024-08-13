@@ -64,7 +64,7 @@ _What if don't know the concrete type implementing the trait at compile time?_
 
 :::{.column width="48%"}
 
-```rust {line-numbers="all|1-8|10-12|14-23|17-20" style="font-size:14pt"}
+```rust {line-numbers="all|1-8|10-12" style="font-size:14pt"}
 use std::io::Write;
 use std::path::PathBuf;
 
@@ -83,7 +83,7 @@ fn log<L: Write>(logger: &mut L, msg: &str) {
 
 :::{.column width="50%"}
 
-```rust {line-numbers="all|2|4-7|9" style="font-size:14pt"}
+```rust {line-numbers="2|4-7|9" style="font-size:14pt"}
 fn main() {
   let file: Option<PathBuf> = // args parsing...
 
@@ -132,36 +132,38 @@ trait?_
 
 ::::::{.columns}
 
-:::{.column width="50%"}
+:::{.column width="45%"}
 
-```rust {line-numbers="all|1-13|15-21"}
+```rust {line-numbers="all|1-3|5-8,10-13"}
 trait Render {
-    fn paint(&self);
+  fn paint(&self);
 }
 
 struct Circle;
 impl Render for Circle {
-    fn paint(&self) { /* ... */ }
+  fn paint(&self) { /* ... */ }
 }
 
 struct Rectangle;
 impl Render for Rectangle {
-    fn paint(&self) { /* ... */ }
+  fn paint(&self) { /* ... */ }
 }
 ```
 
 :::
 
-:::{.column width="50%"}
+:::{.column width="55%" .fragment}
 
-```rust
+```rust {line-numbers="2-3|5-9"}
 fn main() {
-    let mut shapes = Vec::new();
-    let circle = Circle;
-    shapes.push(circle);
-    let rect = Rectangle;
-    shapes.push(rect);
-    shapes.iter().for_each(|shape| shape.paint());
+  let circle = Circle{};
+  let rect = Rectangle{};
+
+  let mut shapes = Vec::new();
+  shapes.push(circle);
+  shapes.push(rect);
+  shapes.iter()
+        .for_each(|shape| shape.paint());
 }
 ```
 
@@ -171,9 +173,7 @@ fn main() {
 
 ---
 
-### layout: default
-
-## Error again!
+## Error Again!
 
 ```txt
    Compiling playground v0.0.1 (/playground)
@@ -181,7 +181,8 @@ error[E0308]: mismatched types
   --> src/main.rs:20:17
    |
 20 |     shapes.push(rect);
-   |            ---- ^^^^ expected struct `Circle`, found struct `Rectangle`
+   |            ---- ^^^^ expected struct `Circle`,
+   |                      found struct `Rectangle`
    |            |
    |            arguments to this method are incorrect
    |
@@ -196,20 +197,22 @@ _What is the type of `shapes`?_
 
 ---
 
-### layout: default
+## Trait Objects to the Rescue
 
-## Trait objects to the rescue
+::: incremental
 
-- Opaque type that implements a set of traits
-- Type description: `dyn T: !Sized` where `T` is a `trait`
+- Opaque type that implements a set of traits.
+- Type description: `dyn T: !Sized` where `T` is a `trait`.
 - Like slices, Trait Objects always live behind pointers (`&dyn T`,
-  `&mut dyn T`, `Box<dyn T>`, `...`)
-- Concrete underlying types are erased from trait object
+  `&mut dyn T`, `Box<dyn T>`, `...`).
+- Concrete underlying types are erased from trait object.
 
-```rust{all|5-7}
+:::
+
+```rust{line-numbers="all|6-8" .fragment}
 fn main() {
-    let log_file: Option<PathBuf> =
-        todo!("read args");
+    let log_file: Option<PathBuf> = // ...
+
     // Create a trait object that implements `Write`
     let logger: &mut dyn Write = match log_file {
         Some(log_path) => &mut FileLogger { log_path },
@@ -220,39 +223,46 @@ fn main() {
 
 ---
 
-### layout: two-cols
+## Layout of Trait Objects
 
-## Layout of trait objects
+::::::{.columns}
 
-```rust
+:::{.column width="50%"}
+
+```rust {style="font-size:14pt;"}
 /// Same code as last slide
 fn main() {
-    let log_file: Option<PathBuf> =
-        todo!("read args");
-    // Create a trait object that implements `Write`
-    let logger: &mut dyn Write = match log_file {
-        Some(log_path) => &mut FileLogger { log_path },
-        None => &mut StdOutLogger,
-    };
+  let log_file: Option<PathBuf> = //...
 
-    log("Hello, world!🦀", &mut logger);
+  // Create a trait object that implements `Write`
+  let logger: &mut dyn Write = match log_file {
+      Some(log_path) => &mut FileLogger { log_path },
+      None => &mut StdOutLogger,
+  };
+
+  log("Hello, world!🦀", &mut logger);
 }
 ```
 
-<v-click>
+::: incremental
 
-- _💸 Cost: pointer indirection via vtable &rarr; less performant_
-- _💰 Benefit: no monomorphization &rarr; smaller binary & shorter compile
-  time!_ </v-click>
+- 💸 **Cost**: pointer indirection via vtable &rarr; less performant.
+- 💰 **Benefit**: no monomorphization &rarr; smaller binary & shorter compile
+  time!
 
-::right::
+:::
 
-<!-- TODO switch out this JPEG for an SVG that works both in dark and light theme -->
-<img src="/images/D-trait-object-layout.jpg" style="margin-left:5%; margin-top: 50px; max-width: 100%; max-height: 90%;">
+:::
+
+:::{.column width="50%"}
+
+![](${meta:include-base-dir}/assets/images/A1-trait-object-layout.svgbob){.svgbob}
+
+:::
+
+::::::
 
 ---
-
-### layout: default
 
 ## Fixing dynamic logger
 
