@@ -59,7 +59,7 @@ echo "Execute 'git add -f '$target' to add the files."
 if is_ci; then
     echo "Commit all assets onto temp branch..."
     git add -f "$target"
-    git commit -a -m "feat: publish '$name'"
+    git commit -m "feat: publish '$name'"
 
     # Commit onto publish.
     echo "Cherry-pick onto publish..."
