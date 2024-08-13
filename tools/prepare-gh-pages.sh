@@ -10,7 +10,7 @@ presentation="${2:-presentation-1}"
 pages_dir="docs/gh-pages"
 target="$pages_dir/$name"
 
-current=$(git rev-parse --show-branch)
+current=$(git branch --show)
 temp="$current-pub-temp"
 
 function is_ci() {
