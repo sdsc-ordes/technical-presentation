@@ -111,4 +111,19 @@
     scrollbar-width: none;
   }
 
+  /* Some Python icons for code */
+  .reveal pre  code.language-python {
+      background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgdmlld0JveD0iMCAwIDcwLjMwNjY2NCA3MS4xMDY2NjciCiAgIHZlcnNpb249IjEuMSIKICAgaWQ9InN2ZzEiCiAgIHdpZHRoPSI3MC4zMDY2NjQiCiAgIGhlaWdodD0iNzEuMTA2NjY3IgogICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxkZWZzCiAgICAgaWQ9ImRlZnMxIiAvPgogIDx0ZXh0CiAgICAgeT0iNzQuNDAwMDAyIgogICAgIGZvbnQtc2l6ZT0iMTAwcHgiCiAgICAgc3R5bGU9ImZpbGw6IzAwOTdmZjtmaWxsLW9wYWNpdHk6MSIKICAgICBpZD0idGV4dDEiCiAgICAgeD0iLTEyLjEiPu6cvDwvdGV4dD4KPC9zdmc+Cg==);
+      background-position: right 10px top 10px;
+      background-size: 12pt, 12pt;
+      background-repeat: no-repeat;
+  }
+
+  /* Some Rust icons for code */
+  .reveal pre code.language-rust {
+      background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgdmlld0JveD0iMCAwIDcwLjMwNjY2NCA3MS4xMDY2NjciCiAgIHZlcnNpb249IjEuMSIKICAgaWQ9InN2ZzEiCiAgIHdpZHRoPSI3MC4zMDY2NjQiCiAgIGhlaWdodD0iNzEuMTA2NjY3IgogICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxkZWZzCiAgICAgaWQ9ImRlZnMxIiAvPgogIDx0ZXh0CiAgICAgeT0iNzQuNDAwMDAyIgogICAgIGZvbnQtc2l6ZT0iMTAwcHgiCiAgICAgc3R5bGU9ImZpbGw6I2ZmMzgwMDtmaWxsLW9wYWNpdHk6MSIKICAgICBpZD0idGV4dDEiCiAgICAgeD0iLTEyLjEiPu6eqDwvdGV4dD4KPC9zdmc+Cg==);
+      background-position: right 10px top 10px;
+      background-size: 12pt, 12pt;
+      background-repeat: no-repeat;
+  }
 </style>
