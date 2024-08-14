@@ -224,11 +224,11 @@ To any value, you can either have **at the same time**:
 
 ### References
 
-- **Single write** reference `&T` 🖊️
+- A single **write reference `&mut T`** 🖊️
 
 **OR**
 
-- **Many read** references `&mut T` 📑 📑 📑
+- Many **read references `&T`** 📑 📑 📑
 
 :::
 

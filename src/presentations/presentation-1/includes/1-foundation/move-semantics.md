@@ -244,7 +244,7 @@ fn main() {
 ::: {.column width="50%" }
 
 ```rust {line-numbers=}
-// Create two variables on the stack.
+// Create a variable on the stack.
 let a = 5;
 ```
 
@@ -556,6 +556,40 @@ fn get_length(arg: String) -> usize {
   it gets destroyed almost immediately after creation
 
 :::
+
+---
+
+## Clone Explicitness vs. Python
+
+In contrast to Rust, `python` hides when stuff gets copied or referenced:
+
+::::::{.columns}
+
+:::{.column width="50%"}
+
+```python {line-numbers=}
+# Python
+a = 1
+b = a
+b += 1
+print(a) # `a` is unchanged -> `int` is a copy-type.
+```
+
+:::
+
+:::{.column width="50%"}
+
+```python
+# Python
+a = {'a': 1}
+b = a    # `b` is a reference to `a`.
+b['a'] += 1
+print(a) # `a` is 2 -> dict is reference-counted.
+```
+
+:::
+
+::::::
 
 ---
 

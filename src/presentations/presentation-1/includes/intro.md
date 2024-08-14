@@ -231,7 +231,7 @@ variables bind to memory</small>)
             return float(num)
   ```
 
-  _You trust `mypy` which is not enforced on runtime._
+  _You trust `mypy` which is not enforced at runtime._
 
   :::
 

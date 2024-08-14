@@ -11,11 +11,11 @@ fn main() {
     let some_x = 5;
     println!("some_x = {}", some_x);
     some_x = 6;
-    println!("some_x = {}", some_x);
+    println!("some_x = {some_x}");
 }
 ```
 
-```text {style="font-size:12pt;"}
+```text {style="font-size:12pt;" .fragment}
 Compiling hello-world v0.1.0
 error[E0384]: cannot assign twice to immutable variable `some_x`
 --> src/main.rs:4:5
@@ -511,8 +511,8 @@ fn also_returns_nothing() {
 
 ## Statements
 
-- **Statements** are instructions that perform some action and **do not return a
-  value**.
+- [**Statements**](https://doc.rust-lang.org/reference/statements-and-expressions.html)
+  are instructions that perform some action and **do not return a value**.
 - A definition of any kind (function definition etc.)
 - The `let var = expr;` statement.
 - Almost everything else is an **expression**.
@@ -570,7 +570,8 @@ let x = (let y = 10); // invalid
 
 ::: incremental
 
-- **Expressions** evaluate to a **resulting value**.
+- [**Expressions**](https://doc.rust-lang.org/reference/statements-and-expressions.html)
+  evaluate to a **resulting value**.
 - Expressions make up most of the Rust code you write.
 - Includes all control flow such as `if` and `loop`.
 - Includes scoping braces (`{` and `}`).
@@ -801,7 +802,8 @@ Approx. Time: 20-45 min.
 
 Do the following exercises:
 
-- `basic-syntax`: all, 09 (optional: macros, read here: https://doc.rust-lang.org/book/ch19-06-macros.html)
+- `basic-syntax`: all, 09 (optional: macros, read here:
+  https://doc.rust-lang.org/book/ch19-06-macros.html)
 
 **Build/Run/Test:**
 
