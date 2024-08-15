@@ -32,8 +32,8 @@ struct Banana
 }
 
 impl Banana {
-  fn get_volume() -> f64 {
-    return size * size * 1.5;
+  fn get_volume(&self) -> f64 {
+    return self.size * self.size * 1.5;
   }
 }
 
@@ -81,19 +81,17 @@ fn main() {
 struct Banana { size: f64; }
 
 impl Banana {
-  fn new(i: f64) -> Self { Self(10) }
+    fn new(i: f64) -> Self { Self { size: i } }
 
-  fn consume(self) -> Self {
-    Self::new(self.size + 5)
-  }
-
-  // Take read reference of `Banana` instance.
-  fn borrow(&self) -> &f64 { &self.size }
-
-  // Take write reference of `Banana` instance.
-  fn borrow_mut(&mut self) -> &mut f64 {
-    &mut self.size;
-  }
+    fn consume(self) -> Self {
+        Self::new(self.size - 5.0)
+    }
+    // Take read reference of `Banana` instance.
+    fn borrow(&self) -> &f64 { &self.size }
+    // Take write reference of `Banana` instance.
+    fn borrow_mut(&mut self) -> &mut f64 {
+        &mut self.size
+    }
 }
 ```
 

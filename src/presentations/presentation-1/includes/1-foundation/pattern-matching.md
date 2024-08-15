@@ -18,22 +18,28 @@ Using the `if let [pattern] = [value]` statement:
 ```rust
 fn accept_banana(fruit: Fruit) {
   if let Fruit::Banana(a, _) = fruit {
-    println!("Got a banana, {} {}", a, _);
+    println!("Got a banana: {}", a);
   } else {
     println!("not handled")
   }
 }
 ```
 
-- `a` and `b` are local variables within `if`-body.
+::: incremental
+
+- `a` is a local variables within `if`-body.
 - The underscore (`_`) can be used to accept any value.
 - **Note:** Abbreviation for the above:
   [`let else`](https://doc.rust-lang.org/rust-by-example/flow_control/let_else.html).
   ```rust
-  let b = Fruit::Banana(3, _) else {...}
+  let Fruit::Banana(a, _) = fruit else {
+      println!("not handled.")
+  };
   ```
 - There is also
   [`while let`](https://doc.rust-lang.org/rust-by-example/flow_control/while_let.html).
+
+:::
 
 ---
 
@@ -126,5 +132,6 @@ fn main() {
 - `|` means `or`.
 - `1..=9` is an inclusive range (later!).
 
-**Quiz:** The `if key.is_lowercase()` after `=>` would never print
-`Something else`.
+**Quiz:** Why not `if key.is_lowercase()` after `=>` ?
+
+[**Answer:** That would never print `Something else`.]{.fragment}
