@@ -753,7 +753,7 @@ def main():
 
   if i > 5:
       j = 20
-      print(j)
+      print(f"i = {j}, j = {i}")
 
 
   print(i, j) # 💩: j is STILL in scope

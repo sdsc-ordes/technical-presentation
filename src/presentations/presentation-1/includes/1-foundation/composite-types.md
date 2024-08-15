@@ -16,7 +16,8 @@ We have seen so far:
 
 :::
 
-[Borrowing will make more with some more **complex data types**.]{.fragment}
+[Borrowing will make more sense with some more **complex
+data types**.]{.fragment}
 
 ---
 
@@ -134,7 +135,7 @@ enum Fruit {
 
 ```rust
 fn main() {
-  let ip_type = Fruit::Banana;
+  let fruit = Fruit::Banana;
 }
 ```
 
@@ -242,7 +243,7 @@ fn main() {
 }
 ```
 
-The type `Fruit` has $(2\cdot 2 \cdot 2) + (2\cdot 2) = 32$ possible states.
+The type `Fruit` has $(2\cdot 2 \cdot 2) + (2\cdot 2) = 12$ possible states.
 
 ---
 
