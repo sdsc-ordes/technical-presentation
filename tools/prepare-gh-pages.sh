@@ -59,21 +59,23 @@ echo "Execute 'git add -f '$target' to add the files."
 if is_ci; then
     echo "Commit all assets onto temp branch..."
     git add -f "$target"
-    git commit -a -m "feat: publish '$name'"
+    git commit -m "feat: publish '$name'"
 
     # Commit onto publish.
-    echo "Cherry-pick onto publish..."
+    echo "Removing old version from 'publish'..."
     git checkout publish
-    git cherry-pick -X theirs "$temp"
+    rm -rf "$target" || true
+    git add -f "$target" &&
+        git commit -a -m "fix: remove old version"
 
-    echo "Reset some hook changes (if any)"
-    git reset --hard HEAD
+    echo "Cherry-pick onto 'publish'..."
+    git cherry-pick --allow-empty -X theirs "$temp"
+
     echo "Reset files in '$target'."
     cd "$target" && git clean -dfX
 
     echo "Push 'publish' branch..."
-    git checkout publish
-    git push publish
+    git push origin publish
 
     echo "Committed and pushed changes onto 'publish'."
 fi
