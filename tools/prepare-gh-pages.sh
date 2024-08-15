@@ -48,6 +48,7 @@ fi
 cd "$ROOT_DIR"
 just presentation="$presentation" init sync pandoc
 
+rm -rf build/node_modules
 rm -rf "$target" || true
 mkdir -p "$pages_dir"
 cp -r build "$target"
