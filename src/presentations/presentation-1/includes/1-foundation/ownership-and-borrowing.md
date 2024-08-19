@@ -60,9 +60,9 @@ In Python we have this:
 ```python {line-numbers="|8,9" fragment-index="1"}
 def main() {
     a = "hello";
-    len = calculate_length(a);
+    l = calculate_length(a);
 
-    print(f"Length of '{a}' is {len}.");
+    print(f"Length of '{a}' is {l}.");
 }
 
 def calculate_length(s: str) -> int {
