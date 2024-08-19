@@ -572,7 +572,8 @@ In contrast to Rust, `python` hides when stuff gets copied or referenced:
 a = 1
 b = a
 b += 1
-print(a) # `a` is unchanged -> `int` is a copy-type.
+print(a) # `a` is unchanged
+         #  -> `int` is a copy-type.
 ```
 
 :::
@@ -584,7 +585,8 @@ print(a) # `a` is unchanged -> `int` is a copy-type.
 a = {'a': 1}
 b = a    # `b` is a reference to `a`.
 b['a'] += 1
-print(a) # `a` is 2 -> dict is reference-counted.
+print(a) # `a` is 2
+         #  -> dict is reference-counted.
 ```
 
 :::
