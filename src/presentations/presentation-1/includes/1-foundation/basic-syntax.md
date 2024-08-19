@@ -68,7 +68,8 @@ fn main() {
 
 - Rust is strongly and strictly typed.
 - Variables use _type inference_, so no need to specify a type
-  ([Henly-Millner Type System](https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system)).
+  ([Henly-Millner Type System](https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system)),
+  ([Understanding It](https://smallcultfollowing.com/babysteps/blog/2017/03/25/unification-in-chalk-part-1/)).
 - We can be explicit in our types (and sometimes have to be).
 
 ---

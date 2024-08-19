@@ -68,7 +68,7 @@ _What if don't know the concrete type implementing the trait at compile time?_
 use std::io::Write;
 use std::path::PathBuf;
 
-struct FileLogger { log_path: PathBuf }
+struct FileLogger { log_file: PathBuf }
 impl Write for FileLogger { /* ... */}
 
 struct StdOutLogger;
@@ -110,7 +110,7 @@ error[E0308]: `match` arms have incompatible types
    |
 17 |       let mut logger = match log_file {
    |  ______________________-
-18 | |         Some(log_path) => FileLogger { log_path },
+18 | |         Some(log_file) => FileLogger { log_file },
    | |                           -----------------------
    | |                           this is found to be of
    | |                           type `FileLogger`
@@ -154,7 +154,7 @@ impl Render for Rectangle {
 
 :::{.column width="55%" .fragment}
 
-```rust {line-numbers="2-3|5-9"}
+```rust {line-numbers="2-3|5-7,9-10"}
 fn main() {
   let circle = Circle{};
   let rect = Rectangle{};
@@ -162,6 +162,7 @@ fn main() {
   let mut shapes = Vec::new();
   shapes.push(circle);
   shapes.push(rect);
+
   shapes.iter()
         .for_each(|shape| shape.paint());
 }
@@ -197,31 +198,240 @@ _What is the type of `shapes`?_
 
 ---
 
-## Trait Objects to the Rescue
+## Dynamically Sized Types (DST)
+
+Rust supports **Dynamically Sized Types** (DSTs): types **without a statically
+known size or alignment**.
+
+On the surface,
+[this is a bit nonsensical](https://doc.rust-lang.org/nomicon/exotic-sizes.html):
+`rustc` always needs to know the size and alignment to compile code!
+
+::: incremental
+
+- [`Sized`](https://doc.rust-lang.org/std/marker/trait.Sized.html) is a
+  **marker** trait for types with know-size at compile time.
+
+- Types in Rust can be `Sized` or `!Sized` (unsized  DSTs).
+
+:::
+
+---
+
+## Examples of `Sized` vs. `!Sized`
+
+::: incremental
+
+- Most types are `Sized`, and **automatically** marked as such
+
+  - `i64`
+  - `String`
+  - `Vec<String>`
+  - etc.
+
+- Two major DSTs (`!Sized`) exposed by the language (**note the absence of a
+  reference!**):
+
+  - Trait Objects: `dyn MyTrait` (covered in the next section)
+  - Slices: `[T]`, `str`, and others.
+
+- DSTs can be **only** be used (local variable) **through a reference**: `&[T]`,
+  `&str`, `&dyn MyTrait`.
+
+:::
+
+:::notes
+
+Pointers, which essentially references (`&str`) are, always have a known size at
+compile, time that is why they can be stored in local variables (which as you
+know live on the stack).
+
+:::
+
+---
+
+## Trait Objects `dyn Trait`
 
 ::: incremental
 
 - Opaque type that implements a set of traits.
-- Type description: `dyn T: !Sized` where `T` is a `trait`.
-- Like slices, Trait Objects always live behind pointers (`&dyn T`,
-  `&mut dyn T`, `Box<dyn T>`, `...`).
+
+  Type Description: `dyn MyTrait: !Sized`
+
+- Like slices, Trait Objects always live behind pointers (`&dyn MyTrait`,
+  `&mut dyn MyTrait`, `Box<dyn MyTrait>`, `...`).
+
 - Concrete underlying types are erased from trait object.
 
 :::
 
 ```rust{line-numbers="all|6-8" .fragment}
 fn main() {
-    let log_file: Option<PathBuf> = // ...
+  let log_file: Option<PathBuf> = // ...
 
-    // Create a trait object that implements `Write`
-    let logger: &mut dyn Write = match log_file {
-        Some(log_path) => &mut FileLogger { log_path },
-        None => &mut StdOutLogger,
-    };
+  // Create a trait object that implements `Write`
+  let logger: &mut dyn Write = match log_file {
+    Some(log_file) => &mut FileLogger { log_file },
+    None => &mut StdOutLogger,
+  };
 }
 ```
 
 ---
+
+## Quiz - Instantiate a Trait?
+
+```rust
+struct A{}
+trait MyTrait { fn show(&self) {}; }
+impl MyTrait for A {}
+
+fn main() {
+  let a: MyTrait = A{};
+}
+```
+
+**Question:** Does that compile?
+
+::: {.fragment }
+
+**Answer: No! - It's invalid code.**
+
+- You can't make a local variable without knowing its size (to allocate enough
+  bytes on the stack), and
+- you can't pass the value of an unsized type into a function as an argument or
+- return it from a function
+
+:::
+
+---
+
+## Generics and `Sized` : How?
+
+::: incremental
+
+- Given a concrete type you can always say if its `Sized` or `!Sized` (DST).
+
+- Whats with generics?
+
+```rust {.fragment}
+fn generic_fn<T: Eq>(x: T) -> T { /*..*/ }
+```
+
+- If `T` is `!Sized`, then the definition of `generic_fn` is incorrect! (why?)
+
+- If `T` is `Sized`, all is OK!.
+
+:::
+
+::: notes
+
+It is incorrect because, you take a `T` which needs to be constructed on the
+stack ergo have a fixed-size at compile time! You also return a `T` which needs
+to have a fixed-size at compile time (also on the stack frame).
+
+:::
+
+---
+
+## Generics and `Sized`
+
+- All generic type parameters are **implicitly** `Sized` by default (everywhere
+  `structs`, `fn`s etc.):
+
+  For example:
+
+  ```rust {.fragment}
+  fn generic_fn<T: Eq + Sized>(x: T) -> T { // Sized is obsolete here.
+    //...
+  }
+  ```
+
+---
+
+## Generics and `?Sized`
+
+Sometimes we want to opt-out of `Sized`: use `?Sized`:
+
+```rust
+fn generic_fn<T: Eq + ?Sized>(x: &T) -> u32 { ... }
+```
+
+::: incremental
+
+- In English: `?Sized` means `T` also allows for dyn. sized types  e.g.
+  `T := dyn Eq`.
+
+- So a `x: &dyn Eq` is a reference to a **trait object** which implements
+  [`Eq`](https://doc.rust-lang.org/std/cmp/trait.Eq.html).
+
+:::
+
+---
+
+## Generics and `?Sized` - Quiz
+
+Does that compile? Why?/Why not?
+
+```rust
+fn generic_fn<T: Eq + ?Sized>(x: &T) -> u32 { 42 }
+
+fn main() {
+  generic_fn("hello world")`
+}
+```
+
+::: {.fragment}
+
+**Answer:** `generic_fn` is instantiated with `&str`:
+
+::: incremental
+
+-  match `&T <-> &str`
+-  `T := str`
+-  `x: &str` which is `Sized`
+-  ✅ Yes it compiles.
+
+:::
+
+:::
+
+---
+
+## Generics and `?Sized` - Quiz
+
+Does that compile? Why?/Why not?
+
+```rust {line-numbers=}
+// removed the reference ------- v
+fn generic_fn<T: Eq + ?Sized>(x: T) -> u32 { 42 }
+
+fn main() {
+  generic_fn("hello world")`
+}
+```
+
+::: {.fragment}
+
+**Answer:** ❌ No - `generic_fn` is invalid:
+
+::: incremental
+
+-  `T` can be `dyn Eq` which is not `Sized`  compile error.
+-  Remember: function parameter go onto the stack!
+-  Remember:
+
+:::
+
+:::
+
+::: notes
+
+The compile error has nothing to do with the call in 5!
+
+:::
+
+## Dynamic Dispatch on the Stack
 
 ::::::{.columns}
 
@@ -234,25 +444,17 @@ fn main() {
 
   // Create a trait object that implements `Write`
   let logger: &mut dyn Write = match log_file {
-      Some(log_path) => &mut FileLogger { log_path },
-      None => &mut StdOutLogger,
+    Some(log_file) => &mut FileLogger{log_file},
+    None => &mut StdOutLogger,
   };
 
-  log("Hello, world!🦀", &mut logger);
+  log(&mut logger, "Hello World!");
 }
 ```
 
-::: incremental
-
-- 💸 **Cost**: pointer indirection via vtable &rarr; less performant.
-- 💰 **Benefit**: no monomorphization &rarr; smaller binary & shorter compile
-  time!
-
 :::
 
-:::
-
-:::{.column width="50%"}
+:::{.column width="50%" .p-no-margin}
 
 ![](${meta:include-base-dir}/assets/images/A1-trait-object-layout.svgbob){.svgbob}
 
@@ -260,14 +462,85 @@ fn main() {
 
 ::::::
 
+::: incremental
+
+- 💸 **Cost**: pointer indirection via vtable (**dynamic dispatch**)  less
+  performant.
+- 💰 **Benefit**: no monomorphization  smaller binary & shorter compile time!
+- 💻 **Memory**: `logger` is a **wide-pointer** which lives **only** on the
+  **stack**  🚀.
+
+:::
+
+::: notes
+
+Its called wide-pointer because you have a pointer to data and a pointer to the
+vtable with the functions. Do not think about the pointer indirection, and less
+performant -> this is 100% premature optimization!
+
+:::
+
+---
+
+## Heap-Based Dynamic Dispatch
+
+::::::{.columns}
+
+:::{.column width="55%"}
+
+```rust {style="font-size:14pt;"}
+/// Same code as last slide
+fn main() {
+  let log_file: Option<PathBuf> = //...
+
+  // Create a trait object on heap that impl. `Write`
+  let logger: Box<dyn Write> = match log_file {
+    Some(log_file) => Box::new(FileLogger{log_file}),
+    None => Box::new(StdOutLogger),
+  };
+
+  log("Hello, world!🦀", &mut logger);
+}
+```
+
+:::
+
+:::{.column width="45%" .p-no-margin}
+
+![](${meta:include-base-dir}/assets/images/A1-trait-object-layout-heap.svgbob){.svgbob}
+
+:::
+
+::::::
+
+::: incremental
+
+- 💸 **Cost**: same as before.
+- 💰 **Benefit**: same as before.
+- 💻 **Memory**: `logger` is a smart-pointer where the data and vtable is on the
+  **heap** (dyn. mem. allocation  🐌, **this is fine 99% time**)
+
+:::
+
+::: notes
+
+A boxed dyn. Trait is totally fine and most of the time easier to deal with in
+code. The dynamic memory allocation should not be your premature optimization
+point! The pointer indirection is the same as in the stack-based dynamic
+dispatch, do not think about this, it is 80% premature optimization. Except you
+are in a very very very hot loop where you do dynamic dispatch always, then
+think about it, in all other cases dont!.
+
+:::
+
 ---
 
 ## Fixing Dynamic Logger
 
-- Trait objects `&dyn T`, `Box<dyn T>`, ... implement `T`!
+- Trait objects `&dyn Trait`, `Box<dyn Trait>`, ... implement `Trait`!
 
-```rust {line-numbers="all|9-12|1-2"}
-// We no longer require L be `Sized`, so to accept trait objects
+```rust {line-numbers="all|9-13|1-4"}
+// L no longer must be `Sized`, so to accept trait objects.
 fn log<L: Write + ?Sized>(entry: &str, logger: &mut L) {
     write!(logger, "{}", entry);
 }
@@ -277,23 +550,24 @@ fn main() {
 
     // Create a trait object that implements `Write`
     let logger: &mut dyn Write = match log_file {
-        Some(log_path) => &mut FileLogger { log_path },
+        Some(log_file) => &mut FileLogger { log_file },
         None => &mut StdOutLogger,
     };
-
     log("Hello, world!🦀", logger);
 }
 ```
 
 And all is well!
+[Live Stack Dyn. Dispatch](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=2f631621994c6a685ecad19c59704647),
+[Live Heap Dyn. Dispatch](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=cf8fdfe6a4b6672a938db4834bc83ace).
 
 ---
 
 ## Forcing Dynamic Dispatch
 
-Sometimes you want to enforce API users (or colleagues) to use dynamic dispatch
+If you want to enforce API users (or colleagues) to use dynamic dispatch:
 
-```rust {line-numbers="all|1"}
+```rust
 fn log(entry: &str, logger: &mut dyn Write) {
     write!(logger, "{}", entry);
 }
@@ -303,10 +577,9 @@ fn main() {
 
     // Create a trait object that implements `Write`
     let logger: &mut dyn Write = match log_file {
-        Some(log_path) => &mut FileLogger { log_path },
+        Some(log_file) => &mut FileLogger { log_file },
         None => &mut StdOutLogger,
     };
-
 
     log("Hello, world!🦀", &mut logger);
 }
@@ -314,7 +587,7 @@ fn main() {
 
 ---
 
-## Fixing the Renderer
+## Heterogeneous Collection on the Heap
 
 ::::::{.columns}
 
@@ -360,6 +633,19 @@ All set!
 
 ---
 
+## Heterogeneous Collection on the Stack 🍭
+
+```rust
+fn main() {
+    let shapes: [&dyn Render; 2] = [&Circle {}, &Rectangle {}];
+    shapes.iter().for_each(|shape| shape.paint());
+}
+```
+
+All set!
+
+---
+
 ## Trait Object Limitations
 
 - Pointer indirection cost.
@@ -376,8 +662,8 @@ All set!
 
 A trait is **object safe** when it fulfills:
 
-- If `trait T: Y`, then`Y` must be object safe.
 - Trait `T` must not be `Sized`: _Why?_
+- If `trait T: Y`, then`Y` must be object safe.
 - No associated constants allowed.
 - No associated types with generic allowed.
 - All associated functions must either be dispatchable from a trait object, or
@@ -392,7 +678,7 @@ These seem to be compiler limitations.
 
 ---
 
-## So far...
+## Trait Object Summary
 
 - Trait objects allow for dynamic dispatch and heterogeneous containers.
 - Trait objects introduce pointer indirection.
