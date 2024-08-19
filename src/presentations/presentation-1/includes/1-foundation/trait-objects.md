@@ -262,19 +262,19 @@ fn main() {
 
 ---
 
-## Fixing dynamic logger
+## Fixing Dynamic Logger
 
 - Trait objects `&dyn T`, `Box<dyn T>`, ... implement `T`!
 
-```rust{all|9-12|1-2}
+```rust {line-numbers="all|9-12|1-2"}
 // We no longer require L be `Sized`, so to accept trait objects
 fn log<L: Write + ?Sized>(entry: &str, logger: &mut L) {
     write!(logger, "{}", entry);
 }
 
 fn main() {
-    let log_file: Option<PathBuf> =
-        todo!("read args");
+    let log_file: Option<PathBuf> = // ...
+
     // Create a trait object that implements `Write`
     let logger: &mut dyn Write = match log_file {
         Some(log_path) => &mut FileLogger { log_path },

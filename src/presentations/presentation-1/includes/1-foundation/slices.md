@@ -170,7 +170,8 @@ Finished dev [unoptimized + debuginfo] target(s) in 0.89s
 
 ::: incremental
 
-- `[T]` is an **incomplete type**: we need to know how many `T`s there are.
+- `[T]` is an **incomplete type**: we need to know how many **of `T`s** there
+  are.
 
 - Types with known compile-time size implement the `Sized` trait, raw slices
   **do not**.
