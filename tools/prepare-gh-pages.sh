@@ -64,6 +64,8 @@ if is_ci; then
     # Commit onto publish.
     echo "Removing old version from 'publish'..."
     git checkout publish
+    git pull origin publish
+
     rm -rf "$target" || true
     git add -f "$target" &&
         git commit -a -m "fix: remove old version"
