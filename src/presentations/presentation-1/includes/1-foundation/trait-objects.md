@@ -289,18 +289,18 @@ And all is well!
 
 ---
 
-## Forcing dynamic dispatch
+## Forcing Dynamic Dispatch
 
 Sometimes you want to enforce API users (or colleagues) to use dynamic dispatch
 
-```rust{all|1}
+```rust {line-numbers="all|1"}
 fn log(entry: &str, logger: &mut dyn Write) {
     write!(logger, "{}", entry);
 }
 
 fn main() {
-    let log_file: Option<PathBuf> =
-        todo!("read args");
+    let log_file: Option<PathBuf> = // ...
+
     // Create a trait object that implements `Write`
     let logger: &mut dyn Write = match log_file {
         Some(log_path) => &mut FileLogger { log_path },
@@ -314,49 +314,65 @@ fn main() {
 
 ---
 
-## Fixing the renderer
+## Fixing the Renderer
+
+::::::{.columns}
+
+:::{.column width="50%"}
 
 ```rust
 fn main() {
     let mut shapes = Vec::new();
+
     let circle = Circle;
     shapes.push(circle);
+
     let rect = Rectangle;
     shapes.push(rect);
+
     shapes.iter().for_each(|shape| shape.paint());
 }
 ```
 
-<v-click>
-Becomes
+:::
+
+:::{.column width="50%" .fragment}
 
 ```rust{all|2,3,5}
 fn main() {
     let mut shapes: Vec<Box<dyn Render>> = Vec::new();
+
     let circle = Box::new(Circle);
     shapes.push(circle);
+
     let rect = Box::new(Rectangle);
     shapes.push(rect);
+
     shapes.iter().for_each(|shape| shape.paint());
 }
 ```
 
-All set! </v-click>
+:::
+
+::::::
+
+All set!
 
 ---
 
-## Trait object limitations
+## Trait Object Limitations
 
-- Pointer indirection cost
-- Harder to debug
-- Type erasure
-- Not all traits work:
+- Pointer indirection cost.
+- Harder to debug.
+- Type erasure (you need a trait).
 
-_Traits need to be 'Object Safe'_
+- Not **all traits** work:
+
+  _Traits need to be 'Object Safe'_
 
 ---
 
-## Object safety
+## Object Safety
 
 In order for a trait to be object safe, these conditions need to be met:
 
