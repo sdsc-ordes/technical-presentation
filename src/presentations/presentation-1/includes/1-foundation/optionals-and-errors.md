@@ -46,7 +46,7 @@ A quick look into the
 
 ::: incremental
 
-- Rust does not have `null` (out of a reason 🤬 💣 🐞).
+- Rust does not have `null` (for good reasons: 🤬 💣 🐞).
 - For types which do not have a value: use **`Option<T>`**.
 
 :::
