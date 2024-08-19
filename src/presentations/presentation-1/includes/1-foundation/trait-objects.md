@@ -164,7 +164,7 @@ fn main() {
   shapes.push(rect);
 
   shapes.iter()
-        .for_each(|shape| shape.paint());
+        .for_each(|s| s.paint());
 }
 ```
 
@@ -603,7 +603,8 @@ fn main() {
     let rect = Rectangle;
     shapes.push(rect);
 
-    shapes.iter().for_each(|shape| shape.paint());
+    shapes.iter()
+          .for_each(|s| s.paint());
 }
 ```
 
@@ -621,7 +622,8 @@ fn main() {
     let rect = Box::new(Rectangle);
     shapes.push(rect);
 
-    shapes.iter().for_each(|shape| shape.paint());
+    shapes.iter()
+          .for_each(|s| s.paint());
 }
 ```
 
