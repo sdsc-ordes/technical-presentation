@@ -482,7 +482,7 @@ performant -> this is 100% premature optimization!
 
 ---
 
-## Heap-Based Dynamic Dispatch
+## Dynamic Dispatch on the Heap
 
 ::::::{.columns}
 
@@ -611,7 +611,7 @@ fn main() {
 
 :::{.column width="50%" .fragment}
 
-```rust{all|2,3,5}
+```rust{line-numbers="all|2,3,5"}
 fn main() {
     let mut shapes: Vec<Box<dyn Render>> = Vec::new();
 
