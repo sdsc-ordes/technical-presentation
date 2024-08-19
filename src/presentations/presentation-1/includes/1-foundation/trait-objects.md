@@ -368,32 +368,32 @@ All set!
 
 - Not **all traits** work:
 
-  _Traits need to be 'Object Safe'_
+  [**Traits need to be _Object Safe_ **]{.emph}
 
 ---
 
 ## Object Safety
 
-In order for a trait to be object safe, these conditions need to be met:
+A trait is **object safe** when it fulfills:
 
-- If `trait T: Y`, then`Y` must be object safe
-- trait `T` must not be `Sized`: _Why?_
-- No associated constants allowed\*
-- No associated types with generic allowed\*
+- If `trait T: Y`, then`Y` must be object safe.
+- Trait `T` must not be `Sized`: _Why?_
+- No associated constants allowed.
+- No associated types with generic allowed.
 - All associated functions must either be dispatchable from a trait object, or
-  explicitly non-dispatchable
+  explicitly non-dispatchable:
   - e.g. function must have a receiver with a reference to `Self`
 
 Details in
 [The Rust Reference](https://doc.rust-lang.org/reference/items/traits.html#object-safety).
 Read them!
 
-\*These seem to be compiler limitations
+These seem to be compiler limitations.
 
 ---
 
 ## So far...
 
-- Trait objects allow for dynamic dispatch and heterogeneous
-- Trait objects introduce pointer indirection
-- Traits need to be object safe to make trait objects out of them
+- Trait objects allow for dynamic dispatch and heterogeneous containers.
+- Trait objects introduce pointer indirection.
+- Traits need to be object safe to make trait objects out of them.
