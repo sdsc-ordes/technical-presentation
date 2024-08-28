@@ -6,7 +6,7 @@
 
 - Shared behavior
 
-```rust {line-numbers="all|13-14"}
+```rust {line-numbers="13-14"}
 use std::ops::Add;
 pub struct BigNumber(u64);
 
@@ -16,7 +16,6 @@ impl Add for BigNumber {
       BigNumber(self.0 + rhs.0)
   }
 }
-
 fn main() {
   // Now we can use `+` to add `BigNumber`s!
   let res: BigNumber = BigNumber(1) + (BigNumber(2));
@@ -52,7 +51,7 @@ Others:
 
 ---
 
-## Default values: `std::default::Default`
+## Default Values: `std::default::Default`
 
 ```rust{line-numbers="all|5|10-17"}
 pub trait Default: Sized {
@@ -150,8 +149,8 @@ pub trait AsMut<T: ?Sized>
 
 ## Reference Conversion: `AsRef<T>` & `AsMut<T>` (2)
 
-```rust {line-numbers="all|1-2|10-11|13-14"}
-fn pass_ownership_and_print<T: AsRef<[u8]>>(slice: T) {
+```rust {line-numbers="1-2|9-10|12-13"}
+fn move_into_and_print<T: AsRef<[u8]>>(slice: T) {
   let bytes: &[u8] = slice.as_ref();
   for byte in bytes {
     print!("{:02X}", byte);
@@ -160,15 +159,15 @@ fn pass_ownership_and_print<T: AsRef<[u8]>>(slice: T) {
 
 fn main() {
   let owned_bytes: Vec<u8> = vec![0xDE, 0xAD, 0xBE, 0xEF];
-  pass_ownership_and_print(owned_bytes);
+  move_into_and_print(owned_bytes);
 
   let byte_slice: [u8; 4] = [0xFE, 0xED, 0xC0, 0xDE];
-  pass_ownership_and_print(byte_slice);
+  move_into_and_print(byte_slice);
 }
 ```
 
-_Have user of `pass_ownership_and_print` choose between stack local `[u8; N]`
-and heap-allocated `Vec<u8>`_
+_Have user of `move_into_and_print` choose between stack local `[u8; N]` and
+heap-allocated `Vec<u8>`_
 
 ---
 
@@ -188,21 +187,17 @@ pub trait Drop {
 
 ::::::{.columns}
 
-:::{.column width="50%"}
+:::{.column width="55%"}
 
-```rust {line-numbers="all|1-7|9-17|19-22"}
+```rust {line-numbers="1-2|4-8|9-13|17"}
 struct Inner;
+struct Outer { inner: Inner }
 
 impl Drop for Inner {
   fn drop(&mut self) {
     println!("Dropped inner");
   }
 }
-
-struct Outer {
-  inner: Inner,
-}
-
 impl Drop for Outer {
   fn drop(&mut self) {
     println!("Dropped outer");
@@ -217,7 +212,7 @@ fn main() {
 
 :::
 
-:::{.column width="50%"}
+:::{.column width="45%"}
 
 **Output**:
 
@@ -226,7 +221,7 @@ Dropped outer
 Dropped inner
 ```
 
-- Destructor runs _before_ members are removed from stack
+- Destructor runs _before_ members are removed from stack.
 - Signature `&mut` prevents explicitly dropping `self` or its fields in
   destructor.
 - Compiler inserts `std::mem::drop` call at end of scope
@@ -270,7 +265,7 @@ There is more:
 
 ## Std-Traits and the Orphan Rule
 
-When you **provide a type**, always implement the basic traits\*\* from the
+When you **provide a type**, **always** implement the basic traits from the
 standard if they are appropriate, e.g.
 
 ::: incremental

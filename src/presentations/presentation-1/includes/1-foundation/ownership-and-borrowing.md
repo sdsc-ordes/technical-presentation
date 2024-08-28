@@ -99,9 +99,9 @@ fn get_length(s: &String) -> usize {
 
 ---
 
-## References (read, immutable)
+## Shared References
 
-Create a **read-only** reference `&`:
+Create a _shared_ (**read-only** or immutable) reference `&`:
 
 <!-- prettier-ignore-start -->
 
@@ -156,9 +156,9 @@ try `rustc --explain E0596`.
 
 ---
 
-## References (write, mutable)
+## Exclusive References
 
-Create a **write** reference `&`:
+Create an _exclusive_ (**writable** or mutable) reference `&mut`:
 
 <!-- prettier-ignore-start -->
 
@@ -278,6 +278,30 @@ To any value, you can either have **at the same time**:
 :::
 
 ---
+
+## Borrow Checker's Scope
+
+::::::{.columns}
+
+:::{.column width="50%" .p-no-margin}
+
+![BorrowChecker's Scope](${meta:include-base-dir}/assets/images/A1-borrow-checkers-scope.svgbob){.svgbob
+#fig:borrow-checkers-scope}
+
+:::
+
+:::{.column width="50%"}
+
+- There are different facilities in Rust to work around some limitations of the
+  borrow checker (_Interior Mutability_ (later)).
+
+:::
+
+::::::
+
+::: notes
+
+:::
 
 ## Reference Example
 

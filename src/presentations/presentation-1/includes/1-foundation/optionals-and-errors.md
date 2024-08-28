@@ -330,23 +330,45 @@ fn can_fail() -> Result<i64, DivideError> {
 
 ## The Magic `?` Operator {auto-animate="true"}
 
-```rust {data-id="operator" line-numbers=""}
+::::::{.columns}
+
+:::{.column width="50%"}
+
+```rust
 fn can_fail() -> Result<i64, DivideError> {
-  let a = divide(10, 0)?;
-  Ok(divide(a, 0)? * 2)
+  let res = match divide(10, 0) {
+    Ok(v) => v,
+    Err(e) => return Err(e),
+  };
+
+  match divide(res, 0) {
+    Ok(v) => Ok(v * 2),
+    Err(e) => Err(e),
+  }
 }
 ```
 
----
+:::
 
-## The Magic `?` Operator {auto-animate="true"}
+:::{.column width="50%"}
 
-```rust {data-id="operator" line-numbers=""}
+```rust {data-id="operator" line-numbers="2|7"}
 fn can_fail() -> Result<i64, DivideError> {
-  let a = divide(10, 0)?;
-  Ok(divide(a, 0)? * 2)
+  let res = divide(10, 0)?;
+
+
+
+
+  Ok(divide(res, 0)? * 2)
+
+
+
 }
 ```
+
+:::
+
+::::::
 
 - The `?` operator does an _implicit match_:
 

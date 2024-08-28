@@ -6,7 +6,23 @@
 
 ## Put it in a `Box`
 
-That pointer from the stack to the heap, how do we create such a thing?
+[`Box<T>`](https://doc.rust-lang.org/std/boxed/struct.Box.html) will allocate a
+type `T` on the heap and wrap the pointer underneath:
+
+::::::{.columns}
+
+:::{.column width="50%"}
+
+```rust
+fn main() {
+  // Put an integer on the heap
+  let boxed_int: Box<i64> = Box::new(10);
+}
+```
+
+:::
+
+:::{.column width="50%"}
 
 ::: {.center-content .p-no-margin}
 
@@ -15,22 +31,19 @@ That pointer from the stack to the heap, how do we create such a thing?
 
 :::
 
-::: incremental
+:::
+
+::::::
 
 - 🧰 **Boxing**: Store a type `T` on the heap.
 
-- 👑 `Box` **uniquely owns** that value. Nobody else does.
+::: incremental
 
+- 👑 `Box` **uniquely owns** that value. Nobody else does.
+- 🧺 A `Box` variable will deallocate the memory when out-of-scope.
 - 🚂 Move semantics apply to a `Box`. Even if the type inside the box is `Copy`.
 
 :::
-
-```rust {.fragment}
-fn main() {
-  // Put an integer on the heap
-  let boxed_int = Box::new(10);
-}
-```
 
 ---
 
@@ -42,7 +55,7 @@ Reasons to box a type `T` on the heap:
 
 - When something is too large to move around ⏱️.
 
-- Need something dynamically sized.
+- Need something dynamically sized (`dyn Trait` later).
 
 - For writing recursive data structures:
 

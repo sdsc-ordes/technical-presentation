@@ -66,7 +66,7 @@ We need to provide information to the compiler:
 ::: incremental
 
 - Tell Rust what `T` can do.
-- Tell Rust what `T` is accepted.
+- Tell Rust which types for `T` are accepted.
 - Tell Rust how `T` implements functionality.
 
 :::
@@ -115,13 +115,15 @@ type Add interface {
 
 ::::::
 
+::: notes Traits are **not** types! :::
+
 ---
 
 ## Implementing a `trait`
 
 Describe how the type does it
 
-```rust {line-numbers="all|1|2-8"}
+```rust {line-numbers="2-4"}
 impl Add for u32 {
     fn add(&self, other: &Self) -> Self {
       *self + *other
@@ -133,7 +135,11 @@ impl Add for u32 {
 
 ## Using a `trait`
 
-```rust {line-numbers="all|1-2|5-6|7-9|10-12"}
+::::::{.columns}
+
+:::{.column width="50%"}
+
+```rust {line-numbers="1-2|5-6|7-8|9-10"}
 // Import the trait
 use my_mod::Add
 
@@ -147,35 +153,57 @@ fn main() {
 }
 ```
 
+:::
+
+:::{.column style="align-content:center; width:50%"}
+
 - Trait needs to be in scope.
 - Call just like a method.
 - Or by using the explicit associated function syntax.
+
+:::
+
+::::::
 
 ---
 
 ## Trait Bounds
 
-```rust {line-numbers="all|1-3,5|5,7-11"}
-fn add_values<T: Add>(this: &T, other: &T) -> T {
+::::::{.columns}
+
+:::{.column width="55%"}
+
+```rust {line-numbers="1-2|5-7|13-14"}
+fn add_values<T: Add>(this: &T,
+                      other: &T) -> T {
   this.add(other)
 }
-
-// Or, equivalently
-
-fn add_values<T>(this: &T, other: &T) -> T
+// or, equivalently
+fn add_values<T>(this: &T,
+                 other: &T) -> T
   where T: Add
+{
+  this.add(other)
+}
+// or shorthand with `impl Trait`
+fn add_values(this: &impl Add,
+              other: &impl Add) -> impl Add
 {
   this.add(other)
 }
 ```
 
-::: incremental
+:::
+
+:::{.column style="width:45%; align-content:center;"}
 
 - We've got a _useful_ generic function!
 
-- English: _"For all types `T` that implement the `Add` `trait`, we define..."_
+- English: _"For all types `T` that implement the `Add` trait, we define..."_
 
 :::
+
+::::::
 
 ---
 
@@ -192,7 +220,7 @@ What happens if...
 
 Generalize on the input type `O`:
 
-```rust {line-numbers="all|1-3|5-9"}
+```rust {line-numbers="1-3|5-9"}
 trait Add<O> {
     fn add(&self, other: &O) -> Self;
 }
@@ -210,12 +238,8 @@ We can now add a `u16` to a `u32`.
 
 ## Defining Output of `Add`
 
-::: incremental
-
 - Addition of two given types always yields one **specific type of output**.
 - Add _associated type_ for addition output.
-
-:::
 
 ::::::{.columns}
 
@@ -223,7 +247,7 @@ We can now add a `u16` to a `u32`.
 
 **Declaration**
 
-```rust {line-numbers="all|2-3"}
+```rust {line-numbers="2|3"}
 trait Add<O> {
   type Out;
   fn add(&self, other: &O) -> Self::Out;
@@ -236,7 +260,7 @@ trait Add<O> {
 
 **Implementation**
 
-```rust {line-numbers="all|1,9|4-6"}
+```rust {line-numbers="1,9|4-6"}
 impl Add<u16> for u32 {
   type Out = u64;
 
@@ -256,7 +280,7 @@ impl Add<u16> for u32 {
 
 The way `std` does it
 
-```rust {line-numbers="all|1|2-4"}
+```rust {line-numbers="1|2-4"}
 pub trait Add<Rhs = Self> {
     type Output;
 
@@ -320,35 +344,64 @@ fn main() {
 
 ::: {.column width="50%"}
 
-#### Type Parameter
+#### Use Type Parameter
 
-_if trait can be implemented for many combinations of types_
+_if trait can be implemented for **many combinations of types**_
 
 ```rust
-// We can add both a u32 value and
-// a u32 reference to a u32
 impl Add<u32> for u32 {/* */}
-impl Add<&u32> for u32 {/* */}
+impl Add<i64> for u32 {/* */}
 ```
 
 :::
 
 :::{.column width="50%"}
 
-#### Associated Type
+#### Use Associated Type
 
-_to define a type for a single <br> implementation_
+to define a type **internal** to the trait, which the **implementer chooses**:
 
 ```rust
 impl Add<u32> for u32 {
   // Addition of two u32's is always u32
-  type MyBananaOut = u32;
+  type Out = u32;
 }
 ```
 
 :::
 
 ::::::
+
+::: notes
+
+- The implementer chooses the associated type `Out` in `Add`.
+- The caller which writes a generic function using this `Add` trait does not
+  need to specify `Out` its defined at the implementations place.
+
+:::
+
+---
+
+## Example - Associated Types
+
+```rust
+trait Distance {
+    type Scalar;
+
+    fn distance(&self, a: &Self::Scalar, b: &Self::Scalar) -> bool;
+    fn first(&self) -> &Self::Scalar;
+    fn last(&self) -> &Self::Scalar;
+}
+
+// The caller specifying a bound does not need to
+// specify the `Scalar`.
+fn distance<T: Distance>(container: &T) -> bool {
+    container.distance(container.first(), container.last())
+}
+```
+
+[If we would have chosen `trait Distance<A, B>`](https://doc.rust-lang.org/rust-by-example/generics/assoc_items/the_problem.html)
+instead, the types `A`, `B` need to be provided everywhere its used.
 
 ---
 
@@ -392,8 +445,8 @@ Trait can be implemented for a type **iff**:
 
 ::: incremental
 
-- Either your crate (library) defines the trait
-- or your crate (library) defines the type
+- Either **your crate** (library) defines the trait
+- or **your crate** (library) defines the type
 - or both.
 
 :::

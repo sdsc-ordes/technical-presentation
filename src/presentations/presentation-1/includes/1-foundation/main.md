@@ -9,6 +9,9 @@ ${meta:include-base-dir}/includes/1-foundation/impl-blocks.md
 ${meta:include-base-dir}/includes/1-foundation/optionals-and-errors.md
 ${meta:include-base-dir}/includes/1-foundation/vec.md
 ${meta:include-base-dir}/includes/1-foundation/slices.md
+
+${meta:include-base-dir}/includes/1-foundation/recap-1.md
+
 ${meta:include-base-dir}/includes/1-foundation/smart-pointers.md
 ${meta:include-base-dir}/includes/1-foundation/traits-generics.md
 ${meta:include-base-dir}/includes/1-foundation/std-traits.md
