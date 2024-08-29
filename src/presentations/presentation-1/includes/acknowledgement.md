@@ -2,7 +2,7 @@
 
 Thanks to the following contributors who fixed typos and mistakes:
 
-- [Sabine Maennel](mailto:sabine.maennel@sdsc.ethz.ch)
+- The ORDES Team at SDSC, who helped me in fixing typos/bugs.
 
 External:
 

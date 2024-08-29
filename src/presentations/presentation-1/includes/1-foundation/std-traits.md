@@ -2,11 +2,13 @@
 
 ---
 
-## Operator Overloading: `std::ops::Add<T>` et al.
+## Operator Overloading
+
+#### `std::ops::Add<T>` et al.
 
 - Shared behavior
 
-```rust {line-numbers="13-14"}
+```rust {line-numbers="12"}
 use std::ops::Add;
 pub struct BigNumber(u64);
 
@@ -18,7 +20,7 @@ impl Add for BigNumber {
 }
 fn main() {
   // Now we can use `+` to add `BigNumber`s!
-  let res: BigNumber = BigNumber(1) + (BigNumber(2));
+  let res: BigNumber = BigNumber(1) + BigNumber(2);
 }
 ```
 
@@ -26,7 +28,9 @@ fn main() {
 
 ---
 
-## Markers: `std::marker::Sized`
+## Markers
+
+#### `std::marker::Sized`
 
 - Marker traits
 
@@ -51,14 +55,16 @@ Others:
 
 ---
 
-## Default Values: `std::default::Default`
+## Default Values
 
-```rust{line-numbers="all|5|10-17"}
+#### `std::default::Default`
+
+```rust{line-numbers="5|10-17"}
 pub trait Default: Sized {
     fn default() -> Self;
 }
 
-##[derive(Default)] // Derive the trait
+#[derive(Default)] // Derive the trait
 struct MyCounter {
   count: u32,
 }
@@ -73,9 +79,11 @@ impl Default for MyCounter {
 
 ---
 
-## Duplication: `std::clone::Clone` & `std::marker::Copy`
+## Duplication
 
-```rust {line-numbers="all|9|4-6"}
+#### `std::clone::Clone` & `std::marker::Copy`
+
+```rust {line-numbers="9|4-6"}
 pub trait Clone: Sized {
     fn clone(&self) -> Self;
 
@@ -98,9 +106,15 @@ pub trait Copy: Clone { } // That's it!
 
 ---
 
-## Conversion: `Into<T>` & `From<T>`
+## Conversions
 
-```rust {line-numbers="all|1-3|5-7|9-15"}
+#### `Into<T>` & `From<T>`
+
+::::::{.columns}
+
+:::{.column width="50%"}
+
+```rust {line-numbers="1-3|5-7|9-15"}
 pub trait From<T>: Sized {
     fn from(value: T) -> Self;
 }
@@ -118,6 +132,10 @@ impl <T, U> Into<U> for T
 }
 ```
 
+:::
+
+:::{.column style="width:50%; align-content:center;"}
+
 ::: incremental
 
 - Blanket implementation.
@@ -125,9 +143,15 @@ impl <T, U> Into<U> for T
 
 :::
 
+:::
+
+::::::
+
 ---
 
-## Reference Conversion: `AsRef<T>` & `AsMut<T>`
+## Reference Conversion
+
+#### `AsRef<T>` & `AsMut<T>`
 
 ```rust
 pub trait AsRef<T: ?Sized>
@@ -147,7 +171,9 @@ pub trait AsMut<T: ?Sized>
 
 ---
 
-## Reference Conversion: `AsRef<T>` & `AsMut<T>` (2)
+## Reference Conversion (2)
+
+#### `AsRef<T>` & `AsMut<T>`
 
 ```rust {line-numbers="1-2|9-10|12-13"}
 fn move_into_and_print<T: AsRef<[u8]>>(slice: T) {

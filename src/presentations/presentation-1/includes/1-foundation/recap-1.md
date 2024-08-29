@@ -10,6 +10,24 @@
 
 ---
 
+## Recap 1 - `Option` & `Result` & `?`
+
+```rust
+enum Option<T> {
+  Some(T),
+  None,
+}
+
+enum Result<R, E> {
+  Ok(R),
+  Err(E),
+}
+```
+
+- [Magic Operator](http://localhost:3000/#/the-magic-operator/1)
+
+---
+
 ## Recap - Borrow Checker
 
 - [The borrow Checkers Scope](#borrow-checkers-scope).

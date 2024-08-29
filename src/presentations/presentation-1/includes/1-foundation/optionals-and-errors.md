@@ -314,12 +314,12 @@ There is a special operator associated with `Result`, the
 
 ```rust {data-id="operator" .fragment line-numbers="all|2-4|7-10"}
 fn can_fail() -> Result<i64, DivideError> {
-  let res = match divide(10, 0) {
+  let num: i32 = match divide(10, 1) {
     Ok(v) => v,
     Err(e) => return Err(e),
   };
 
-  match divide(res, 0) {
+  match divide(num, 2) {
     Ok(v) => Ok(v * 2),
     Err(e) => Err(e),
   }
@@ -336,12 +336,12 @@ fn can_fail() -> Result<i64, DivideError> {
 
 ```rust
 fn can_fail() -> Result<i64, DivideError> {
-  let res = match divide(10, 0) {
+  let num: i32 = match divide(10, 1) {
     Ok(v) => v,
     Err(e) => return Err(e),
   };
 
-  match divide(res, 0) {
+  match divide(num, 2) {
     Ok(v) => Ok(v * 2),
     Err(e) => Err(e),
   }
@@ -354,12 +354,12 @@ fn can_fail() -> Result<i64, DivideError> {
 
 ```rust {data-id="operator" line-numbers="2|7"}
 fn can_fail() -> Result<i64, DivideError> {
-  let res = divide(10, 0)?;
+  let num = divide(10, 1)?;
 
 
 
 
-  Ok(divide(res, 0)? * 2)
+  Ok(divide(num, 2)? * 2)
 
 
 

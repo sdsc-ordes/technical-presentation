@@ -31,3 +31,6 @@
 
 - [**Rustling**](https://rustlings.cool/): More exercises. We also use some of
   these in our exercises.
+
+- [**Library Best-Practices**](https://blessed.rs/crates#section-common-subsection-error-handling):
+  For every use case there is a good library out there.

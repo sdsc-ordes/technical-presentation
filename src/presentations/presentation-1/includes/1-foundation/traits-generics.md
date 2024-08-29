@@ -393,6 +393,9 @@ trait Distance {
     fn last(&self) -> &Self::Scalar;
 }
 
+// Implement Distance for some types here ....
+impl Distance for ...
+
 // The caller specifying a bound does not need to
 // specify the `Scalar`.
 fn distance<T: Distance>(container: &T) -> bool {
@@ -400,8 +403,8 @@ fn distance<T: Distance>(container: &T) -> bool {
 }
 ```
 
-[If we would have chosen `trait Distance<A, B>`](https://doc.rust-lang.org/rust-by-example/generics/assoc_items/the_problem.html)
-instead, the types `A`, `B` need to be provided everywhere its used.
+[If we would have chosen `trait Distance<Scalar>`](https://doc.rust-lang.org/rust-by-example/generics/assoc_items/the_problem.html)
+instead, the type `Scalar` need to be provided everywhere its used.
 
 ---
 
