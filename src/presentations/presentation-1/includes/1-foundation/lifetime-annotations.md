@@ -1,4 +1,4 @@
-## Lifetime Annotations
+# Lifetime Annotations
 
 ---
 
@@ -6,15 +6,61 @@
 
 ::: incremental
 
-- References refer to variable.
+- References refer variables (stack-allocated memory).
 
-- Variable has a lifetime:
+- A variable has a lifetime:
+
   - Starts at declaration.
   - Ends at `drop`.
 
+- The barrow checker prevents dangling references (pointing to
+  deallocated/invalid memory 💣).
+
 :::
 
-::: {.fragment}
+---
+
+## Example - Lifetime Scopes
+
+```rust {line-numbers=}
+fn main() {
+    let r;
+
+    {
+        let x = 5;
+        r = &x;
+    }
+
+    println!("r: {r}");
+}
+```
+
+**Question**: Will this compile?
+
+---
+
+## Example - Lifetime Scopes (2)
+
+Variable `r` lives for lifetime `'a` and `x` for `'b`.
+
+```rust {line-numbers="9" .no-compile}
+fn main() {
+    let r;                // ---------+- 'a
+                          //          |
+    {                     //          |
+        let x = 5;        // -+-- 'b  |
+        r = &x;           //  |       |
+    }                     // -+       |
+                          //          |
+    println!("r: {r}");   //          |
+}                         // ---------+
+```
+
+**Answer**: No, `r` points to `x` which is dropped in L9.
+
+---
+
+## Example - Lifetime in Function (1)
 
 **Question**: Will this compile?
 
@@ -29,11 +75,9 @@ fn longer(a: &str, b: &str) -> &str {
 }
 ```
 
-:::
-
 ---
 
-## Lifetimes
+## Example - Lifetime in Function (2)
 
 **Answer**: No. `rustc` needs to know more about `a` and `b`.
 
@@ -84,9 +128,9 @@ try `rustc --explain E0106`.
 
 ## Lifetime Annotations
 
-Solution with lifetime `'l`:
+**Solution**: Provide a **constraint** with a lifetime parameter `'l`:
 
-```rust {line-numbers="1"}
+```rust {line-numbers="1" .does-compile}
 fn longer<'l>(a: &'l str, b: &'l str) -> &'l str {
     if a.len() > b.len() {
         a
@@ -117,8 +161,9 @@ fn longer<'l>(a: &'l str, b: &'l str) -> &'l str {
 
 ::: {.fragment}
 
-**❗: [Annotations do NOT change the lifetime of variables! Their
-scopes do!]{.emph}**<br> They just provide information for the borrow checker.
+**❗[Annotations do NOT change the lifetime of variables. Their
+scopes do.]{.emph}**<br> Annotations are **constraints** to provide information
+to the borrow checker.
 
 :::
 
@@ -130,33 +175,65 @@ scopes do!]{.emph}**<br> They just provide information for the borrow checker.
 
 ## Validating Boundaries
 
-- Lifetime validation is done within function boundaries.
+- Lifetime validation is done within function boundaries (and scopes e.g.
+  `{...}`).
 - No information of calling context is used.
 
-**Question:** Why?
+**Question:** Why no calling context?
+
+[**Answer:** Because its only important to know the lifetime relation between
+**input & output** - the constraint.]{.fragment}
+
+---
+
+## Example - Validating Boundaries
+
+```rust
+fn main() {
+  let x = 3;                       // ------------+- 'a
+  {                                //                 |
+    let y = 10;                    // ------+--- 'b   |
+    let r: &i64 = longest(&x, &y); // --+- 'c     |   |  'l := min('a,'b) => 'l := 'b
+    println!("longest: {r}")       //   |         |   |
+  }                                // --+---------+   |
+}                                  // ----------------+
+```
+
+Borrow checker checks if `r`'s lifetime fulfills `<= 'b`  `'c <= 'b`  ✅.
 
 ---
 
 ## Lifetime Annotations in Types
 
+If references are used in `struct`s, it needs a life-time annotation:
+
 ```rust
-/// A struct that contains a reference to a T
-pub struct ContainsRef<'r, T> {
-  reference: &'r T
+/// A struct that contains a reference.
+pub struct ContainsRef<'r> {
+  ref: &'r i64
 }
 ```
+
+**English:**
+
+:::incremental
+
+- Given an instance `let x: A = ...`, than constraint
+  `lifetime(x.ref) >= lifetime(x)` must hold.
+
+:::
 
 ---
 
 ## Lifetime Elision
 
-Question: "Why haven't I come across this before?"
+**Question**: "Why haven't I come across this before?"
 
-[Answer: "Because of lifetime elision!"]{.fragment}
+[**Answer:** "Because of lifetime elision!"]{.fragment}
 
 ---
 
-### Lifetime Elision
+## Lifetime Elision
 
 Rust compiler has heuristics for eliding lifetime bounds:
 
@@ -184,7 +261,7 @@ Rust compiler has heuristics for eliding lifetime bounds:
 
   ::::::
 
-- If there is exactly one input lifetime position (elided or annotated), that
+- If **exactly one** input lifetime position (elided or annotated), that
   lifetime is assigned to all elided output lifetimes.
 
   ::::::{.columns}
@@ -207,7 +284,7 @@ Rust compiler has heuristics for eliding lifetime bounds:
 
   ::::::
 
-- If there are multiple input lifetime positions, but one of them is `&self` or
+- If **multiple** input lifetime positions, but one of them is `&self` or
   `&mut self`, the lifetime of `self` is assigned to all elided output
   lifetimes.
 
@@ -231,7 +308,7 @@ Rust compiler has heuristics for eliding lifetime bounds:
 
   ::::::
 
-- Otherwise, annotations are needed to satisfy compiler.
+- **Otherwise**, annotations are needed to satisfy compiler.
 
 :::
 

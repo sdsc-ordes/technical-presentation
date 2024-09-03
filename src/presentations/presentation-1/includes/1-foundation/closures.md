@@ -5,7 +5,6 @@
 ## Closures
 
 ```rust
-
 fn main() {
     let z = 42;
     let compute = move |x, y| x + y + z // Whats the type of this?
@@ -35,7 +34,7 @@ fn main() {
 
 ## What is a Closure?
 
-The compiler translates `|x: i64| x * x ` approx. into
+The compiler translates `|x: i64| x * x ` approx. into the following `struct`
 
 ```rust {line-numbers="1"}
 struct SquareFunc {}
@@ -49,7 +48,7 @@ impl SquareFunc {
 
 ---
 
-## What is a Closure? (2)
+## What is a `Fn` Closure?
 
 For a closure with some state:
 
@@ -58,7 +57,7 @@ let z = 43;
 let square_it = |x| x * x + z; // compiler opaque type: approx `SquareIt`.
 ```
 
-approx. into:
+approx. maps to:
 
 ```rust {line-numbers="2"}
 struct SquareIt<'a> {
@@ -80,35 +79,129 @@ The closure by default **captures by reference**.
 
 ---
 
-## What is a Closure? (3)
+## What is a `FnMut` Closure?
 
-For a closure with some **mutable state**:
+A closure with some **mutable state**:
 
-```rust {line-numbers="2"}
-let mut z = 43;
-let square_it = move |x| x * x + z;
-            //  **** -------------- capture by value by default.
-z += 1;
+::::::{.columns}
+
+:::{.column width="50%"}
+
+```rust {line-numbers="2,4,5"}
+fn main() {
+  let mut total: i32 = 0;
+
+  let mut square_it = |x| {
+      total += x * x;
+      x * x
+  };
+
+  square_it(10);
+  assert_eq!(100, total);
+}
 ```
 
-```rust
+:::
+
+:::{.column style="width:50%; align-content:center;"}
+
+approx. maps to:
+
+```rust {line-numbers="6"}
+struct SquareIt<'a>' {
+  total: &'a mut i64
+}
+
+impl SquareIt {
+  fn call(&mut self, x: i64) {
+    self.total += x * x;
+    x * x
+  }
+}
+```
+
+:::
+
+::::::
+
+---
+
+## Capture by Value
+
+Capture by value with `move`:
+
+::::::{.columns}
+
+:::{.column width="60%"}
+
+```rust {line-numbers="2,4"}
+fn main() {
+  let mut total: i32 = 0; // Why `mut` here?
+
+  let mut square_it = move |x| { // => FnMut(i32) -> i32
+      total += x * x;
+      x + x
+  };
+
+  square_it(10);
+  assert_eq!(0, total)
+}
+```
+
+:::
+
+:::{.column width="40%"}
+
+approx. maps to:
+
+```rust {line-numbers="2,6"}
 struct SquareIt {
-  z: i64
+  total: i64
 }
 
 impl SquareIt {
   fn call(&self, x: i64) {
-    x * x + self.z
+    self.total += x * x;
+    x * x
   }
 }
 ```
+
+:::
+
+::::::
 
 ::: notes
 
 Without the `move` the snipped would not compile as you cannot capture immutable
 into the closure and at the same time increment `z`.
 
+You need `mut` because you cannot `move` from a non `mut` value
+
 :::
+
+---
+
+## Example - Quiz
+
+Does it compile? Does it run without panic?
+
+```rust {line-numbers=}
+fn main() {
+    let mut total: i32 = 0;
+
+    let mut square_it = move |x| { // => FnMut(i32) -> i32
+        total += x * x;
+        total + x
+    };
+    total = 9;
+
+    square_it(10);
+    assert_eq!(9, total)
+}
+```
+
+[**Answer:** It compiles and runs fine! `total` is not changed.]{.fragment}
 
 ---
 
@@ -152,13 +245,13 @@ class Fn {
 
 ::: {.p-no-margin}
 
-- `Fn`: can be
+- `Fn`: closures that can be
   - called multiple times **concurrently**
   - borrowed immutable.
-- `FnMut`: can be
+- `FnMut`: closures that can be
   - called multiple times **not concurrently**
   - borrowed mutable.
-- `FnOnce`: can be
+- `FnOnce`: closures that can be
   - called once, it takes ownership of `self`.
 
 :::
