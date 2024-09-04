@@ -6,7 +6,7 @@
 
 ::: incremental
 
-- References refer variables (stack-allocated memory).
+- References refer to variables (stack-allocated memory).
 
 - A variable has a lifetime:
 
@@ -56,7 +56,7 @@ fn main() {
 }                         // ---------+
 ```
 
-**Answer**: No, `r` points to `x` which is dropped in L9.
+**Answer**: No, `r` points to `x` which is dropped in L6.
 
 ---
 
@@ -188,7 +188,7 @@ to the borrow checker.
 
 ## Example - Validating Boundaries
 
-```rust
+```rust {contenteditable="true"}
 fn main() {
   let x = 3;                       // ------------+- 'a
   {                                //                 |

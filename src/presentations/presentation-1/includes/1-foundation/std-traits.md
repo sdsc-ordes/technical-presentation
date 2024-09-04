@@ -325,7 +325,8 @@ Approx. Time: 40-50 min.
 
 Do the following exercises:
 
-- `extension-traits`: a very good one!
+- `traits`: a very good one (moderate to hard)!
+- `extension-traits`: a very good one (moderate to hard)!
 - `local-storage-vec`: ⚠️ Hardcore exercise (spare for later)
 
 **Build/Run/Test:**

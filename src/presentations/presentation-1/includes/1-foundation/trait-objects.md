@@ -258,14 +258,14 @@ know live on the stack).
 
   Type Description: `dyn MyTrait: !Sized`
 
-- Like slices, Trait Objects always live behind pointers (`&dyn MyTrait`,
+- Like slices, trait objects **always live behind pointers** (`&dyn MyTrait`,
   `&mut dyn MyTrait`, `Box<dyn MyTrait>`, `...`).
 
 - Concrete underlying types are erased from trait object.
 
 :::
 
-```rust{line-numbers="all|6-8" .fragment}
+```rust{line-numbers="5|6-8" .fragment}
 fn main() {
   let log_file: Option<PathBuf> = // ...
 
@@ -281,13 +281,14 @@ fn main() {
 
 ## Quiz - Instantiate a Trait?
 
-```rust
+```rust {contenteditable="true"}
 struct A{}
 trait MyTrait { fn show(&self) {}; }
 impl MyTrait for A {}
 
 fn main() {
   let a: MyTrait = A{};
+  let b: dyn MyTrait = A{};
 }
 ```
 
@@ -297,10 +298,15 @@ fn main() {
 
 **Answer: No! - It's invalid code.**
 
-- You can't make a local variable without knowing its size (to allocate enough
-  bytes on the stack), and
-- you can't pass the value of an unsized type into a function as an argument or
-- return it from a function
+::: incremental
+
+- You can't declare a local variable `a`, `MyTrait` **is not a type**.
+- You can't declare `b` as `dyn MyTrait`, because for the type system its
+  `!Sized`  **can't compute size of memory of `b` on the stack**.
+- _Also: You can't pass the value of an unsized type into a function as an
+  argument or return it from a function._
+
+:::
 
 :::
 
@@ -318,9 +324,9 @@ fn main() {
 fn generic_fn<T: Eq>(x: T) -> T { /*..*/ }
 ```
 
-- If `T` is `!Sized`, then the definition of `generic_fn` is incorrect! (why?)
-
 - If `T` is `Sized`, all is OK!.
+
+- If `T` is `!Sized`, then the definition of `generic_fn` is incorrect! (why?)
 
 :::
 
@@ -359,7 +365,7 @@ fn generic_fn<T: Eq + ?Sized>(x: &T) -> u32 { ... }
 
 ::: incremental
 
-- In English: `?Sized` means `T` also allows for dyn. sized types  e.g.
+- In English: `?Sized` means `T` also allows for dyn. sized types (DST)  e.g.
   `T := dyn Eq`.
 
 - So a `x: &dyn Eq` is a reference to a **trait object** which implements
@@ -413,13 +419,13 @@ fn main() {
 
 ::: {.fragment}
 
-**Answer:** ❌ No - `generic_fn` is invalid:
+**Answer:** ❌ No - declaration `generic_fn` is invalid:
 
 ::: incremental
 
--  `T` can be `dyn Eq` which is not `Sized`  compile error.
--  Remember: function parameter go onto the stack!
--  Remember:
+- `T` can **potentially** be `dyn Eq`  leads to `x: dyn Eq` which is not
+  `Sized`  compile error.
+- [**Remember: function parameter go onto the stack!**]{.emph}
 
 :::
 
@@ -565,7 +571,8 @@ And all is well!
 
 ## Forcing Dynamic Dispatch
 
-If you want to enforce API users (or colleagues) to use dynamic dispatch:
+If one wants to enforce API users to use dynamic dispatch, use `&mut dyn Write`
+on `log`:
 
 ```rust
 fn log(entry: &str, logger: &mut dyn Write) {
@@ -593,7 +600,7 @@ fn main() {
 
 :::{.column width="50%"}
 
-```rust
+```rust {.no-compile}
 fn main() {
     let mut shapes = Vec::new();
 
@@ -612,7 +619,7 @@ fn main() {
 
 :::{.column width="50%" .fragment}
 
-```rust{line-numbers="all|2,3,5"}
+```rust{line-numbers="2,3,5" .does-compile}
 fn main() {
     let mut shapes: Vec<Box<dyn Render>> = Vec::new();
 
