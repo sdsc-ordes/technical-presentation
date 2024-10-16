@@ -231,7 +231,7 @@ fn main() {
 
 ## Closure Traits
 
-`Fn`, `FnMut` and `FnOnce` are traits which implement **different behaviors** ff
+`Fn`, `FnMut` and `FnOnce` are traits which implement **different behaviors**
 for **closures**. _The compiler implements the appropriate ones!_
 
 ```mermaid {style="width:80%"}
@@ -393,4 +393,21 @@ impl Graph {
   }
 
 }
+```
+
+## Exercise Time (10)
+
+Approx. Time: 20-60 min.
+
+Do the following exercises:
+
+- `closures`: all
+
+**Build/Run/Test:**
+
+```bash
+just build <exercise> --bin 01
+just run <exercise> --bin 01
+just test <exercise> --bin 01
+just watch [build|run|test|watch] <exercise> --bin 01
 ```

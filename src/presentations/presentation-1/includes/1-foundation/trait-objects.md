@@ -17,17 +17,19 @@ There's more to this story though...
 
 ## Monomorphization (recap)
 
+The [ `Add` ](#the-trait-keyword/1) trait.
+
 ::::::{.columns}
 
 :::{.column width="50%"}
 
 ```rust
-impl MyAdd for i32 {/* ... */}
-impl MyAdd for f32 {/* ... */}
+impl Add for i32 {/* ... */}
+impl Add for f32 {/* ... */}
 
-fn add_values<T: MyAdd>(l: &T, r: &T) -> T
+fn add_values<T: Add>(l: &T, r: &T) -> T
 {
-  l.my_add(r)
+  l.add(r)
 }
 
 fn main() {
@@ -236,7 +238,7 @@ On the surface,
   - Slices: `[T]`, `str`, and others.
 
 - DSTs can be **only** be used (local variable) **through a reference**: `&[T]`,
-  `&str`, `&dyn MyTrait`.
+  `&str`, `&dyn MyTrait` (references are `Sized`).
 
 :::
 
@@ -342,14 +344,25 @@ to have a fixed-size at compile time (also on the stack frame).
 
 ## Generics and `Sized`
 
-- All generic type parameters are **implicitly** `Sized` by default (everywhere
-  `structs`, `fn`s etc.):
+- All **generic type parameters** are **implicitly** `Sized` by default
+  (everywhere `structs`, `fn`s etc.):
 
   For example:
 
   ```rust {.fragment}
   fn generic_fn<T: Eq + Sized>(x: T) -> T { // Sized is obsolete here.
     //...
+  }
+  ```
+
+  or
+
+  ```rust {.fragment}
+  fn generic_fn<T>(x: &T) -> u32
+  where
+      T: Eq + Sized // Sized is obsolete here.
+  {
+    // ...
   }
   ```
 
@@ -413,13 +426,14 @@ Does that compile? Why?/Why not?
 fn generic_fn<T: Eq + ?Sized>(x: T) -> u32 { 42 }
 
 fn main() {
-  generic_fn("hello world")`
+  generic_fn("hello world");
 }
 ```
 
 ::: {.fragment}
 
-**Answer:** ❌ No - declaration `generic_fn` is invalid:
+**Answer:** ❌ No - declaration `generic_fn` is invalid (line 5 is not the
+problem!):
 
 ::: incremental
 
@@ -436,6 +450,50 @@ fn main() {
 The compile error has nothing to do with the call in 5!
 
 :::
+
+## Generics and `?Sized` - Quiz (Tip)
+
+How to print the type `T`?
+
+::::::::{.columns}
+
+:::{.column width="50%"}
+
+```rust
+fn generic_fn<T: Eq>(x: T) -> u32 {
+    42
+}
+
+fn main() {
+    generic_fn("hello world");
+}
+```
+
+:::
+
+:::{.column width="50%" .fragment}
+
+```rust
+fn generic_fn<T: Eq + std::fmt::Display>(x: T) -> u32 {
+    println!(
+      "x: {} = '{x}'",
+      std::any::type_name::<T>());
+
+    42
+}
+
+fn main() {
+    generic_fn("hello world");
+}
+```
+
+```
+x: &str = 'hello world'
+```
+
+:::
+
+::::::
 
 ## Dynamic Dispatch on the Stack
 
@@ -472,7 +530,8 @@ fn main() {
 
 - 💸 **Cost**: pointer indirection via vtable (**dynamic dispatch**)  less
   performant.
-- 💰 **Benefit**: no monomorphization  smaller binary & shorter compile time!
+- 💰 **Benefit**: no monomorphization (generics)  smaller binary & shorter
+  compile time!
 - 💻 **Memory**: `logger` is a **wide-pointer** which lives **only** on the
   **stack**  🚀.
 
@@ -598,39 +657,41 @@ fn main() {
 
 ::::::{.columns}
 
-:::{.column width="50%"}
+:::{.column width="45%"}
 
 ```rust {.no-compile}
 fn main() {
-    let mut shapes = Vec::new();
+  let mut shapes = Vec::new();
 
-    let circle = Circle;
-    shapes.push(circle);
 
-    let rect = Rectangle;
-    shapes.push(rect);
+  let circle = Circle;
+  shapes.push(circle);
 
-    shapes.iter()
-          .for_each(|s| s.paint());
+  let rect = Rectangle;
+  shapes.push(rect);
+
+  shapes.iter()
+        .for_each(|s| s.paint());
 }
 ```
 
 :::
 
-:::{.column width="50%" .fragment}
+:::{.column width="55%" .fragment}
 
-```rust{line-numbers="2,3,5" .does-compile}
+```rust{line-numbers="2,3,5,8" .does-compile}
 fn main() {
-    let mut shapes: Vec<Box<dyn Render>> = Vec::new();
+  let mut shapes: Vec<Box<dyn Render>>
+    = Vec::new();
 
-    let circle = Box::new(Circle);
-    shapes.push(circle);
+  let circle = Box::new(Circle);
+  shapes.push(circle);
 
-    let rect = Box::new(Rectangle);
-    shapes.push(rect);
+  let rect = Box::new(Rectangle);
+  shapes.push(rect);
 
-    shapes.iter()
-          .for_each(|s| s.paint());
+  shapes.iter()
+        .for_each(|s| s.paint());
 }
 ```
 
@@ -684,6 +745,54 @@ Details in
 Read them!
 
 These seem to be compiler limitations.
+
+---
+
+## Non-Object Safe Trait (😱)
+
+```rust {line-numbers="1-4|6|8-13|16-19"}
+trait Fruit {
+  fn create(&self) -> Self;
+  fn show(&self) -> String;
+}
+
+struct Banana { color: i32 }
+
+impl Fruit for Banana {
+  fn create(&self) -> Self { Banana {} }
+
+  fn show(&self) -> String {
+      return format!("banana: color {}", self.color).to_string();
+  }
+}
+
+fn main() {
+    let obj: Box<dyn Fruit> = Box::new(Banana { color: 10 });
+    println!("type: {}", obj.show())
+}
+```
+
+---
+
+## Non-Object Safe Traits (💩)
+
+```text
+The trait `Fruit` cannot be made into an object
+
+22 |     println!("type: {}", obj.show())
+   |                          ^^^^^^^^^^ `Fruit` cannot be made into an object
+
+note: for a trait to be "object safe" it needs to
+      allow building a vtable to allow the call to be
+      resolvable dynamically; for more information
+      visit <https://doc.rust-lang.org/reference/items/traits.html#object-safety>
+
+1  | trait Fruit {
+   |       ----- this trait cannot be made into an object...
+2  |     fn create(&self) -> Self;
+                             ^^^^ ...because method `create`
+                                  references the `Self` type in its return type
+```
 
 ---
 
