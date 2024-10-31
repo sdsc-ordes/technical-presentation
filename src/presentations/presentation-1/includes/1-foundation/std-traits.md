@@ -325,7 +325,8 @@ Approx. Time: 40-50 min.
 
 Do the following exercises:
 
-- `traits`: a very good one (moderate to hard)!
+- `traits`
+- `std-traits`
 - `extension-traits`: a very good one (moderate to hard)!
 - `local-storage-vec`: ⚠️ Hardcore exercise (spare for later)
 
