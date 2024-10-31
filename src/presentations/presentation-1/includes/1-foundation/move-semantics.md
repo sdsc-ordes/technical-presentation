@@ -41,7 +41,11 @@ An executable **binary** (a file on your disk) will be loaded first into the mem
 
 - Two memory mechanisms are at play when executing:
   the **stack** and the **heap**
+
 :::
+
+**Further Technical Videos**:
+[A program is not a process](https://www.youtube.com/watch?v=7ge7u5VUSbE), [Why is the heap so slow](https://www.youtube.com/watch?v=ioJkA7Mw2-U), [Why is the stack so fast](https://www.youtube.com/watch?v=N3o5yHYLviQ).
 
 :::
 ::: {.column .center-content}
