@@ -9,7 +9,7 @@
 - [Rust Workshop Exercises](https://github.com/sdsc-ordes/rust-workshop): These
   are the exercises we do during the workshop.
 
-- [Slides](https://sdsc-ordes.github.io/technical-presentation/gh-pages/rust-workshop):
+- [Slides Source](https://github.com/sdsc-ordes/technical-presentation/tree/gabriel.nuetzi/rust-workshop):
   The slides of this presentation.
 
 ---
