@@ -34,3 +34,5 @@
 
 - [**Library Best-Practices**](https://blessed.rs/crates#section-common-subsection-error-handling):
   For every use case there is a good library out there.
+
+- [**Videos: From Python To Rust**](https://www.youtube.com/@BedroomBuilds/videos)
