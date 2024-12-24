@@ -48,20 +48,21 @@ The syntax\* is similar and as easy to read as in Python.
 ::: {.column width="50%"}
 
 ```rust
+#[derive(Debug)]
 struct Apple {
   name: String
 }
 
 fn grow() -> Vec<Apple> {
 
-  let apples = vec![Apple{"a"},
-                    Apple{"b"}];
+  let apples = vec![Apple{name: "a".to_string()},
+                    Apple{name: "b".to_string()}];
 
-  for b in apples {
+  for b in &apples {
     println!("Apple: {b:?}");
   }
 
-  return apples
+  apples
 }
 ```
 
@@ -83,12 +84,11 @@ def grow() -> List[Apple]:
 
 
   return apples
-
-
 ```
 
 :::
 ::::::
+
 <!-- prettier-ignore-end -->
 
 \*: 80% you will encounter is very readable (except macros etc.).
