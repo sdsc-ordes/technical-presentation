@@ -17,7 +17,7 @@ There's more to this story though...
 
 ## Monomorphization (recap)
 
-The [ `Add` ](#the-trait-keyword/1) trait.
+The [`Add`](#the-trait-keyword/1) trait.
 
 ::::::{.columns}
 
@@ -724,16 +724,16 @@ All set!
 
 - Not **all traits** work:
 
-  [**Traits need to be _Object Safe_ **]{.emph}
+  [**Traits need to be _dyn-compatible_ **]{.emph}
 
 ---
 
-## Object Safety
+## dyn-compatible Objects
 
-A trait is **object safe** when it fulfills:
+A trait is **dyn-compatbile** (formerly "object safe") when it fulfills:
 
 - Trait `T` must not be `Sized`: _Why?_
-- If `trait T: Y`, then`Y` must be object safe.
+- If `trait T: Y`, then`Y` must be dyn-compatible.
 - No associated constants allowed.
 - No associated types with generic allowed.
 - All associated functions must either be dispatchable from a trait object, or
@@ -748,7 +748,7 @@ These seem to be compiler limitations.
 
 ---
 
-## Non-Object Safe Trait (😱)
+## Non-dyn-compatible Trait (😱)
 
 ```rust {line-numbers="1-4|6|8-13|16-19"}
 trait Fruit {
@@ -774,24 +774,24 @@ fn main() {
 
 ---
 
-## Non-Object Safe Traits (💩)
+## Non-dyn-compatible Traits (💩)
 
 ```text
-The trait `Fruit` cannot be made into an object
+error[E0038]: the trait `Fruit` cannot be made into an object
 
-22 |     println!("type: {}", obj.show())
+18 |     println!("type: {}", obj.show())
    |                          ^^^^^^^^^^ `Fruit` cannot be made into an object
 
-note: for a trait to be "object safe" it needs to
+note: for a trait to be "dyn-compatible" it needs to 
       allow building a vtable to allow the call to be
       resolvable dynamically; for more information
       visit <https://doc.rust-lang.org/reference/items/traits.html#object-safety>
 
 1  | trait Fruit {
    |       ----- this trait cannot be made into an object...
-2  |     fn create(&self) -> Self;
-                             ^^^^ ...because method `create`
-                                  references the `Self` type in its return type
+2  |   fn create(&self) -> Self;
+   |                       ^^^^ ...because method `create` references
+                                the `Self` type in its return type
 ```
 
 ---
@@ -800,4 +800,4 @@ note: for a trait to be "object safe" it needs to
 
 - Trait objects allow for dynamic dispatch and heterogeneous containers.
 - Trait objects introduce pointer indirection.
-- Traits need to be object safe to make trait objects out of them.
+- Traits need to be dyn-compatible to make trait objects out of them.
