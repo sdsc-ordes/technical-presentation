@@ -728,9 +728,9 @@ All set!
 
 ---
 
-## dyn-compatible Objects
+## _Dyn-Compatible_ Trait
 
-A trait is **dyn-compatbile** (formerly "object safe") when it fulfills:
+A trait is **dyn-compatible** (formerly _object safe_) when it fulfills:
 
 - Trait `T` must not be `Sized`: _Why?_
 - If `trait T: Y`, then`Y` must be dyn-compatible.
@@ -741,14 +741,14 @@ A trait is **dyn-compatbile** (formerly "object safe") when it fulfills:
   - e.g. function must have a receiver with a reference to `Self`
 
 Details in
-[The Rust Reference](https://doc.rust-lang.org/reference/items/traits.html#object-safety).
+[The Rust Reference](https://doc.rust-lang.org/beta/reference/items/traits.html#dyn-compatibility).
 Read them!
 
 These seem to be compiler limitations.
 
 ---
 
-## Non-dyn-compatible Trait (😱)
+## Non _Dyn-Compatible_ Trait (😱)
 
 ```rust {line-numbers="1-4|6|8-13|16-19"}
 trait Fruit {
@@ -774,7 +774,7 @@ fn main() {
 
 ---
 
-## Non-dyn-compatible Traits (💩)
+## Non _Dyn-Compatible_ Trait (💩)
 
 ```text
 error[E0038]: the trait `Fruit` cannot be made into an object
@@ -782,10 +782,10 @@ error[E0038]: the trait `Fruit` cannot be made into an object
 18 |     println!("type: {}", obj.show())
    |                          ^^^^^^^^^^ `Fruit` cannot be made into an object
 
-note: for a trait to be "dyn-compatible" it needs to 
+note: for a trait to be "dyn-compatible" it needs to
       allow building a vtable to allow the call to be
       resolvable dynamically; for more information
-      visit <https://doc.rust-lang.org/reference/items/traits.html#object-safety>
+      visit <https://doc.rust-lang.org/beta/reference/items/traits.html#dyn-compatibility>
 
 1  | trait Fruit {
    |       ----- this trait cannot be made into an object...
@@ -800,4 +800,4 @@ note: for a trait to be "dyn-compatible" it needs to
 
 - Trait objects allow for dynamic dispatch and heterogeneous containers.
 - Trait objects introduce pointer indirection.
-- Traits need to be dyn-compatible to make trait objects out of them.
+- Traits need to be _dyn-compatible_ to make trait objects out of them.
