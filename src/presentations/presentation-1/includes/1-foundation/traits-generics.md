@@ -435,6 +435,35 @@ fn main() {
 
 ---
 
+## Culprits with `#[derive(Clone)]`
+
+```rust
+struct NonClone{}
+
+#[derive(Clone)]
+struct A<T> { a: Arc<T> }
+
+fn main() {
+  let a = A { a: Arc::new(NonClone{})};
+}
+```
+
+**Question:** Does that compile?
+
+:::::: { .fragment }
+
+**Answer: No but it should.**
+
+::: incremental
+
+- `#[derive(Clone)]` de-sugars into `impl<T> Clone for A<T> where T: Clone`
+  which adds a wrong and unnecessary bound `T: Clone` (maybe that changes in the
+  future).
+
+:::
+
+::::::
+
 ## Orphan Rule
 
 _Coherence: There must be **at most one** implementation of a trait for any
