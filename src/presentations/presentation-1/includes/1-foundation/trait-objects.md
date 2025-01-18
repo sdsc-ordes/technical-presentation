@@ -734,15 +734,16 @@ All set!
 
 When to use what is rarely a clear-cut, but broadly
 
-- **In libraries**, use static dispatch for the user to decide if they want to
+- **In libraries**: use static dispatch for the user to decide if they want to
   pass
 
   - a `let d: &dyn MyTrait` for a signature
-    `fn lib_func(s: impl MyTrait + ?Sized)`.
+    `fn lib_func(s: impl MyTrait + ?Sized)`,
   - or a concrete type `A` which implements `Trait`.
 
-- **For binaries**, you are writing final code, and using dynamic dispatch (no
-  generics) gives cleaner code, faster compile.
+- **For binaries**: you are writing final code  use dynamic dispatch (no
+  generics)  cleaner and faster compilable code with only marginal performance
+  cost.
 
 ---
 
