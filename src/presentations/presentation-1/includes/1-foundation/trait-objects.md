@@ -495,59 +495,9 @@ x: &str = 'hello world'
 
 ::::::
 
-## Dynamic Dispatch on the Stack
-
-::::::{.columns}
-
-:::{.column width="50%"}
-
-```rust {style="font-size:14pt;"}
-/// Same code as last slide
-fn main() {
-  let log_file: Option<PathBuf> = //...
-
-  // Create a trait object that implements `Write`
-  let logger: &mut dyn Write = match log_file {
-    Some(log_file) => &mut FileLogger{log_file},
-    None => &mut StdOutLogger,
-  };
-
-  log(&mut logger, "Hello World!");
-}
-```
-
-:::
-
-:::{.column width="50%" .p-no-margin}
-
-![](${meta:include-base-dir}/assets/images/A1-trait-object-layout.svgbob){.svgbob}
-
-:::
-
-::::::
-
-::: incremental
-
-- 💸 **Cost**: pointer indirection via vtable (**dynamic dispatch**)  less
-  performant.
-- 💰 **Benefit**: no monomorphization (generics)  smaller binary & shorter
-  compile time!
-- 💻 **Memory**: `logger` is a **wide-pointer** which lives **only** on the
-  **stack**  🚀.
-
-:::
-
-::: notes
-
-Its called wide-pointer because you have a pointer to data and a pointer to the
-vtable with the functions. Do not think about the pointer indirection, and less
-performant -> this is 100% premature optimization!
-
-:::
-
 ---
 
-## Dynamic Dispatch on the Heap
+## Dynamic Dispatch on the Heap (idiomatic)
 
 ::::::{.columns}
 
@@ -580,8 +530,10 @@ fn main() {
 
 ::: incremental
 
-- 💸 **Cost**: same as before.
-- 💰 **Benefit**: same as before.
+- 💸 **Cost**: pointer indirection via vtable (**dynamic dispatch**)  less
+  performant.
+- 💰 **Benefit**: no monomorphization (no generics)  smaller binary & shorter
+  compile time!
 - 💻 **Memory**: `logger` is a smart-pointer where the data and vtable is on the
   **heap** (dyn. mem. allocation  🐌, **this is fine 99% time**)
 
@@ -595,6 +547,56 @@ point! The pointer indirection is the same as in the stack-based dynamic
 dispatch, do not think about this, it is 80% premature optimization. Except you
 are in a very very very hot loop where you do dynamic dispatch always, then
 think about it, in all other cases dont!.
+
+:::
+
+---
+
+## Dynamic Dispatch on the Stack (esoteric)
+
+::::::{.columns}
+
+:::{.column width="50%"}
+
+```rust {style="font-size:14pt;"}
+/// Same code as last slide
+fn main() {
+  let log_file: Option<PathBuf> = //...
+
+  // Create a trait object that implements `Write`
+  let logger: &mut dyn Write = match log_file {
+    Some(log_file) => &mut FileLogger{log_file},
+    None => &mut StdOutLogger,
+  };
+
+  log(&mut logger, "Hello World!");
+}
+```
+
+:::
+
+:::{.column width="50%" .p-no-margin}
+
+![](${meta:include-base-dir}/assets/images/A1-trait-object-layout.svgbob){.svgbob}
+
+:::
+
+::::::
+
+::: incremental
+
+- 💸 **Cost**: same as before.
+- 💰 **Benefit**: same as before.
+- 💻 **Memory**: `logger` is a **wide-pointer** which lives **only** on the
+  **stack**  🚀.
+
+:::
+
+::: notes
+
+Its called wide-pointer because you have a pointer to data and a pointer to the
+vtable with the functions. Do not think about the pointer indirection, and less
+performant -> this is 100% premature optimization!
 
 :::
 
@@ -725,6 +727,38 @@ All set!
 - Not **all traits** work:
 
   [**Traits need to be _dyn-compatible_ **]{.emph}
+
+---
+
+## Static Dispatch or Dynamic Dispatch?
+
+When to use what is rarely a clear-cut, but broadly
+
+- **In libraries**, use static dispatch for the user to decide if they want to
+  pass
+
+  - a `let d: &dyn MyTrait` for a signature
+    `fn lib_func(s: impl MyTrait + ?Sized)`.
+  - or a concrete type `A` which implements `Trait`.
+
+- **For binaries**, you are writing final code, and using dynamic dispatch (no
+  generics) gives cleaner code, faster compile.
+
+---
+
+## Static Dispatch or Dynamic Dispatch?
+
+When to use what is rarely a clear-cut, but broadly
+
+- **In libraries**, use static dispatch for the user to decide if they want to
+  pass
+
+  - a `let d: &dyn MyTrait` for a signature
+    `fn lib_func(s: impl MyTrait + ?Sized)`.
+  - or a concrete type `A` which implements `Trait`.
+
+- **For binaries**, you are writing final code, and using dynamic dispatch (no
+  generics) gives cleaner code, faster compile.
 
 ---
 
