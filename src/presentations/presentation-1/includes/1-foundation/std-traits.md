@@ -292,17 +292,21 @@ There is more:
 ## Std-Traits and the Orphan Rule
 
 When you **provide a type**, **always** implement the basic traits from the
-standard if they are appropriate, e.g.
+standard if they are appropriate, e.g. (`>` implies priority)
 
 ::: incremental
 
 - `Default` : Initialize the type with default values.
-- `Debug` : Format trait for the debug format specifier `{:?}`
-- `Display` : Format trait for the empty format specifier `{}`.
-- `Clone`: Cloning the type.
-- `Copy`: _Marker_ trait: The type can be bitwise copied.
+- `Debug` > `Display` : Format trait for debug specifier `{:?}` or non-debug
+  with with `{}`.
+- `Clone`: Cloning the type or bitwise copy.
+- `PartialEq` > `PartialOrd` (and maybe `Eq` > `Ord`).
+- `Hash`: To store the type in `HashMap` etc.
+- `Copy`: **Only implement _marker-trait_ `Copy` if you really need to.**
 
 :::
+
+::: incremental
 
 Other traits for later:
 
@@ -310,10 +314,13 @@ Other traits for later:
 - `Sync` : _Auto_ trait: A value `T` can safely be shared between threads.
 - `Sized` : _Marker_ trait to denote that type `T` is known at compile time
 
+:::
+
 ::: notes
 
 Marker traits do not need an implementation. Auto traits are auto implemented if
-the types fulfills the conditions.
+the types fulfills the conditions. Copy trait changes the semantics of moving
+and removing `Copy` on an exposed type is a backward-incompatible change.
 
 :::
 
