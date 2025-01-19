@@ -278,7 +278,7 @@ fn drop<T>(_x: T) {}
 
 There is more:
 
-- [Comparision](https://google.github.io/comprehensive-rust/std-traits/comparisons.html)
+- [Comparison](https://google.github.io/comprehensive-rust/std-traits/comparisons.html)
   `PartialEq` and `Eq` etc.
 - [`Read` and `BufRead`](https://google.github.io/comprehensive-rust/std-traits/read-and-write.html)
   for abstraction over `u8` sources.
