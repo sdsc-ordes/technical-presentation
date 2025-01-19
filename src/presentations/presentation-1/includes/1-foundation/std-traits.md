@@ -334,6 +334,7 @@ Do the following exercises:
 
 - `traits`
 - `std-traits`
+- `blanket-implementation`
 - `extension-traits`: a very good one (moderate to hard)!
 - `local-storage-vec`: ⚠️ Hardcore exercise (spare for later)
 
