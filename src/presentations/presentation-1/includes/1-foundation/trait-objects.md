@@ -15,7 +15,7 @@ There's more to this story though...
 
 ---
 
-## Monomorphization (recap)
+## Static Dispatch: Monomorphization (recap)
 
 The [`Add`](#the-trait-keyword/1) trait.
 
