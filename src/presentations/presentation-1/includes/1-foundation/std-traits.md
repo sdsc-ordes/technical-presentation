@@ -291,7 +291,7 @@ There is more:
 
 ## Std-Traits and the Orphan Rule
 
-When you **provide a type**, **always** implement the basic traits from the
+When you **provide a type**, **always** implement (or derive) the basic traits from the
 standard if they are appropriate, e.g. (`>` implies priority)
 
 ::: incremental
