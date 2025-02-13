@@ -97,6 +97,7 @@ build:
       npm run build
 
 # Present the presentation.
+alias serve := present
 present:
     cd "{{root_dir}}/build" && \
       npm_config_container_mgr="{{container_mgr}}" \

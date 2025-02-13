@@ -1,6 +1,6 @@
 <!-- markdownlint-disable-file MD034 MD033 MD001 MD024 MD026-->
 
-# Creating a nice API
+# Creating a Nice API
 
 :::notes
 
@@ -10,9 +10,9 @@
 
 ---
 
-# Rust API Guidelines
+## Rust API Guidelines
 
-:::::::::{.columns}
+::::::{.columns}
 
 :::{.column width="50%"}
 
@@ -43,7 +43,7 @@ exercises!
 
 ---
 
-# General Recommendations
+## General Recommendations
 
 Make your API
 
@@ -68,7 +68,7 @@ In general, you want to make your API unsurprising, flexible and obvious.
 
 ---
 
-# Make your API - Unsurprising
+## Make your API - Unsurprising
 
 :::notes
 
@@ -78,7 +78,7 @@ So, how to make your API unsurprising?
 
 ---
 
-# Naming your Methods
+## Naming your Methods
 
 ```rust {line-numbers="|7-10|12-15"}
 pub struct S {
@@ -120,7 +120,7 @@ conventions.
 
 ---
 
-# Implement/Derive Common Traits
+## Implement/Derive Common Traits
 
 _As long as it makes sense_ public types should implement:
 
@@ -159,7 +159,7 @@ types more useful to others.
 
 ---
 
-# Make your API - Flexible
+## Make your API - Flexible
 
 :::notes
 
@@ -169,7 +169,7 @@ Now, let's take a look at some ways to make your API flexible
 
 ---
 
-# Use Generics
+## Use Generics
 
 ```rust {line-numbers="|1-3|5-9"}
 pub fn add(x: u32, y: u32) -> u32 {
@@ -198,7 +198,7 @@ perform a certain action.
 
 ---
 
-# Accept Borrowed Data (if possible)
+## Accept Borrowed Data (if possible)
 
 - User decides whether calling function should own the data.
 - Avoids unnecessary moves.
@@ -239,7 +239,7 @@ types, as they are cheap to clone.
 
 ---
 
-# Make your API - Obvious
+## Make your API - Obvious
 
 :::notes
 
@@ -249,12 +249,15 @@ Lastly, we'll make our APIs obvious
 
 ---
 
-# Write Rustdoc
+## Write Rustdoc
+
+::::::{.columns}
+
+:::{.column width="60%"}
 
 - Use 3 forward-slashes to start a doc comment.
-- You can add code examples, too. ::::::{.columns}
-
-:::{.column width="50%"}
+- You can add code examples, too.
+- To open docs in your browser: `cargo doc --open`
 
 ````rust
 /// A well-documented struct.
@@ -272,23 +275,17 @@ pub struct MyDocumentedStruct {
 }
 ````
 
-_To open docs in your browser:_
-
-```shell
-cargo doc --open
-```
-
 :::
 
-:::{.column width="50%"}
+:::{.column width="40%"}
 
-<img src="/images/B-rustdoc.png" style="margin-left:5%;max-width: 100%; max-height: 90%;">
+![](${meta:include-base-dir}/assets/images/A2-rustdoc.png){}
 
 :::
 
 ::::::
 
-:::notest
+:::notes
 
 Lots of respect for authors of good documentation! If you find writing
 documentation hard, keep in mind that you may be writing this for your future
@@ -304,14 +301,12 @@ self.
 
 ---
 
-## layout: default
-
-# Include examples
+# Include Examples
 
 Create examples to show users how to use your library
 
-```txt{all}
-$ tree
+```shell {line-numbers="all"}
+tree
 .
 ├── Cargo.lock
 ├── Cargo.toml
@@ -319,28 +314,30 @@ $ tree
 │   └── say_hello.rs
 └── src
     └── lib.rs
-$ cargo run --example say_hello
-   Compiling my_app v0.1.0 (/home/henkdieter/tg/edu/my_app)
-    Finished dev [unoptimized + debuginfo] target(s) in 0.30s
-     Running `target/debug/examples/say_hello`
-Hello, henkdieter!
-
 ```
 
-<!--
-- If you're writing a library, adding a couple of examples helps your users get started. In fact, many libraries are accompanied with examples defined in their Git repositories.
+```shell
+cargo run --example say_hello
+...
+Hello, henkdieter!
+```
+
+:::notes
+
+- If you're writing a library, adding a couple of examples helps your users get
+  started. In fact, many libraries are accompanied with examples defined in
+  their Git repositories.
 - Run examples with the `--example` option, specifying the binary
--->
+
+:::
 
 ---
 
-## layout: default
-
-# Use semantic typing (1)
+## Use Semantic Typing (1)
 
 Make the type system work for you!
 
-```rust {all|1-2|7-8}
+```rust {line-numbers="all|1-2|7-8"}
 /// Fetch a page from passed URL
 fn load_page(url: &str) -> String {
     todo!("Fetch");
@@ -354,20 +351,28 @@ fn main() {
 
 _`&str` is not restrictive enough: not all `&str` represent correct URLs_
 
-<!--
-Rusts type system is awesome. Use it to you advantage by embedding semantics into your types.
-- As an example, the `load_page` function takes a string slice, indicating the URL of the page that it should load.
-- At the call site of load_page, it's unclear what a page even is (memory page? remote content?)
+:::notes
+
+Rusts type system is awesome. Use it to you advantage by embedding semantics
+into your types.
+
+- As an example, the `load_page` function takes a string slice, indicating the
+  URL of the page that it should load.
+- At the call site of load_page, it's unclear what a page even is (memory page?
+  remote content?)
 - `load_page` accepts all strings, even strings that do not represent valid URLs
--->
+
+:::
 
 ---
 
-## layout: two-cols
+## Use Semantic Typing (2)
 
-# Use semantic typing (2)
+::::::{.columns}
 
-```rust{all|1-3,14-16|5-12,22-24|18-20|all}
+:::{.column width="50%"}
+
+```rust {line-numbers="all|1-3,14-16|5-12,22-24|18-20|all"}
 struct Url<'u> {
   url: &'u str,
 }
@@ -380,55 +385,66 @@ impl<'u> Url<'u> {
     Self { url }
   }
 }
+fn valid(url: &str) -> bool {
+  url != "🦀"
+}
+```
 
+:::
+
+:::{.column width="50%"}
+
+```rust
 fn load_page(remote: Url) -> String {
     todo!("load it");
 }
 fn main() {
-    let content = load_page(Url::new("🦀")); // Not good
-}
-fn valid(url: &str) -> bool {
-    url != "🦀" // Far from complete
+    // Not good
+    let c = load_page(Url::new("🦀"));
 }
 ```
 
-::right::
-
-<v-click>
-<div style="padding-left:10px; padding-top: 50px;">
 ```txt
-   Compiling playground v0.0.1 (/playground)
-    Finished dev [unoptimized + debuginfo] target(s) in 2.90s
-     Running `target/debug/playground`
-thread 'main' panicked at 'URL invalid: 🦀', src/main.rs:11:7
-note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+thread 'main' panicked at
+'URL invalid: 🦀', src/main.rs:11:7
+note: run with `RUST_BACKTRACE=1` ...
 ```
 
-- Clear intent
-- Input validation: security!
+:::incremental
 
-_Use the [`url`](https://lib.rs/url) crate_
+- Clear intent.
+- Validate inputs: security!
+- **Use the [`url`](https://lib.rs/url) crate.**
 
-</div>
+:::
 
-</v-click>
+:::
 
-<!--
- - The `Url` struct defined here, wraps a string slice, but has a name that clarifies intent at the call site
- - what's more, the `Url` struct can only be instantiated with strings that represent valid URLs
--->
+::::::
+
+:::notes
+
+- The `Url` struct defined here, wraps a string slice, but has a name that
+  clarifies intent at the call site
+- what's more, the `Url` struct can only be instantiated with strings that
+  represent valid URLs
+
+:::
 
 ---
 
-## layout: quote
-
-# Use Clippy and Rustfmt for all your projects!
+# Use Clippy and Rustfmt - All Time!
 
 ```bash
-$ cargo clippy
-$ cargo fmt
+cargo clippy
+cargo fmt
 ```
 
-<!--
+Use the state-of-the-art
+[repository-template `rust`](https://github.com/sdsc-ordes/repository-template).
+
+:::notes
+
 Use Clippy and Rustfmt to help adhering to the guidelines
--->
+
+:::
