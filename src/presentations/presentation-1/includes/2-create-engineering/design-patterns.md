@@ -1,28 +1,19 @@
-
----
-layout: cover
----
-
 # Design patterns in Rust
 
 ---
-layout: default
----
 
-# Why learn design patterns?
+## Why Design Patterns?
 
-- Common problems call for common, tried an tested solutions
-- Make crate architecture more clear
-- Speed up development
-- Rust does some patterns ever-so-slightly differently
+- Common problems call for common, tried an tested solutions.
+- Make crate architecture more clear.
+- Speed up development.
+- Rust does some patterns ever-so-slightly differently.
 
-*Learning common Rust patterns makes understanding new code easier*
+_Learning common Rust patterns makes understanding new code easier_
 
 ---
-layout: default
----
 
-# What we'll do
+## What Do We Cover?
 
 ```rust
 const PATTERNS: &[Pattern] = &[
@@ -41,20 +32,16 @@ fn main() {
 ```
 
 ---
-layout: cover
+
+## 1. The Newtype Pattern
+
+A small but useful pattern.
+
 ---
 
-# 1. The Newtype pattern
-a small but useful pattern
+## Newtype: Introduction
 
----
-layout: default
----
-
-# Newtype: introduction
-&nbsp;
-
-### Wrap an external type in a new local type
+#### Wrap an external type in a new local type
 
 ```rust
 pub struct Imei(String)
@@ -63,317 +50,320 @@ pub struct Imei(String)
 That's it!
 
 ---
-layout: default
----
 
-# Newtype: example
+## Newtype: Example
 
-```rust
+```rust {style="font-size:14pt;"}
 pub enum ValidateImeiError { /* - snip - */}
-
 pub struct Imei(String);
 
 impl Imei {
-    fn validate(imei: &str) -> Result<(), ValidateImeiError> {
-        todo!();
-    }
+  fn validate(imei: &str) -> Result<(), ValidateImeiError> {
+      todo!();
+  }
 }
 
 impl TryFrom<String> for Imei {
-    type Error = ValidateImeiError;
+  type Error = ValidateImeiError;
 
-    fn try_from(imei: String) -> Result<Self, Self::Error> {
-        Self::validate(&imei)?;
-        Ok(Self(imei))
-    }
+  fn try_from(imei: String) -> Result<Self, Self::Error> {
+    Self::validate(&imei)?;
+    Ok(Self(imei))
+  }
 }
 
 fn register_phone(imei: Imei, label: String) {
-    // We can certain `imei` is valid here
+  // We can certain `imei` is valid here
 }
 ```
 
 ---
-layout: default
----
 
-# Newtype: when to use
+## Newtype: When to Use?
 
-Newtype solves some problems:
-- Orphan rule: no `impl`s for external `trait`s on external types
-- Allow for semantic typing (`url` example from mod B)
-- Enforce input validation
+New types solve some problems:
 
----
-layout: cover
----
-
-# 2. The RAII guard pattern
-More robust resource handling
+- Orphan rule: no `impl`s for external `trait`s on external types.
+- Allow for semantic typing (`url` example [from before](#url-example))
+- Enforce input validation.
 
 ---
-layout: default
----
 
-# RAII Guards: introduction
+## 2. The RAII Guard Pattern
 
-- Resource Acquisition Is Initialization (?)
-- Link acquiring/releasing a resource to the lifetime of a variable
-- Guard constructor initializes resource, destructor frees it
-- Access resource through the guard
-
-*Do you know of an example?*
+More robust resource handling.
 
 ---
-layout: two-cols
+
+## RAII Guards: Introduction
+
+- RAII: **R**esource **A**cquisition **I**s **I**nitialization.
+- Link acquiring/releasing a resource to the lifetime of a variable.
+- A constructor initializes the resource, the destructor frees it.
+- Access resource through the guard.
+
+_Do you know of an example?_
+
 ---
 
-# RAII Guards: example
+## RAII Guards: Example
 
-```rust
+::::::{.columns}
+
+:::{.column width="50%"}
+
+```rust {style="font-size:14pt;"}
 pub struct Transaction<'c> {
-    connection: &'c mut Connection,
-    did_commit: bool,
-    id: usize,
+  connection: &'c mut Connection,
+  did_commit: bool,
+  id: usize,
 }
 
 impl<'c> Transaction<'c> {
-    pub fn begin(connection: &'c mut Connection)
-     -> Self {
-        let id = 
-            connection.start_transaction();
-        Self {
-            did_commit: false,
-            id,
-            connection,
-        }
-    }
+  pub fn begin(connection: &'c mut Connection)
+    -> Self {
+    let id = connection.start_transaction();
+    Self { did_commit: false, id, connection }
+  }
 
-    pub fn query(&self sql: &str) { /* - snip - */}
+  pub fn query(&self sql: &str) {
+    /* - snip - */
+  }
 
-    pub fn commit(self) {
-        self.did_commit = true;
-    }
+  pub fn commit(self) {
+      self.did_commit = true;
+  }
 }
 ```
-::right::
-<div style="padding-left:10px; padding-top: 50px;">
 
-```rust
+:::
+
+:::{.column width="50%" .fragment}
+
+```rust {style="font-size:14pt;"}
 impl Drop for Transaction<'_> {
-    fn drop(&mut self) {
-        if self.did_commit {
-            self
-                .connection
-                .commit_transaction(self.id);
-            
-        } else {
-            self
-                .connection
-                .rollback_transaction(self.id);
-        }
+  fn drop(&mut self) {
+    if self.did_commit {
+      self
+        .connection
+        .commit_transaction(self.id);
+
+    } else {
+      self
+        .connection
+        .rollback_transaction(self.id);
     }
+  }
 }
 ```
-</div>
+
+:::
+
+::::::
 
 ---
-layout: default
----
 
-# RAII Guards: when to use
+## RAII Guards: When to Use?
 
-- Ensure a resource is freed at some point
-- Ensure invariants hold while guard lives
+- Ensure a resource is freed at some point.
+- Ensure **invariants** hold while guard lives.
 
 ---
-layout: cover
+
+## 3. The Typestate Pattern
+
+Encode state in the type.
+
 ---
 
-# 3. The Typestate pattern
-Encode state in the type
+## Typestate: Introduction
 
----
-layout: default
----
+- Define **uninitializable types** for each state of your object `O`.
 
-# Typestate: introduction
-
-- Define uninitializable types for each state of your object
 ```rust
 pub enum Ready {} // No variants, cannot be initialized
 ```
-<v-click>
 
-- Make your type generic over its state using `std::marker::PhantomData`
-- Implement methods only for relevant states
-- Methods that update state take owned `self` and return instance with new state
+::: incremental
 
-*👻 `PhantomData<T>` makes types act like they own a `T`, and takes no space*
-</v-click>
+- Implement methods on `O` **only for relevant** states.
+
+- Methods on `O` that **update state** take **owned `self`** and return instance
+  with new state.
+
+- Make your type generic over its state using `std::marker::PhantomData`. _👻
+  `PhantomData<T>` makes types act like they own a `T`, and takes no space_.
+
+:::
+
 ---
-layout: three-slots
----
 
-# Typestate: example
+## Typestate: Example
 
-::left::
+::::::{.columns}
 
-```rust
-pub enum Idle {} // Nothing to do
-pub enum ItemSelected {} // Item was selected
-pub enum MoneyInserted {} // Money was inserted
+:::{.column width="50%"}
 
-pub struct CoffeeMachine<S> {
-    _state: PhantomData<S>,
+```rust {style="font-size:14pt;"}
+pub enum Idle {} // Nothing to do.
+pub enum ItemSelected {} // Item was selected.
+pub enum MoneyInserted {} // Money was inserted.
+
+pub struct CandyMachine<S> {
+  state: PhantomData<S>,
 }
-impl<CS> CoffeeMachine<CS> {
-    /// Just update the state
-    fn into_state<NS>(self) -> CoffeeMachine<NS> {
-        CoffeeMachine {
-            _state: PhantomData,
-        }
-    }
+impl<S> CandyMachine<S> {
+  /// Just update the state
+  fn into_state<NS>(self) -> CandyMachine<NS> {
+    CandyMachine { state: PhantomData, }
+  }
 }
-impl CoffeeMachine<Idle> {
-    pub fn new() -> Self {
-        Self {
-            _state: PhantomData,
-        }
-    }
+impl CandyMachine<Idle> {
+  pub fn new() -> Self {
+    Self { state: PhantomData }
+  }
+}
+```
+
+:::
+
+:::{.column width="50%"}
+
+```rust {style="font-size:14pt;"}
+impl CandyMachine<Idle> {
+  fn select_item(self, item: usize)
+    -> CandyMachine<ItemSelected> {
+    println!("Selected item {item}");
+    self.into_state()
+  }
+}
+impl CandyMachine<ItemSelected> {
+  fn insert_money(self)
+    -> CandyMachine<MoneyInserted> {
+    println!("Money inserted!");
+    self.into_state()
+  }
+}
+impl CandyMachine<MoneyInserted> {
+  fn make_beverage(self)
+    -> CandyMachine<Idle> {
+    println!("There you go!");
+    self.into_state()
+  }
 }
 ```
 
-::right::
-<div style="padding-left:10px; padding-top: 0;">
+:::
+
+::::::
+
+---
+
+## Typestate: When to Use?
+
+- If your problem is like a state machine.
+- Ensure _at compile time_ that no invalid operation is done.
+
+:::incremental
+
+_References: Look at
+[`serde::Serialize`](https://docs.rs/serde/latest/serde/ser/trait.Serializer.html)
+and `serialize_struct` which starts the typestate pattern._
+
+:::
+
+---
+
+## 4. The Strategy Pattern
+
+Select behavior dynamically.
+
+---
+
+## Strategy: Introduction
+
+- Turn set of behaviors into objects.
+- Make them interchangeble inside context.
+- Execute strategy depending on input.
+
+_Trait objects work well here!_
+
+---
+
+## Strategy: Example
+
+::::::{.columns}
+
+:::{.column width="50%"}
 
 ```rust
-impl CoffeeMachine<Idle> {
-    fn select_item(self, item: usize) -> CoffeeMachine<ItemSelected> {
-        println!("Selected item {item}");
-        self.into_state()
-    }
-}
-
-impl CoffeeMachine<ItemSelected> {
-    fn insert_money(self) -> CoffeeMachine<MoneyInserted> {
-        println!("Money inserted!");
-        self.into_state()
-    }
-}
-
-impl CoffeeMachine<MoneyInserted> {
-    fn make_beverage(self) -> CoffeeMachine<Idle> {
-        println!("There you go!");
-        self.into_state()
-    }
-}
-```
-</div>
-
----
-layout: default
----
-
-# Typestate: when to use
-
-- If your problem is like a state machine
-- Ensure *at compile time* that no invalid operation is done
-
----
-layout: cover
----
-
-# 4. The Strategy pattern
-Select behavior dynamically
-
----
-layout: default
----
-
-# Strategy: introduction
-
-- Turn set of behaviors into objects
-- Make them interchangeble inside context
-- Execute strategy depending on input
-
-*Trait objects work well here!*
-
----
-layout: two-cols
----
-
-# Strategy: example
-
-```rust
-
 trait PaymentStrategy {
-    fn pay(&self);
+  fn pay(&self);
 }
 
 struct CashPayment;
 impl PaymentStrategy for CashPayment {
-    fn pay(&self) {
-        println!("🪙💸");
-    }
+  fn pay(&self) {
+    println!("🪙💸");
+  }
 }
 
 struct CardPayment;
 impl PaymentStrategy for CardPayment {
-    fn pay(&self) {
-        println!("💳");
-    }
+  fn pay(&self) {
+    println!("💳");
+  }
 }
 ```
-::right::
 
-<div style="padding-left:10px; padding-top: 50px;">
+:::
+
+:::{.column width="50%" .fragment}
 
 ```rust
-
 fn main() {
-    let method: &str 
-        = todo!("Read input");
-    let strategy: &dyn PaymentStrategy 
-        = match method {
-        "card" => &CardPayment,
-        "cash" => &CashPayment,
-        _ => panic!("Oh no!"),
-    };
-    strategy.pay();
+  let method = todo!("Read input");
+
+  let strategy: &dyn PaymentStrategy
+    = match method {
+    "card" => &CardPayment,
+    "cash" => &CashPayment,
+    _ => panic!("Oh no!"),
+  };
+
+  strategy.pay();
 }
 ```
 
-</div> 
+:::
+
+::::::
 
 ---
-layout: default
----
 
-# Strategy: when to use
+## Strategy: When to Use?
 
-- Switch algorithms based on some run-time parameter (input, config, ...)
+- Switch algorithms based on some **run-time parameter** (input, config, ...).
 
 ---
-layout: cover
----
 
-# Anti-patterns
-What *not* to do
+## Anti-Patterns
 
----
-layout: cover
----
-
-# Deref polymorphism
-
-A common pitfall you'll want to avoid
+What _not_ to do
 
 ---
-layout: two-cols
+
+## Deref Polymorphism
+
+A common pitfall you'll want to avoid.
+
 ---
 
-# Deref polymorphism: Example
+## Deref Polymorphism: Example
+
+::::::{.columns}
+
+:::{.column width="50%"}
 
 ```rust
 use std::ops::Deref;
@@ -395,7 +385,11 @@ impl Animal {
     }
 }
 ```
-::right::
+
+:::
+
+:::{.column width="60%"}
+
 ```rust
 struct Dog {
     animal: Animal
@@ -415,7 +409,7 @@ impl Deref for Dog {
         &self.animal
     }
 }
-fn main (){ 
+fn main (){
     let dog: Dog = todo!("Instantiate Dog");
     dog.bark();
     dog.walk();
@@ -424,11 +418,13 @@ fn main (){
 }
 ```
 
----
-layout: default
+:::
+
+::::::
+
 ---
 
-# The output
+## The Output
 
 ```txt
 Woof woof!
@@ -437,42 +433,57 @@ Munch munch
 ...
 ```
 
-*Even overloading works!*
+_Even overloading works!_
 
 ---
-layout: default
----
 
-# Why is it bad?
+## Why Is It Bad?
 
-- This is no 'real' inheritance: `Dog` is no subtype of `Animal`
-- Traits implemented on `Animal` are not implemented on `Dog` automatically
-- `Deref` and `DerefMut` are intended 'pointer-to-`T`' to `T` conversions
+:::incremental
+
+- No _real_ inheritance: `Dog` is no subtype of `Animal`.
+- Traits on `Animal` are not implemented on `Dog` automatically.
+- `Deref` and `DerefMut` intended for 'pointer-to-`T`' to `T` conversions.
 - Deref coercion by `.` 'converts' `self` from `Dog` to `Animal`
-- Rust favours explicit conversions for easier reasoning about code
+- Rust favours **explicit conversions** for easier reasoning about code.
 
-*It will only add confusion: for OOP programmers it's incomplete, for Rust programmers it is unidiomatic*
+:::
 
-## ⚠️ Don't do OOP in Rust!
+::: {.fragment}
 
----
-layout: default
----
+_Confusion: for OOP programmers it's incomplete, for Rust programmers it is
+unidiomatic_.
 
-# What to do instead?
+### ⚠️ Don't do OOP in Rust!
 
-- *Move away from OOP constructs*
-- Compose your structs
-- Use facade methods
-- Use `AsRef` and `AsMut` for explicit conversion
+:::
 
 ---
-layout: default
+
+## What to Do Instead?
+
+- _Move away from OOP constructs_
+- Compose your `struct`s.
+- Use the
+  [facade pattern](https://refactoring.guru/design-patterns/facade/rust/example)
+  and methods.
+- Use `AsRef` and `AsMut` for explicit conversion.
+
+:::notes
+
+- Facade pattern: Make an object which intracts with different types to
+  accomplish some logic. E.g. A filtering type `GraphFilter` which provides a
+  filtering interface which acts on a graph type `Graph` and a filter lambda
+  `FilterFunc`. It might provide different methods for filtering.
+
+:::
+
 ---
 
-# More anti-patterns
+## More Anti-Patterns
 
-- Forcing dynamic dispatch in libraries
-- `clone()` _to satisfy the borrow checker_
-- `unwrap()` or `expect()` _to handle conditions that are recoverable or not impossible_
-
+- Use global state: Singleton patterns and global variables.
+- Forcing dynamic dispatch in libraries.
+- `clone()` _to satisfy the borrow checker_.
+- `unwrap()` or `expect()` _to handle conditions that are recoverable or not
+  impossible_

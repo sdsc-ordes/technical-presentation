@@ -80,29 +80,41 @@ So, how to make your API unsurprising?
 
 ## Naming your Methods
 
+::::::{.columns}
+
+:::{.column width="%"}
+
 ```rust {line-numbers="|7-10|12-15"}
 pub struct S {
-    first: First,
-    second: Second,
+  first: First,
+  second: Second,
 }
 
 impl S {
-    // Not get_first.
-    pub fn first(&self) -> &First {
-        &self.first
-    }
+  // Not get_first.
+  pub fn first(&self) -> &First {
+      &self.first
+  }
 
-    // Not get_first_mut, get_mut_first, or mut_first.
-    pub fn first_mut(&mut self) -> &mut First {
-        &mut self.first
-    }
+  // Not get_first_mut, get_mut_first, or mut_first.
+  pub fn first_mut(&mut self) -> &mut First {
+      &mut self.first
+  }
 }
 ```
+
+:::
+
+:::{.column width="50%"}
 
 Other example: conversion methods `as_`, `to_`, `into_`, name depends on:
 
 - Runtime cost
 - Owned ⇔ Borrowed
+
+:::
+
+::::::
 
 :::notes
 
@@ -305,7 +317,7 @@ self.
 
 Create examples to show users how to use your library
 
-```shell {line-numbers="all"}
+```bash {line-numbers="all"}
 tree
 .
 ├── Cargo.lock
@@ -316,7 +328,7 @@ tree
     └── lib.rs
 ```
 
-```shell
+```bash
 cargo run --example say_hello
 ...
 Hello, henkdieter!
@@ -333,7 +345,7 @@ Hello, henkdieter!
 
 ---
 
-## Use Semantic Typing (1)
+## Use Semantic Typing (1) {id="url-example"}
 
 Make the type system work for you!
 
@@ -445,6 +457,6 @@ Use the state-of-the-art
 
 :::notes
 
-Use Clippy and Rustfmt to help adhering to the guidelines
+Use Clippy and Rustfmt to help adhering to the guidelines.
 
 :::
