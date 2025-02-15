@@ -117,4 +117,4 @@ using Func =             int(float); // Type: Function.
 
 ## Disclaimer
 
-Customized with ❤️ by Gabriel Nützi.
+Customized with ❤️ by Gabriel Nützi for SDSC.
