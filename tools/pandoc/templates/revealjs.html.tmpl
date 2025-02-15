@@ -440,6 +440,17 @@ $endif$
 
         highlight: {
           highlightOnLoad: false,
+          beforeHighlight: (hljs) => {
+            const keywords = new Map([
+              $for(highlightjs-keywords/pairs)$[ "$it.key$", [ $for(it.value)$"$it$"${sep},$endfor$ ] ]${ sep },$endfor$
+            ]);
+            addHighlightJSKeywords(hljs, keywords)
+
+            // Run the plugin's highlighting code that was skipped on load
+            Array.from(Reveal.getRevealElement().querySelectorAll('pre code')).forEach((block) => {
+                RevealHighlight().highlightBlock(block);
+            });
+          }
         },
 
         // reveal.js plugins
@@ -451,17 +462,6 @@ $endif$
           RevealMath.MathJax3,
           RevealMenu
         ]
-      }).then(() => {
-
-          const keywords = new Map([
-            $for(highlightjs-keywords/pairs)$[ "$it.key$", [ $for(it.value)$"$it$"${sep},$endfor$ ] ]${ sep },$endfor$
-          ]);
-          addHighlightJSKeywords(Reveal.getPlugin("highlight").hljs, keywords)
-
-          // Run the plugin's highlighting code that was skipped on load
-          Array.from(Reveal.getRevealElement().querySelectorAll('pre code')).forEach((block) => {
-              RevealHighlight().highlightBlock(block);
-          });
       });
     </script>
   $for(include-after)$
