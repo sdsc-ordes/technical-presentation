@@ -4,10 +4,10 @@
   projectRootFile = "LICENSE.md";
 
   settings.global.excludes = [
-    "external/*"
-    "/fonts/*"
-    "src/mixin/plugin/*"
-    "src/mixin/dist/*"
+    "external/**"
+    "**/pandoc-diagram.lua"
+    "src/mixin/plugin/**"
+    "src/mixin/dist/**"
   ];
 
   # Markdown, JSON, YAML, etc.

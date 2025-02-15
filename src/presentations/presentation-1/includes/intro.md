@@ -109,6 +109,12 @@ using Func =             int(float); // Type: Function.
 
 ---
 
+# Funny Lua Filter
+
+![](${meta:include-base-dir}/assets/images/diagram.svgbob){.svgbob}
+
+---
+
 # Disclaimer
 
 Customized with ❤️ by Gabriel Nützi and Simon Spörri.
