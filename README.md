@@ -2,6 +2,7 @@
 <h1>Technical Presentation</h1>
 
 <br>
+
 Make technical presentations in Markdown/HTML etc.
 
 This uses [`revealjs`](https://github.com/hakimel/reveal.js) with some
@@ -17,7 +18,11 @@ company `scss` file for design modifications.
 Authors:
 
 - [Gabriel Nützi](https://github.com/gabyx) and
-- [Simon Spörri](https://github.com/simonspoerri).
+
+> [!WARNING]
+>
+> This is the `pandoc` tooling branch, if you want a simpler version with
+> `reveal.js` only, use `main-simple`.
 
 Current [`revealjs`](https://github.com/hakimel/reveal.js) version: `4.6.1`
 
