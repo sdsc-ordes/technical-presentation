@@ -1,3 +1,7 @@
 .direnv
+.devenv
+
 build
+
 .zip
+.env

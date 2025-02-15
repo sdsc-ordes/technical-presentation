@@ -1,17 +1,23 @@
 set positional-arguments
 set shell := ["bash", "-cue"]
+set dotenv-load := true
 root_dir := justfile_directory()
+flake_dir := root_dir / "tools/nix"
 
 # General Variables:
 # You can chose either "podman" or "docker"
-container_mgr := "podman"
+container_mgr := env("CONTAINER_MGR", "podman")
 
 # The presentation to render.
-presentation := "presentation-1"
+presentation := env("PRESENTATION", "presentation-1")
 
 # Enter a `nix` development shell.
 nix-develop:
     nix develop './tools/nix#default'
+
+# Format the project.
+format *args:
+    nix run --accept-flake-config {{flake_dir}}#treefmt -- "$@"
 
 # Clean the build folder.
 clean:
@@ -104,16 +110,16 @@ pdf:
 
 # Convert to `.pdf` and package into a `.zip` file which is standalone shareable.
 package file="presentation.zip": pdf
-    "{{root_dir}}/tools/package-presentation.sh" "{{container_mgr}}" "{{file}}"
+    "{{root_dir}}/tools/scripts/package-presentation.sh" "{{container_mgr}}" "{{file}}"
 
 # Prepare a folder `name` to make later a PR to branch `publish` to serve your presentation.
 publish name:
-    "{{root_dir}}/tools/prepare-gh-pages.sh" "{{name}}" "{{presentation}}"
+    "{{root_dir}}/tools/scripts/prepare-gh-pages.sh" "{{name}}" "{{presentation}}"
 
 # Bake the logo into the style-sheets.
 bake-logo mime="svg":
     cd "{{root_dir}}" && \
-      tools/bake-logo.sh "{{mime}}"
+      tools/srcipts/bake-logo.sh "{{mime}}"
 
 # Build the container for `.devcontainer`.
 build-dev-container *args:
