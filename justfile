@@ -119,7 +119,7 @@ publish name:
 # Bake the logo into the style-sheets.
 bake-logo mime="svg":
     cd "{{root_dir}}" && \
-      tools/srcipts/bake-logo.sh "{{mime}}"
+      tools/scripts/bake-logo.sh "{{mime}}"
 
 # Build the container for `.devcontainer`.
 build-dev-container *args:
