@@ -1,14 +1,13 @@
 { pkgs, ... }:
 {
   # Used to find the project root
-  # We use `LICENSE` instead of `.git/config`
-  # because that does not work with Git worktree.
   projectRootFile = "LICENSE.md";
 
   settings.global.excludes = [
-    "external/**"
-    "**/fonts/**"
-    "**/mixin/plugin/**"
+    "external/*"
+    "/fonts/*"
+    "src/mixin/plugin/*"
+    "src/mixin/dist/*"
   ];
 
   # Markdown, JSON, YAML, etc.

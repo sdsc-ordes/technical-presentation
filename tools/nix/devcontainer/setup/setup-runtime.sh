@@ -40,7 +40,7 @@ function setup() {
     if [ -d ~/.shell ]; then
         print_info "Setting zsh history to '~/.shell/.zsh_history'."
         touch ~/.shell/.zsh_history &&
-            sed -i -E "s@^HISTFILE=.*\$@HISTFILE=~/.shell/.zsh_history@" ~/.zshrc || {
+            sed -i -E 's@^HISTFILE=.*$@HISTFILE=~/.shell/.zsh_history@' ~/.zshrc || {
             print_error "Could not set HISTFILE to '~/.shell/.zsh_history' in '~/.zshrc'. "
         }
     fi
