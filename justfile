@@ -13,7 +13,7 @@ presentation := env("PRESENTATION", "presentation-1")
 
 # Enter a `nix` development shell.
 nix-develop:
-    nix develop './tools/nix#default'
+    nix develop --accept-flake-config --no-pure-eval './tools/nix#default'
 
 # Format the project.
 format *args:
