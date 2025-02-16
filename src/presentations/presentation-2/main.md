@@ -1,8 +1,7 @@
 ---
 title: Rust Workshop 🦀
 subtitle: |
-  Part 2: Create Engineering
-  [Part 1: Here](https://sdsc-ordes.github.io/technical-presentation/gh-pages/rust-workshop)
+  Part 2: Create Engineering<br>
 
 author:
   "**Gabriel Nützi**,
@@ -10,7 +9,9 @@ author:
 
 lang: en
 
-date: August 14, 2024 (updated October 31, 24)
+date: |
+  February 16, 2025,
+  [Part 1: Here](https://sdsc-ordes.github.io/technical-presentation/gh-pages/rust-workshop)
 
 css: presentations/presentation-1/css/custom.css
 highlightjs-theme: railscasts
