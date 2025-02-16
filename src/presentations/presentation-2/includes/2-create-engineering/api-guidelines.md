@@ -313,7 +313,7 @@ self.
 
 ---
 
-# Include Examples
+## Include Examples
 
 Create examples to show users how to use your library
 
@@ -445,7 +445,7 @@ note: run with `RUST_BACKTRACE=1` ...
 
 ---
 
-# Use Clippy and Rustfmt - All Time!
+## Use Clippy and Rustfmt - All Time!
 
 ```bash
 cargo clippy

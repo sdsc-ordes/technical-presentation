@@ -1,4 +1,4 @@
-# Design patterns in Rust
+# Design Patterns in Rust
 
 ---
 
