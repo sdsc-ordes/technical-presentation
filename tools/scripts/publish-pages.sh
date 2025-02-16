@@ -85,6 +85,9 @@ function main() {
     mkdir -p "$target"
     cp -r build/. "$target"
 
+    ci::print_info "Add .nojekyll file to not build with jekyll."
+    touch "$pages_dir/.nojekyll"
+
     ci::print_info "Create a PR to branch 'publish' to merge only THE changes in '$pages_dir'."
     ci::print_info "Execute 'git add -f '$target' to add the files."
 
