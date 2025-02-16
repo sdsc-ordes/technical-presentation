@@ -29,7 +29,7 @@ svgbob:
 
 # Filter: `pandoc-include-files` filter
 # The base include dir inside the `build` dir.
-include-base-dir: presentations/presentation-2
+include-base-dir: presentations/part-2
 
 # Output Writer Settings: RevealJS
 controls: true
