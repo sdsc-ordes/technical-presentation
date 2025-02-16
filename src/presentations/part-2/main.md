@@ -13,7 +13,7 @@ date: |
   February 16, 2025,
   [Part 1](https://sdsc-ordes.github.io/technical-presentation/gh-pages/rust-workshop/part-1)
 
-css: presentations/presentation-1/css/custom.css
+css: presentations/part-2/css/custom.css
 highlightjs-theme: railscasts
 highlightjs-keywords:
   bash: ["cargo", "rustc"]
