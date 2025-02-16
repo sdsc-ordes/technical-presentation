@@ -28,7 +28,7 @@ $headingTextTransform: none;
 $mainFont: "Museo", "Palatino Linotype", "Book Antiqua", "Palatino", serif;
 $headingFont: "Museo", "Palatin Linotype", "Book Antiqua", "Palatino", serif;
 $linkColor: $companyBlueLight;
-$linkColorHover: lighten($companyBlueLight, 20%);
+$linkColorHover: color.adjust($companyBlueLight, $lightness: 20%);
 
 // Image
 $imgBorderSize: 0;
