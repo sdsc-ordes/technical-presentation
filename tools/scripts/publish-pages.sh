@@ -22,7 +22,7 @@ function publish() {
     echo "theme: []" >"$docs_dir/_config.yaml"
 
     ci::print_info "Commit all assets onto temp branch..."
-    git add "$docs_dir/.nojekyll"
+    git add "$docs_dir/_config.yaml"
     git add -f "$target"
     git commit -m "feat: publish '$name'"
 
