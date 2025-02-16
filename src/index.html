@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>reveal.js</title>
+
+    <link rel="stylesheet" href="dist/reset.css" />
+    <link rel="stylesheet" href="dist/reveal.css" />
+    <link rel="stylesheet" href="dist/theme/company.css" />
+
+    <!-- Theme used for syntax highlighting of code -->
+    <!-- <link rel="stylesheet" href="lib/css/monokai.css"> -->
+    <link rel="stylesheet" href="plugin/highlight/styles/railscasts.css" />
+
+    <!-- Printing and PDF exports -->
+    <script>
+      // If decktape export we need to load some other css
+      // Emoji-Convertion
+      if (window.location.search.match(/decktape/gi)) {
+        let link = document.createElement("link")
+        link.rel = "stylesheet"
+        link.type = "text/css"
+        link.href = "css/print/decktape.css"
+        document.getElementsByTagName("head")[0].appendChild(link)
+      }
+    </script>
+
+    <!-- Some tweaks -->
+    <style type="text/css">
+      /* Code Focus */
+      .reveal .line {
+        display: block;
+      }
+      .reveal .line.focus {
+        background: #383838;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section
+          data-markdown="presentations/presentation-1/presentation.md"
+          data-separator="^\n---\n"
+          data-separator-vertical="^\n--\n"
+          data-separator-notes="^Note:"
+          data-charset="utf-8"
+        ></section>
+      </div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script src="plugin/search/search.js"></script>
+    <script src="plugin/zoom/zoom.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script>
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependencies
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        fragmentInURL: true,
+        mouseWheel: false,
+        slideNumber: "c/t",
+        transition: "fade", // none/fade/slide/convex/concave/zoom
+        width: 960,
+        height: 700,
+        margin: 0.05,
+        minScale: 0.1,
+        maxScale: 2,
+        pdfSeparateFragments: false,
+        hideInactiveMouse: true,
+        hideMouseTime: 1000,
+        // More info https://github.com/hakimel/reveal.js#dependencies
+        plugins: [
+          RevealMarkdown,
+          RevealHighlight,
+          RevealSearch,
+          RevealNotes,
+          RevealMath,
+          RevealZoom,
+        ],
+      })
+    </script>
+  </body>
+</html>

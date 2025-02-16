@@ -1,0 +1,19 @@
+{
+  "config": {
+    "container_mgr": "podman"
+  },
+  "scripts": {
+    "present": "concurrently --kill-others --success first \"npm run start\" \"npm run present::browser-sync\"",
+    "present::browser-sync": "browser-sync start --index index.html --server --files . --ignore '.git/**' --port 3000",
+    "pdf": "npm-run-all -s build pdf::start",
+    "pdf::start": "concurrently --kill-others --success first \"npm run pdf::export\" \"npm run pdf::server\"",
+    "pdf::export": "delay 7 && \"$(pwd)/../tools/render-with-decktape.sh\" \"$npm_config_container_mgr\" 3030",
+    "pdf::server": "browser-sync start --index index.html --server --port 3030"
+  },
+  "devDependencies": {
+    "browser-sync": "^3.0.2",
+    "concurrently": "^8.2.1",
+    "delay-cli": "^2.0.0",
+    "npm-run-all": "^4.1.5"
+  }
+}
