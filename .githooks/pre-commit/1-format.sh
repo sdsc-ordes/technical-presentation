@@ -25,4 +25,4 @@ if [ "${#FILES[@]}" = "0" ]; then
 fi
 
 print_info "Running 'treefmt'..."
-# nix run "./tools/nix#treefmt" -- "${FILES[@]}"
+nix run "./tools/nix#treefmt" -- "${FILES[@]}"

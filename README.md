@@ -82,6 +82,13 @@ You need the following tools:
 4. **`just package`** -> Export the presentation as HTML and PDF inside a `.zip`
    file to the [`publish`](publish) folder.
 
+5. **`just publish`** -> Build and upload the (selected) presentation to the
+   `publish` **branch** in the folder `docs/gh-pages` which can then be served
+   by Github pages. The
+   [`.publish.yaml`](./src/presentations/presentation-1/.publish.yaml) helps in
+   defining the name and output folder in `docs/gh-pages` to host multiple
+   presentations alongside.
+
 ## Make a Presentation
 
 - Write your presentation in Markdown in

@@ -12,6 +12,11 @@
 
   # Markdown, JSON, YAML, etc.
   programs.prettier.enable = true;
+  settings.formatter.prettier = {
+    options = [
+      "--no-error-on-unmatched-pattern"
+    ];
+  };
 
   # Shell.
   programs.shfmt = {

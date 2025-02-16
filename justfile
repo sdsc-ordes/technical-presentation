@@ -3,6 +3,7 @@ set shell := ["bash", "-cue"]
 set dotenv-load := true
 root_dir := justfile_directory()
 flake_dir := root_dir / "tools/nix"
+build_dir := root_dir / "build"
 
 # General Variables:
 # You can chose either "podman" or "docker"
@@ -11,9 +12,20 @@ container_mgr := env("CONTAINER_MGR", "podman")
 # The presentation to render.
 presentation := env("PRESENTATION", "presentation-1")
 
-# Enter a `nix` development shell.
-nix-develop:
-    nix develop --accept-flake-config --no-pure-eval './tools/nix#default'
+# Enter the default Nix development shell.
+develop *args:
+    just nix-develop default "$@"
+
+# Enter the Nix development shell `$1` and execute the command `${@:2}`.
+nix-develop *args:
+    #!/usr/bin/env bash
+    set -eu
+    cd "{{root_dir}}"
+    shell="$1"; shift 1;
+    args=("$@") && [ "${#args[@]}" != 0 ] || args="$SHELL"
+    nix develop --no-pure-eval --accept-flake-config \
+        "{{flake_dir}}#$shell" \
+        --command "${args[@]}"
 
 # Format the project.
 format *args:
@@ -22,31 +34,29 @@ format *args:
 # Clean the build folder.
 clean:
     cd "{{root_dir}}" && \
-      rm -rf build && \
-      mkdir -p build
+      rm -rf "{{build_dir}}" && \
+      mkdir -p "{{build_dir}}"
 
 # Init reveal.js into build folder.
-init:
+init pres=presentation:
     #!/usr/bin/env bash
     set -eu
-    cd "{{root_dir}}"
-    rm -rf "build"
-    mkdir -p "build"
+    just clean
 
     echo "Init pinned reveal.js folder to 'build'..."
     git submodule update --init
-    rsync -a "external/reveal.js/" "build/"
+    rsync -a "external/reveal.js/" "{{build_dir}}/"
 
-    just sync
+    just sync "{{pres}}"
 
-    echo "Install node packages in 'build' ..."
-    (cd build && yarn install && npm run build)
+    echo "Install node packages in '{{build_dir}}' ..."
+    (cd "{{build_dir}}" && yarn install && npm run build)
 
-    just presentation="{{presentation}}" pandoc
+    just pandoc "{{pres}}"
 
 
 # Watch the files in `src` and synchronize them into the `build` folder.
-watch:
+watch pres=presentation:
     #!/usr/bin/env bash
     set -eu
     cd "{{root_dir}}"
@@ -56,7 +66,7 @@ watch:
       watchman-wait -m 0 -t 0 "$@"
     }
 
-    checksum_dir=build/.checksums
+    checksum_dir="{{build_dir}}/.checksums"
     mkdir -p "$checksum_dir"
 
     watch src tools | (
@@ -86,25 +96,26 @@ watch:
         echo "$current_hash" > "$checksum_dir/$key"
 
         echo "File: '$LINE' changes"
-        just sync
-        just presentation="{{presentation}}" pandoc
+        just sync "{{pres}}"
+        just pandoc "{{pres}}"
       done
     )
 
 # Build the presentation.
 build:
-    cd "{{root_dir}}/build" && \
+    cd "{{build_dir}}" && \
       npm run build
 
 # Present the presentation.
+alias serve := present
 present:
-    cd "{{root_dir}}/build" && \
+    cd "{{build_dir}}" && \
       npm_config_container_mgr="{{container_mgr}}" \
       npm run present
 
 # Convert the presentation to a `.pdf`.
 pdf:
-    cd "{{root_dir}}/build" && \
+    cd "{{build_dir}}" && \
       npm_config_container_mgr="{{container_mgr}}" \
       npm run pdf
 
@@ -113,8 +124,8 @@ package file="presentation.zip": pdf
     "{{root_dir}}/tools/scripts/package-presentation.sh" "{{container_mgr}}" "{{file}}"
 
 # Prepare a folder `name` to make later a PR to branch `publish` to serve your presentation.
-publish name:
-    "{{root_dir}}/tools/scripts/prepare-gh-pages.sh" "{{name}}" "{{presentation}}"
+publish pres=presentation:
+    "{{root_dir}}/tools/scripts/publish-pages.sh" "{{pres}}"
 
 # Bake the logo into the style-sheets.
 bake-logo mime="svg":
@@ -132,33 +143,35 @@ build-dev-container *args:
       nix/
 
 [private]
-sync:
+sync pres=presentation:
     #!/usr/bin/env bash
     set -eu
     cd "{{root_dir}}"
 
     sync() {
-      rsync --checksum -a "$@"
+      # Resolve all symlinks to make independent presentations.
+      rsync --checksum -a --copy-links "$@"
     }
 
     echo "Add additional 'npm' scripts."
     jq -s '.[0] *= .[1] | .[0]' external/reveal.js/package.json src/package.json > build/package.json
 
     # Cannot use symlink because `serve` does not like it.
+    mkdir -p "{{build_dir}}/presentations"
     echo "Add additional files (styles, themes, etc.) ..."
-    sync src/presentations/ build/presentations/
-    sync src/mixin/ build/
+    sync "src/presentations/{{pres}}" "{{build_dir}}/presentations/"
+    sync src/mixin/ "{{build_dir}}/"
 
 
-pandoc:
+pandoc pres=presentation:
     #!/usr/bin/env bash
     set -eu
 
     root_dir="{{root_dir}}"
-    build_dir="$root_dir/build"
-    presentation="{{presentation}}"
+    build_dir="{{build_dir}}"
+    presentation="{{pres}}"
     presentation_dir_rel="presentations/$presentation"
-    presentation_dir="$root_dir/build/$presentation_dir_rel"
+    presentation_dir="$build_dir/$presentation_dir_rel"
     image_convert_dir="$presentation_dir_rel/assets/images/convert"
     lua_path="$(pwd)/tools/pandoc/lua/?.lua;;"
     data_dir="$(pwd)/tools/pandoc"
@@ -175,7 +188,7 @@ pandoc:
          --defaults=pandoc-general.yaml \
          --defaults=pandoc-revealjs.yaml \
          --defaults=pandoc-filters.yaml \
-         -o "$root_dir/build/index.html" \
+         -o "$build_dir/index.html" \
          "$presentation_dir/main.md" &&
       echo "Pandoc converted successfully." || {
       echo "Pandoc failed!"

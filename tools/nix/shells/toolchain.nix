@@ -34,6 +34,8 @@ let
       svgbob
       mermaid-cli
 
+      yq-go
+
       pkgs.${namespace}.treefmt
     ];
   };
