@@ -1,6 +1,6 @@
 ---
-title: Technical Presentation
-subtitle: "A tooling repo to produce good tech. presentations."
+title: Rust Workshop 🦀
+subtitle: "Part 1: From Python to Rust & Basics"
 
 author:
   "**Gabriel Nützi**,
@@ -8,12 +8,12 @@ author:
 
 lang: en
 
-date: August 8, 2024
+date: August 14, 2024 (updated October 31, 24)
 
 css: presentations/presentation-1/css/custom.css
 highlightjs-theme: railscasts
 highlightjs-keywords:
-  bash: ["mytool", "othertool"]
+  bash: ["cargo", "rustc"]
 
 # Filter: pandoc-crossref
 figureTitle: |
@@ -49,9 +49,11 @@ hideMouseTime: 1000
 hash: true
 ---
 
-<!-- markdownlint-disable-file MD034 MD033 MD001 MD024 MD026 -->
-<!-- Include slides with the pandoc include filter -->
-
 ```{.include}
+${meta:include-base-dir}/includes/preface.md
+${meta:include-base-dir}/includes/help.md
+${meta:include-base-dir}/includes/acknowledgement.md
+${meta:include-base-dir}/includes/links.md
 ${meta:include-base-dir}/includes/intro.md
+${meta:include-base-dir}/includes/1-foundation/main.md
 ```
