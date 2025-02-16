@@ -8,7 +8,9 @@ author:
 
 lang: en
 
-date: August 14, 2024 (updated October 31, 24)
+date: |
+  August 14, 2024 (updated October 31, 24),
+  [Part 2](https://sdsc-ordes.github.io/technical-presentation/gh-pages/rust-workshop-2)
 
 css: presentations/presentation-1/css/custom.css
 highlightjs-theme: railscasts
