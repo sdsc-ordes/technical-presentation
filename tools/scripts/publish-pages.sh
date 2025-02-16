@@ -18,8 +18,8 @@ function cleanup() {
 trap cleanup EXIT
 
 function publish() {
-    ci::print_info "Add .nojekyll file to not build with jekyll."
-    touch "$docs_dir/.nojekyll"
+    ci::print_info "Set jekyll to no theme."
+    echo "theme: []" >"$docs_dir/_config.yaml"
 
     ci::print_info "Commit all assets onto temp branch..."
     git add "$docs_dir/.nojekyll"
