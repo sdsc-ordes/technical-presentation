@@ -4,6 +4,7 @@ set -e
 set -u
 
 ROOT_DIR=$(git rev-parse --show-toplevel)
+. "$ROOT_DIR/tools/ci/general.sh"
 
 name="${1:-demo}"
 presentation="${2:-presentation-1}"
@@ -20,11 +21,6 @@ function cleanup() {
     if git rev-parse "$temp" &>/dev/null; then
         git branch -D "$temp" || true
     fi
-}
-
-function is_ci() {
-    [ "${CI:-}" = "true" ] && return 0
-    return 1
 }
 
 if ! git diff --quiet --exit-code; then
@@ -56,7 +52,7 @@ cp -r build "$target"
 echo "Create a PR to branch 'publish' to merge only THE changes in '$pages_dir'."
 echo "Execute 'git add -f '$target' to add the files."
 
-if is_ci; then
+if ci::is_running; then
     echo "Commit all assets onto temp branch..."
     git add -f "$target"
     git commit -m "feat: publish '$name'"
