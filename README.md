@@ -14,7 +14,7 @@ company `scss` file for design modifications.
 with some small modifications for SDSC.**
 
 - **See the
-  [demo presentation here](https://sdsc-ordes.github.io/technical-presentation)**.
+  [demo presentation here](https://sdsc-ordes.github.io/technical-presentation/gh-pages/demo)**.
 - **See some other
   [C++ presentation here](https://gabyx.github.io/tech-pr-cpp-value-catergories)**
   [src](https://github.com/gabyx/tech-pr-cpp-value-catergories).
