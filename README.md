@@ -10,7 +10,7 @@ modifications to package to PDF and standalone HTML format. Also it includes a
 company `scss` file for design modifications.
 
 - **See the
-  [demo presentation here](https://gabyx.github.io/Technical-Presentation)**.
+  [demo presentation here](https://gabyx.github.io/Technical-Presentation/gh-pages/demo)**.
 - **See some other
   [C++ presentation here](https://gabyx.github.io/tech-pr-cpp-value-catergories)**
   [src](https://github.com/gabyx/tech-pr-cpp-value-catergories).
