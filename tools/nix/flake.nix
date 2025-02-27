@@ -40,13 +40,16 @@
 
   outputs =
     inputs:
+    let
+      root-dir = ../..;
+    in
     inputs.snowfall-lib.mkFlake {
       inherit inputs;
       # The `src` must be the root of the flake.
-      src = ../..;
+      src = "${root-dir}";
 
       snowfall = {
-        root = ./.;
+        root = "${root-dir}" + "/tools/nix";
         namespace = "technical-presentation";
         meta = {
           name = "technical-presentation";

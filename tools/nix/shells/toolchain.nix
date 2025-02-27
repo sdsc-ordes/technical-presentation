@@ -13,6 +13,8 @@
 let
   # Packages for the 'default' shell.
   default = {
+    devcontainer.enable = true;
+
     packages = with pkgs; [
       just
       parallel
