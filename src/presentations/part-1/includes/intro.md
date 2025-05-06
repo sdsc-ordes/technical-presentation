@@ -4,7 +4,7 @@
 
 ## Why Nix
 
-### [Learn Nix the Fun Way](https://fzakaria.github.io/learn-nix-the-fun-way)
+We will see in a minute!
 
 ---
 
@@ -26,7 +26,7 @@ The basic requirements for working with this repository are:
 
 :::incremental
 
-- Nix is a _domain-specific_ **functional** language.
+- A _domain-specific_ **functional** language (**no side-effects**).
 
 - Structurally similar to JSON but with
   [_function_](https://nixos.org/guides/nix-pills/05-functions-and-imports.html).
@@ -34,6 +34,8 @@ The basic requirements for working with this repository are:
 - Supports fundamental data types such as `string`, `integer`, `path`, `list`,
   and `attribute set`. See
   [Nix Language Basics](https://nixos.org/guides/nix-pills/04-basics-of-language.html#basics-of-language).
+
+- **Lazy evaluated**, _expression evaluation delayed until needed_.
 
 - ⚠️The Nix language is **specifically designed** for
   **deterministic/reproducible** software deployment.
@@ -87,19 +89,78 @@ floating-point types, which are unnecessary in this context.
 
 :::{.column width="50%"}
 
-```nix
-mult = width: height: width * height;
-res = mult 4 2;    # 8
-
-mult10 = mult 10   # Bind an argument.
-
-res = mult10 8     # 80
+```nix {line-numbers="2" .fragment}
+let # start for "procedural" statements
+ mult = a: b: a * b;
+ x10 = mult 10; # Bind the first arg.
+in
+x10 (mult 8 2)
+# -> 160
 ```
 
-```nix
-args: {
+```nix {line-numbers="2" .fragment}
+let
+f = args: {
   a = args.banana + "-nice";
   b = args.orange + "-sour";
+};
+in
+f { banana = "1"; orange = "2" };
+# -> { a = "1-nice"; b = "2-sour"; }
+```
+
+:::
+
+:::{.column width="50%"}
+
+```nix {line-numbers="2" .fragment}
+let
+f = { ban, ora, ...}: { # Destructuring
+  a = args.ban + "-nice";
+  b = args.ora + "-sour";
+};
+in
+f { ban = "1"; ora = "2"; berry ="3"; }
+# -> { a = "1-nice"; b = "2-sour"; }
+```
+
+```nix {line-numbers="2" .fragment}
+let
+f = list: {
+  a = builtins.map (x: x*x) list;
+};
+in
+f [ 1 3 9 ];
+# -> [ 1 9 81 ]
+```
+
+:::
+
+::::::
+
+---
+
+### More Examples
+
+::::::{.columns}
+
+:::{.column width="50%"}
+
+```nix {line-numbers="2" .fragment}
+# Concat lists.
+[ 1 2 3 ] ++ [ 1 2 3 ];
+```
+
+```nix {line-numbers="2" .fragment}
+# Merge attribute sets.
+{ a = 1; b = 2; } // { a = 2; c = 3; }
+```
+
+```nix {line-numbers="2" .fragment}
+a = rec {
+  b = 2;
+  c = b + d:
+  d = 10;
 }
 ```
 
@@ -107,22 +168,78 @@ args: {
 
 :::{.column width="50%"}
 
-```nix {.fragment data-fragment="1"}
-mult = width: height: width * height;
-res = mult 4 2;    # 8
-
-mult10 = mult 10   # Bind an argument.
-
-res = mult10 8     # 80
+```nix {line-numbers="2" .fragment}
+# Lazy evaluation.
+let
+  x = abort "fail";
+in
+if false then x else 42
+# -> 42
 ```
 
-```nix
-{ banana, orange, ...}: {
-  a = args.banana + "-nice";
-  b = args.orange + "-sour";
-}
+```nix {line-numbers="2" .fragment}
+
 ```
 
 :::
 
 ::::::
+
+---
+
+## Learn Nix the Fun Way
+
+### [Learn Nix the Fun Way](https://fzakaria.github.io/learn-nix-the-fun-way)
+
+---
+
+## Fixed Point Combinator 🤯
+
+In maths a fix point `x` of a function `f` is defined as:
+
+$$
+x = f(x).
+$$
+
+In functional programming a fix-point **combinator** `fix` is a _higher-order_
+function which returns the fix point of another function `g`:
+
+```nix
+ fix = g: g (fix g)
+```
+
+Really?
+
+:::{.fragment}
+
+Apply `fix` to a function `f` and see what it returns:
+
+$$
+\underbrace{\text{fix}(f)}_{x} = f( \underbrace{\text{fix}(f)}_{x} )
+$$
+
+:::
+
+---
+
+## Fixed-Point Combinator 🤯
+
+That is how recursive self-referential sets can be defined.
+
+```nix
+let
+  fix = g: g (fix g); # Fix-point combinator.
+
+  # Define the constructor.
+  newSet = self: { path = "/bin"; full = self.path + "/my-app"; };
+
+  mySet = fix newEnv;               # fulfills: myEnv == fix myEnv;
+in
+  mySet.full
+```
+
+Seems recursive: `fix` calls `fix` again -> but isn't 🤯.
+
+Used in `pkgs.callPackage`:
+
+---
