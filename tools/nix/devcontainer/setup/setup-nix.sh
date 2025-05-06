@@ -7,8 +7,8 @@ set -o pipefail
 . "$CONTAINER_SETUP_DIR/common/log.sh"
 
 function setup_nix() {
-
     print_info "Install Nix."
+
     sh <(curl -L https://nixos.org/nix/install) --no-daemon
 
     print_info "Enable Features for Nix."
@@ -18,6 +18,12 @@ function setup_nix() {
         echo "accept-flake-config = true"
     } >~/.config/nix/nix.conf
 
+    # Currently the podman/systemd multi-user install
+    # with determinant does not work
+    # curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install linux \
+    #     --extra-conf "sandbox = false" \
+    #     --no-start-daemon \
+    #     --no-confirm
 }
 
 setup_nix "$@"

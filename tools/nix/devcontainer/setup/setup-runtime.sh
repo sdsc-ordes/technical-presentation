@@ -54,7 +54,10 @@ function setup() {
 
     # Custom setups for other stuff in containers.
     if [ -d "$CONTAINER_SETUP_DIR/runtime" ]; then
-        for script in "$CONTAINER_SETUP_DIR/runtime"/*.sh; do
+        readarray -t scripts < <(find "$CONTAINER_SETUP_DIR/runtime" -type f -name "*.sh") ||
+            die "Could not load all scripts in $CONTAINER_SETUP_DIR/runtime"
+
+        for script in "${scripts[@]}"; do
             print_info "Run setup in '$script' ..."
 
             "$script" ||

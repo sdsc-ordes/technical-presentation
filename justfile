@@ -137,10 +137,10 @@ build-dev-container *args:
     cd "{{root_dir}}" && \
       "{{container_mgr}}" build \
       --build-arg "REPOSITORY_COMMIT_SHA=$(git rev-parse --short=11 HEAD)" \
-      -f nix/devcontainer/Containerfile \
+      -f tools/nix/devcontainer/Containerfile \
       -t technical-presentation:latest \
       "$@" \
-      nix/
+      tools/nix
 
 [private]
 sync pres=presentation:
@@ -173,8 +173,8 @@ pandoc pres=presentation:
     presentation_dir_rel="presentations/$presentation"
     presentation_dir="$build_dir/$presentation_dir_rel"
     image_convert_dir="$presentation_dir_rel/assets/images/convert"
-    lua_path="$(pwd)/tools/pandoc/lua/?.lua;;"
-    data_dir="$(pwd)/tools/pandoc"
+    lua_path="$root_dir/tools/pandoc/lua/?.lua;;"
+    data_dir="$root_dir/tools/pandoc"
 
     # Execute pandoc in folder where the presentation should be built is.
     cd "$build_dir" &&
