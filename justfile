@@ -50,7 +50,7 @@ init pres=presentation:
     just sync "{{pres}}"
 
     echo "Install node packages in '{{build_dir}}' ..."
-    (cd "{{build_dir}}" && yarn install && npm run build)
+    (cd "{{build_dir}}" && pnpm install && pnpm run build)
 
     just pandoc "{{pres}}"
 

@@ -13,15 +13,14 @@
 let
   # Packages for the 'default' shell.
   default = {
-    devcontainer.enable = true;
+    devcontainer.enable = false;
 
     packages = with pkgs; [
       just
       parallel
       direnv
 
-      nodePackages_latest.npm
-      nodePackages_latest.yarn
+      nodePackages_latest.pnpm
 
       pandoc
       pandoc-include
