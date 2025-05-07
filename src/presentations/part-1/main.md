@@ -17,7 +17,8 @@ date: |
 css: presentations/part-1/css/custom.css
 highlightjs-theme: railscasts
 highlightjs-keywords:
-  bash: ["nix"]
+  bash: ["nix", "cat", "jq"]
+
 # Filter: pandoc-crossref
 fgureTitle: |
   Fig.

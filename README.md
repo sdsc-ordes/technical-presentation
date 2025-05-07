@@ -39,7 +39,7 @@ Current [`revealjs`](https://github.com/hakimel/reveal.js) version: `4.6.1`
 
 You can enter a development shell with
 
-```shell
+```bash
 nix develop './tools/nix#default'
 ```
 
@@ -52,13 +52,13 @@ There is a [`.devcontainer`](.devcontainer) to be run over `code` or the
 [devcontainer](https://github.com/devcontainers/cli) CLI. First build the
 container:
 
-```shell
+```bash
 just build-dev-container
 ```
 
 or with `docker` instead of `podman`:
 
-```shell
+```bash
 just container_mgr=docker build-dev-container
 ```
 
@@ -121,6 +121,6 @@ Check the following resources with additional slide materials:
   - Replace embedded image in [`company.scss`](css/theme/source/company.scss)
     with
 
-  ```shell
+  ```bash
   just bake-logo
   ```
