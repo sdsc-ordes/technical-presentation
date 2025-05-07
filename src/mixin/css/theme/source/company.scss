@@ -99,6 +99,7 @@ $codeFontSize: 16pt;
   pre {
     border-radius: 4pt;
     font-size: $codeFontSize;
+    max-width: 100%;
     width: fit-content;
     code {
       font-size: inherit;
