@@ -64,6 +64,34 @@ $codeFontSize: 16pt;
   background-size: 10em;
 }
 
+// Define a custom scrollbar class
+@mixin scrollbar-style($background-color, $radius) {
+  // No y scrollbar.
+  overflow-y: hidden;
+
+  &::-webkit-scrollbar {
+    border-radius: $radius;
+    width: 0px; // Hide the scrollbar by default
+    height: 0px; // Hide the scrollbar by default
+  }
+
+  &::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.3);
+    background-color: color.adjust($background-color, $lightness: 20%);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: color.adjust($background-color, $lightness: 35%);
+  }
+
+  &:hover {
+    &::-webkit-scrollbar {
+      width: 10px; // Show scrollbar on hover
+      height: 10px;
+    }
+  }
+}
+
 .reveal {
   // Linksbünding
   .slides {
@@ -97,15 +125,31 @@ $codeFontSize: 16pt;
 
   // Block Code
   pre {
-    border-radius: 4pt;
+    @include scrollbar-style(#232323, 4pt);
+
     font-size: $codeFontSize;
-    max-width: 100%;
+    border-radius: 4pt;
     width: fit-content;
+    max-width: 100%;
+    max-height: calc(var(--slide-height) - 100px);
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    // &:hover {
+    //   border-top-right-radius: 0px;
+    //   border-bottom-right-radius: 0px;
+    // }
+  }
+
+  pre {
     code {
+      overflow-x: hidden;
+
       font-size: inherit;
       line-height: normal;
       color: #e6e6e6;
       background: #232323;
+      border-radius: 0pt;
       padding: 1ex;
       padding-left: 2ex;
       padding-right: 2ex;

@@ -462,6 +462,14 @@ $endif$
           RevealMath.MathJax3,
           RevealMenu
         ]
+      }).then(() => {
+        // Set two variables for slide and height and width, to scale
+        // better code blocks etc.
+        Reveal.on('ready', () => {
+          const config = Reveal.getConfig();
+          document.documentElement.style.setProperty('--slide-height', `${config.height}px`);
+          document.documentElement.style.setProperty('--slide-width', `${config.width}px`);
+        });
       });
     </script>
   $for(include-after)$
