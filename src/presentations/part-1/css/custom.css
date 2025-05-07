@@ -126,3 +126,11 @@
   background-size: 10pt, 10pt;
   background-repeat: no-repeat;
 }
+
+.reveal .quiz p {
+  background: #efefef;
+  padding: 2pt;
+  padding-right: 10pt;
+  padding-left: 10pt;
+  border-radius: 10pt;
+}

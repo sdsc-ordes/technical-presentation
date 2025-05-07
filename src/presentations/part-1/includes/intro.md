@@ -326,9 +326,9 @@ pkgs.writeShellScriptBin "what-is-my-ip" ''
 ''
 ```
 
-::: {.fragment}
+::: {.fragment .quiz}
 
-Quiz: What returns `builtins.fetchTarball "..."`?
+_**Quiz:** What returns `builtins.fetchTarball "..."`?_
 
 :::
 
@@ -367,6 +367,24 @@ Explore whats in this file
     --raw-output ".origin"
 ```
 
+Nix has encoded the executables used by **store paths** (`/nix/store`).
+
+:::
+
+:::{.fragment .quiz}
+
+_**Quiz:** Can you share this script with your colleague?_
+
+:::
+
+:::notes
+
+Do not think you can now simply share this script by giving the contents of
+directory `/nix/store/7x9hf9g95d4wjjvq853x25jhakki63bz-what-is-my-ip` to
+somebody else and it will work. This is not sufficient as we need the other
+derivations as well. This is done differently namely over Nix itself, because
+Nix has all information (`nix copy`).
+
 :::
 
 ## Building Our First Package (3)
@@ -384,21 +402,13 @@ fundamental `derivation` command (see
 
 ---
 
-```nix
-{
-  system ? builtins.currentSystem,
-  pkgs ?
-    import (fetchTarball
-      "https://github.com/NixOS/nixpkgs/archive/5ef6c425980847c78a80d759abc476e941a9bf42.tar.gz")
-      {
-        inherit system;
-      },
-}:
-
-# This is the most fundamental command in Nix:
+```nix {line-numbers="1|2|4|5|7-20|22,10"}
 derivation {
+  inherit system;
+
   name = "what-is-my-ip";
   builder = "/bin/sh";
+
   args = [
     "-c"
     ''
@@ -414,7 +424,30 @@ derivation {
     ''
   ];
 
-  system = builtins.currentSystem;
   outputs = [ "out" ];
 }
 ```
+
+---
+
+## Inspect the Dependency Graph
+
+Run
+
+```bash
+nix run github:craigmbooth/nix-visualize -- \
+  -c tools/configs/nix-visualize/config.ini
+  -s nix
+  "$(nix build -f ./examples/what-is-my-ip.nix --print-out-paths)"
+```
+
+and inspect `frame.png`.
+
+:::{.center-content}
+
+![](https://media.githubusercontent.com/media/sdsc-ordes/nix-workshop/refs/heads/main/docs/assets/dependency-graph.png){width="50%"
+.border-light .center-content}
+
+:::
+
+---
