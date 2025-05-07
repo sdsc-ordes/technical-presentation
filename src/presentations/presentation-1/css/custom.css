@@ -56,8 +56,3 @@
   justify-content: center;
   align-items: center;
 }
-
-.reveal pre,
-.reveal code {
-  scrollbar-width: none;
-}
