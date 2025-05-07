@@ -457,7 +457,7 @@ fundamental `derivation` command (see
 
 ---
 
-```nix {line-numbers="1|2|4|5|7-20|22,10"}
+```nix {line-numbers="1|2|4|5|7-20|22,10" style="font-size:14pt;"}
 derivation {
   inherit system;
 
@@ -511,9 +511,9 @@ and inspect `frame.png`.
 
 :::{.quiz}
 
-_**Quiz:** What do you expect
-`/nix/store/zl7h70n70g5m57iw5pa8gqkxz6y0zfcf-curl-8.12.1-bin/bin/curl` links to
-and what does your system `curl` link to on e.g. Ubuntu/macOS? Use `ldd curl` to
+_**Quiz:** What do you expect<br>
+`/nix/store/zl7h70n70g5m57iw5pa8gqkxz6y0zfcf-curl-8.12.1-bin/bin/curl`<br> links
+to and what does your system `curl` link to? <br><br> Use `ldd curl` to
 inspect._
 
 :::
@@ -638,7 +638,7 @@ the same except that the available attributes are now `inputs` and `outputs`:
 
 A [derivation](https://nix.dev/manual/nix/2.24/glossary#gloss-derivation) is a
 
-- **specialized attribute set** that describes how to build a Nix package.
+- **specialized attribute set**, describes how to **build** a Nix package.
 
   ```nix
   { type = "derivation"; ... }
@@ -746,7 +746,7 @@ can be used to format all files in this repository.
 
 ## Inspect a Derivation ()
 
-```json {style="max-height:100px;"}
+```json {style="font-size:12pt"}
 {
   "/nix/store/72zknv2ssr8pkvf5jrc0g5w64bqjvyq1-treefmt.drv": {
     "args": [
@@ -826,7 +826,7 @@ can be used to format all files in this repository.
 
 ---
 
-## Store Derivation - What is that good for?
+## Store Derivation
 
 > A **derivation** contains only **build instructions** for Nix to
 > **realize/build** it. This can be literally anything, e.g. a software package,
@@ -953,18 +953,12 @@ The simple flake in
 [`./examples/flake-simple`](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/flake-simple/flake.nix)
 defines `devShells` an output:
 
-```nix
-devShells = forAllSystems (
-  system:
-  let
-    pkgs = inputs.nixpkgs-unstable.legacyPackages.${system};
-  in
+```nix {line-numbers="2|3-12|4|5|7-10"}
+ devShells = forAllSystems (system:
+  let pkgs = inputs.nixpkgs-unstable.legacyPackages.${system}; in
   {
     default = pkgs.mkShell {
-      packages = [
-        pkgs.skopeo
-        pkgs.cowsay
-      ];
+      packages = [ pkgs.skopeo pkgs.cowsay ];
 
       shellHook = ''
         echo "Hello from Shell"
@@ -975,8 +969,47 @@ devShells = forAllSystems (
 );
 ```
 
+:::{.fragment}
+
 Function `pkgs.mkShell` makes a derivation consumable by `nix develop`:
 
 ```bash
 nix develop "./examples/flake-simple#default"
 ```
+
+:::
+
+---
+
+## References
+
+- [Nix Packages Search](https://search.nixos.org/packages?)
+- [Nix Packages Search for Version Pinning](https://nixhub.io)
+
+- [NixOS Manual](https://nixos.org/manual/nixos/stable/)
+- [NixOS Options Search](https://search.nixos.org/options?)
+- [NixOS With Flakes](https://nixos-and-flakes.thiscute.world/nixos-with-flakes)
+- [NixOS Status](https://status.nixos.org/)
+
+- [Nixpkgs Pull Request Tracker](https://nixpk.gs/pr-tracker.html)
+- [Nixpkgs-Lib Function Search](https://noogle.dev/)
+
+---
+
+## Your Nix Journey
+
+:::incremental
+
+- ✅ Check the references.
+
+- Ask the people who set the `devShell` how to extend it if you don't know yet.
+
+- More to come in part 2.
+
+- Changing the world of non-reproducible build systems is hard and an endeavour
+  on its own.
+
+- Embrace Nix as tool to give you better reproducibility. The Nix community is
+  always helpful.
+
+:::
