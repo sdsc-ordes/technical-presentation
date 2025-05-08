@@ -969,7 +969,7 @@ Its a Nix **derivation** in the output attribute set `devShells` of the
 
 The `banana-shell` derivation is meant to be consumed by `nix develop`.
 
-## How to Create a DevShell Derivation?
+## Create A DevShell
 
 The flake in
 [`./examples/flake-simple`](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/flake-simple/flake.nix)
