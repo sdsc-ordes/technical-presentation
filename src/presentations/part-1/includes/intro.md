@@ -95,7 +95,7 @@ floating-point types, which are unnecessary in this context.
 
 ## Examples
 
-Verify the next examples in the Nix Repl (Return-Eval-Prompt-Loop):
+Verify the next examples in the Nix REPL (Read-Eval-Print-Loop):
 
 ```bash
 nix repl
@@ -262,7 +262,7 @@ in set.${key}.v
 
 ## Strings and Paths
 
-```nix
+```nix {line-numbers=""}
 let
   file = ./.github/workflows;    # A path. Nix makes them absolute!
   drv = "${file}/gh-pages.yaml"; # Interpolated path gets added into the `/nix/store`.
@@ -618,7 +618,7 @@ A flake
 - Nix can evaluate a `flake.nix` by calling the `outputs` function passing all
   `inputs`.
 
-  - Try `nix repl .` to load all outputs in `./flake.nix` is at the root (`.`).
+  - Try `nix repl .` to load all outputs of `./flake.nix` in directory `.`.
 
   - Check `outputs.packages.x86_64-linux = { ... }`. It is a flat attribute set
     of Nix **derivations**.
