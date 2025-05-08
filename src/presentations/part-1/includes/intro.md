@@ -1003,6 +1003,23 @@ nix develop "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#default" -
 
 ---
 
+## Use [`devenv.sh`](https://devenv.sh)
+
+Our
+[best-practice repository templates](https://github.com/sdsc-ordes/repository-template)
+support `devenv.sh` Nix DevShells.
+
+- Nix DevShells from `nixpkgs` (`pkgs.mkShell`) are quite raw and sometimes too
+  simplistic.
+
+- Nix DevShells from `devenv` you can do a looot more stuff, better. To be
+  continued ...
+
+- They are configured based on the same mechanism which drives `NixOS` (NixOS
+  Modules).
+
+---
+
 ## References
 
 - [Nix Packages Search](https://search.nixos.org/packages?)
