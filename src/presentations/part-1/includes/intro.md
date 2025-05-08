@@ -202,7 +202,7 @@ in f [ 1 3 9 ]
 ```nix {line-numbers="1-5|2|3|4|6" .fragment}
 rec {
   b = 2;
-  c = b + d:
+  c = b + d;
   d = 10;
 }
 # -> { b = 2; c = 12; d = 10; }
@@ -272,7 +272,7 @@ in set.${key}.v
 ```nix {line-numbers="2|3|5"}
 let
   dir = ./.github/workflows;    # A path. Nix makes them absolute!
-  file = "${file}/gh-pages.yaml"; # Interpolated path gets added into the `/nix/store`.
+  file = "${dir}/gh-pages.yaml"; # Interpolated path gets added into the `/nix/store`.
 in file
 # -> "/nix/store/w9il9gvki2nfdzfc1lrlbiv3xy3mx90a-workflows/gh-pages.yaml"
 ```
@@ -940,8 +940,9 @@ with Flakes. **You should only use the modern commands, e.g.
 
 ## Exercise
 
-Eval/build/run the `treefmt` utility in the `packages` output in flake directory
-output [root directory](https://github.com/sdsc-ordes/nix-workshop/blob/main)
+Eval/build/run the `treefmt` utility in the `packages` output in the flake
+inside
+[the root directory](https://github.com/sdsc-ordes/nix-workshop/blob/main).
 
 Hints:
 
