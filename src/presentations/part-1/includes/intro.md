@@ -530,8 +530,6 @@ the output script for store paths and include these in the runtime dependencies.
 
 ---
 
-## Nix Terminology
-
 ## What Is a Flake?
 
 You have seen files like `flake.nix` lying around in repositories already.
@@ -571,7 +569,7 @@ A flake
   - Other repositories, local files, or URLs with a `flake.nix`.
 
 - defines structured
-  [**outputs**](https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-configuration-explained#_2-flake-outputs)
+  [**outputs**](https://nixos-and-flakes.thiscute.world/other-usage-of-flakes/outputs)
   (a function)
 
   - Specifies what the flake provides.
@@ -684,18 +682,19 @@ flowchart LR
 ## Inspect a Derivation
 
 ```bash
-nix eval ".#packages.x86_64-linux.my-tool"
+nix eval "./examples/flake-simple#packages.x86_64-linux.mytool"
 
-> «derivation /nix/store/72zknv2ssr8pkvf5jrc0g5w64bqjvyq1-treefmt.drv»
+> «derivation /nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv»
 ```
 
-`.#packages.x86_64-linux.my-tool` is an _installable_. More later!
+`./examples/flake-simple#packages.x86_64-linux.mytool` is an _installable_. More
+later!
 
 :::{.fragment}
 
 ```bash
 # Inspect the store derivation.
-cat /nix/store/72zknv2ssr8pkvf5jrc0g5w64bqjvyq1-treefmt.drv
+cat /nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv
 ```
 
 :::
@@ -729,14 +728,14 @@ the derivation for another architecture.
 JSON output of the above:
 
 ```bash
-nix derivation show /nix/store/72zknv2ssr8pkvf5jrc0g5w64bqjvyq1-treefmt.drv
+nix derivation show /nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv
 ```
 
 :::
 
 :::notes
 
-The output of `/nix/store/72zknv2ssr8pkvf5jrc0g5w64bqjvyq1-treefmt.drv` above is
+The output of `/nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv` above is
 the internal serialization of the formatter's derivation which **when built**
 can be used to format all files in this repository.
 
@@ -748,19 +747,20 @@ can be used to format all files in this repository.
 
 ```json {style="font-size:12pt"}
 {
-  "/nix/store/72zknv2ssr8pkvf5jrc0g5w64bqjvyq1-treefmt.drv": {
+  "/nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv": {
     "args": [
       "-e",
-      "/nix/store/v6x3cs394jgqfbi0a42pam708flxaphh-default-builder.sh"
+      "/nix/store/vj1c3wf9c11a0qs6p3ymfvrnsdgsdcbq-source-stdenv.sh",
+      "/nix/store/shkw4qm9qcw5sc5n1k5jznc83ny02r39-default-builder.sh"
     ],
-    "builder": "/nix/store/8vpg72ik2kgxfj05lc56hkqrdrfl8xi9-bash-5.2p37/bin/bash",
+    "builder": "/nix/store/9nw8b61s8lfdn8fkabxhbz0s775gjhbr-bash-5.2p37/bin/bash",
     "env": {
       "__structuredAttrs": "",
       "allowSubstitutes": "",
-      "buildCommand": "target=$out/bin/treefmt\nmkdir -p \"$(dirname \"$target\")\"\n\nif [ -e \"$textPath\" ]; then\n  mv \"$textPath\" \"$target\"\nelse\n  echo -n \"$text\" > \"$target\"\nfi\n\nif [ -n \"$executable\" ]; then\n  chmod +x \"$target\"\nfi\n\neval \"$checkPhase\"\n",
+      "buildCommand": "target=$out/bin/mytool\nmkdir -p \"$(dirname \"$target\")\"\n\nif [ -e \"$textPath\" ]; then\n  mv \"$textPath\" \"$target\"\nelse\n  echo -n \"$text\" > \"$target\"\nfi\n\nif [ -n \"$executable\" ]; then\n  chmod +x \"$target\"\nfi\n\neval \"$checkPhase\"\n",
       "buildInputs": "",
-      "builder": "/nix/store/8vpg72ik2kgxfj05lc56hkqrdrfl8xi9-bash-5.2p37/bin/bash",
-      "checkPhase": "/nix/store/8vpg72ik2kgxfj05lc56hkqrdrfl8xi9-bash-5.2p37/bin/bash -n -O extglob \"$target\"\n",
+      "builder": "/nix/store/9nw8b61s8lfdn8fkabxhbz0s775gjhbr-bash-5.2p37/bin/bash",
+      "checkPhase": "/nix/store/9nw8b61s8lfdn8fkabxhbz0s775gjhbr-bash-5.2p37/bin/bash -n -O extglob \"$target\"\n",
       "cmakeFlags": "",
       "configureFlags": "",
       "depsBuildBuild": "",
@@ -778,45 +778,46 @@ can be used to format all files in this repository.
       "enableParallelInstalling": "1",
       "executable": "1",
       "mesonFlags": "",
-      "name": "treefmt",
+      "name": "mytool",
       "nativeBuildInputs": "",
-      "out": "/nix/store/5rvqlxk2vx0hx1yk8qdll2l8l62pfn8n-treefmt",
+      "out": "/nix/store/blm702jzcwfppwrrj9925ivd9gxp4c9n-mytool",
       "outputs": "out",
       "passAsFile": "buildCommand text",
       "patches": "",
       "preferLocalBuild": "1",
       "propagatedBuildInputs": "",
       "propagatedNativeBuildInputs": "",
-      "stdenv": "/nix/store/hsxp8g7zdr6wxk1mp812g8nbzvajzn4w-stdenv-linux",
+      "stdenv": "/nix/store/npp9k9062ny7w0k1i03ij6xvqb7vhvjh-stdenv-linux",
       "strictDeps": "",
       "system": "x86_64-linux",
-      "text": "#!/nix/store/8vpg72ik2kgxfj05lc56hkqrdrfl8xi9-bash-5.2p37/bin/bash\nset -euo pipefail\nunset PRJ_ROOT\nexec /nix/store/0jcp33pgf85arjv3nbghws34mrmy7qq5-treefmt-2.1.0/bin/treefmt \\\n  --config-file=/nix/store/qk8rqccch6slk037dhnprryqwi8mv0xs-treefmt.toml \\\n  --tree-root-file=.git/config \\\n  \"$@\"\n\n"
+      "text": "#!/nix/store/9nw8b61s8lfdn8fkabxhbz0s775gjhbr-bash-5.2p37/bin/bash\n\"/nix/store/xkk1gr9bw2dbdjna8391rj1zl1l3dmhq-cowsay-3.8.4/bin/cowsay\" \"Hello there ;)\"\necho \"-------------------------------------\"\n\"/nix/store/4ydiim4lfk6nyab4pdkjj9s33pgbigfd-figlet-2.2.5/bin/figlet\" \"Do you expect\"\n\"/nix/store/4ydiim4lfk6nyab4pdkjj9s33pgbigfd-figlet-2.2.5/bin/figlet\" \"something \"\n\"/nix/store/4ydiim4lfk6nyab4pdkjj9s33pgbigfd-figlet-2.2.5/bin/figlet\" \"useful ? \"\n\n"
     },
     "inputDrvs": {
-      "/nix/store/1fmb3b4cmr1bl1v6vgr8plw15rqw5jhf-treefmt.toml.drv": {
+      "/nix/store/1fsd2cb5ab7ci01ks4j0gbbq254jw6sk-stdenv-linux.drv": {
         "dynamicOutputs": {},
         "outputs": ["out"]
       },
-      "/nix/store/3avbfsh9rjq8psqbbplv2da6dr679cib-treefmt-2.1.0.drv": {
+      "/nix/store/lrf9kbhlaf5mkvnlf3zr9wzvk7c2z72l-bash-5.2p37.drv": {
         "dynamicOutputs": {},
         "outputs": ["out"]
       },
-      "/nix/store/61fjldjpjn6n8b037xkvvrgjv4q8myhl-bash-5.2p37.drv": {
+      "/nix/store/phq4wh4490manblg905xixpc3gvwr149-figlet-2.2.5.drv": {
         "dynamicOutputs": {},
         "outputs": ["out"]
       },
-      "/nix/store/gp6gh2jn0x7y7shdvvwxlza4r5bmh211-stdenv-linux.drv": {
+      "/nix/store/wdpicivrj0bmzh935rr1hm1vlk18j0mp-cowsay-3.8.4.drv": {
         "dynamicOutputs": {},
         "outputs": ["out"]
       }
     },
     "inputSrcs": [
-      "/nix/store/v6x3cs394jgqfbi0a42pam708flxaphh-default-builder.sh"
+      "/nix/store/shkw4qm9qcw5sc5n1k5jznc83ny02r39-default-builder.sh",
+      "/nix/store/vj1c3wf9c11a0qs6p3ymfvrnsdgsdcbq-source-stdenv.sh"
     ],
-    "name": "treefmt",
+    "name": "mytool",
     "outputs": {
       "out": {
-        "path": "/nix/store/5rvqlxk2vx0hx1yk8qdll2l8l62pfn8n-treefmt"
+        "path": "/nix/store/blm702jzcwfppwrrj9925ivd9gxp4c9n-mytool"
       }
     },
     "system": "x86_64-linux"
@@ -840,7 +841,7 @@ We can build the above derivation - or in other terms **realize it in the Nix
 store** - by doing:
 
 ```bash
-nix build /nix/store/72zknv2ssr8pkvf5jrc0g5w64bqjvyq1-treefmt.drv
+nix build -L /nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv --print-out-paths
 ```
 
 :::
@@ -850,14 +851,15 @@ nix build /nix/store/72zknv2ssr8pkvf5jrc0g5w64bqjvyq1-treefmt.drv
 or directly
 
 ```bash
-nix build ".#packages.x86_64-linux.my-tool" --out-link ./my-tool
+nix build -L "./examples/simple-flake#packages.x86_64-linux.mytool" \
+  --print-out-paths --out-link ./mytool
 ```
 
 :::
 
 :::{.fragment}
 
-✅: **Use Short Form**: `nix build .#my-tool` which uses
+✅ **Short Form:** `nix build "./examples/simple-flake#mytool"` which uses
 `builtins.currentSystem` (works also for macOS users).
 
 :::
@@ -866,12 +868,12 @@ nix build ".#packages.x86_64-linux.my-tool" --out-link ./my-tool
 
 :::{.column width="50%" .fragment}
 
-✅ Inspect `tree ./my-tool`:
+✅ Inspect `tree ./mytool`:
 
 ```bash
-/nix/store/5rvqlxk2vx0hx1yk8qdll2l8l62pfn8n-treefmt
+/nix/store/blm702jzc...vd9gxp4c9n-mytool
 └── bin
-    └── my-tool
+    └── mytool
 ```
 
 :::
@@ -881,22 +883,25 @@ nix build ".#packages.x86_64-linux.my-tool" --out-link ./my-tool
 ✅ Run it with:
 
 ```bash
-./my-tool/bin/my-tool -h
+./mytool/bin/mytool -h
 ```
 
 ```bash
-nix run ".#packages.x86_64-linux.my-tool"
+nix run "./examples/flake-simple#mytool"
 ```
 
 :::
 
 :::
+
+---
 
 ## What Is an Installable
 
 :::{.fragment}
 
-The path `.#packages.x86_64-linux.my-tool` is referred to as a
+The path `./examples/flake-simple#packages.x86_64-linux.mytool` is referred to
+as a
 [Flake output attribute installable](https://nix.dev/manual/nix/2.24/command-ref/new-cli/nix#flake-output-attribute),
 or simply an
 [_installable_](https://nix.dev/manual/nix/2.24/command-ref/new-cli/nix#installables).
@@ -911,8 +916,9 @@ An **installable** is a Flake output that can be realized in the Nix store.
 
 ::: incremental
 
-- `.` refers to this repository’s [`flake.nix`](./flake.nix) directory.
-- `packages.x86_64-linux.my-tool` following `#` is an output attribute defined
+- `./examples/flake-simple` refers to this repository’s
+  [`flake.nix`](./flake.nix) directory.
+- `packages.x86_64-linux.mytool` following `#` is an output attribute defined
   within the flake.
 
 :::
@@ -923,17 +929,33 @@ accept **installables** as input, making them a fundamental concept in working
 with Flakes. **You should only use the modern commands, e.g.
 `nix <subcommand>`**. Stay away from the command `nix-env`.
 
+---
+
+## Exercise
+
+Eval/build/run the `treefmt` utility in the `packages` output in flake directory
+output [root directory](https://github.com/sdsc-ordes/nix-workshop/blob/main)
+
+Hints:
+
+- `nix eval --impure --expr 'builtins.currentSystem'`
+- `packages.${system}.treefmt`
+- `nix run`
+- `"github:sdsc-ordes/nix-workshop#..."`
+
+---
+
 ## What Is a DevShell?
 
 Its a Nix **derivation** in the output attribute set `devShells` of the
 `flake.nix`:
 
-```nix
+```nix { line-numbers="8-10" }
 {
   inputs = { /* ... */ };
   outputs = inputs: {
     packages = {
-      my-tool = /* derivation */
+      mytool = /* derivation */
     };
 
     devShells = {
@@ -949,7 +971,7 @@ The `banana-shell` derivation is meant to be consumed by `nix develop`.
 
 ## How to Create a DevShell Derivation?
 
-The simple flake in
+The flake in
 [`./examples/flake-simple`](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/flake-simple/flake.nix)
 defines `devShells` an output:
 
@@ -973,8 +995,8 @@ defines `devShells` an output:
 
 Function `pkgs.mkShell` makes a derivation consumable by `nix develop`:
 
-```bash
-nix develop "./examples/flake-simple#default"
+```bash {style="font-size:14pt"}
+nix develop "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#default" --command zsh
 ```
 
 :::
@@ -1000,14 +1022,15 @@ nix develop "./examples/flake-simple#default"
 
 :::incremental
 
-- ✅ Check the references.
+- ✅ Ask the people who set the `devShell` how to extend it if you don't know
+  yet.
 
-- Ask the people who set the `devShell` how to extend it if you don't know yet.
+- ✅ Check the references.
 
 - More to come in part 2.
 
-- Changing the world of non-reproducible build systems is hard and an endeavour
-  on its own.
+- Changing the world of non-reproducible build systems is hard endeavour on its
+  own.
 
 - Embrace Nix as tool to give you better reproducibility. The Nix community is
   always helpful.
