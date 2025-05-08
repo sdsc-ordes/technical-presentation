@@ -1,13 +1,5 @@
 <!-- markdownlint-disable-file MD034 MD033 MD001 MD024 MD026-->
 
-# Introduction
-
-## Why Nix
-
-We will see in a minute!
-
----
-
 ## Requirements
 
 All examples refer to the
@@ -29,6 +21,21 @@ See
 
 🪟 Windows Users: kindly asked to leave this presentation (since Nix is for Unix
 system) **or** use **WSL Ubuntu**.
+
+---
+
+# Introduction
+
+## Why Nix
+
+We will see in a minute!
+
+:::notes
+
+Before we jump into the presentation from Farid, lets do quickly short wrap up
+of the Nix language that you can read already some of the code he presents.
+
+:::
 
 ---
 
@@ -69,22 +76,22 @@ floating-point types, which are unnecessary in this context.
 - Nix files have suffix `.nix` and contain mostly 1
   [_function_](https://nixos.org/guides/nix-pills/05-functions-and-imports.html).
 
-- The function `args: ...` in file `myfunction.nix` takes one argument `args`
+- The function `args: ...` in file `myfunction.nix` takes one argument `banana`
   and
 
   ```nix {line-numbers="2|3|4|5|6|7|8|9"}
   # myfunction.nix
-  args:
+  banana:
   let
     aNumber = 1;  # A number.
     aList = [ 1 2 3 "help"];  # A list with 4 elements.
     anAttrSet = { a = 1; b.c.d = [1]; };  # A nested attribute set.
-    result = args.myFunc { val1 = aNumber; };  # Calls another function `args.myFunc`.
+    result = banana.getColor { v = aNumber; };  # Calls another function `args.myFunc`.
   in
-  { val1 = aNumber; val2 = anAttrSet.b.c.d; val3 = result; }
+  { x = aNumber; y = anAttrSet.b.c.d; z = result; }
   ```
 
-  returns an attribute set `{ val1 = ... }`.
+  returns an attribute set `{ x = ... }`.
 
 - Watch this [short introduction](https://www.youtube.com/watch?v=HiTgbsFlPzs)
   for the basic building block.
@@ -165,7 +172,7 @@ f = list: {
   a = builtins.map (x: x*x) list;
 };
 in f [ 1 3 9 ]
-# -> [ 1 9 81 ]
+# -> { a = [ 1 9 81 ] }
 ```
 
 :::
@@ -262,11 +269,11 @@ in set.${key}.v
 
 ## Strings and Paths
 
-```nix {line-numbers=""}
+```nix {line-numbers="2|3|5"}
 let
-  file = ./.github/workflows;    # A path. Nix makes them absolute!
-  drv = "${file}/gh-pages.yaml"; # Interpolated path gets added into the `/nix/store`.
-in drv
+  dir = ./.github/workflows;    # A path. Nix makes them absolute!
+  file = "${file}/gh-pages.yaml"; # Interpolated path gets added into the `/nix/store`.
+in file
 # -> "/nix/store/w9il9gvki2nfdzfc1lrlbiv3xy3mx90a-workflows/gh-pages.yaml"
 ```
 
@@ -366,7 +373,7 @@ Used in `pkgs.callPackage` in `nixpkgs`.
 Put the following in a script
 [`whats-is-my-ip.nix`](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/what-is-my-ip.nix):
 
-```nix {line-numbers="2|3|4-7"}
+```nix {line-numbers="2|3|4-7" style="font-size:14pt"}
 {
 system ? builtins.currentSystem, # Mostly: x86_64-linux
 pkgs ?
@@ -457,7 +464,7 @@ fundamental `derivation` command (see
 
 ---
 
-```nix {line-numbers="1|2|4|5|7-20|22,10" style="font-size:14pt;"}
+```nix {line-numbers="1|2|4|5|7-20|10|12-16|22,10" style="font-size:14pt;"}
 derivation {
   inherit system;
 
@@ -491,8 +498,8 @@ Run
 
 ```bash
 nix run github:craigmbooth/nix-visualize -- \
-  -c tools/configs/nix-visualize/config.ini
-  -s nix
+  -c tools/configs/nix-visualize/config.ini \
+  -s nix \
   "$(nix build -f ./examples/what-is-my-ip.nix --print-out-paths)"
 ```
 
