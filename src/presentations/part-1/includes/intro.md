@@ -1,6 +1,6 @@
 <!-- markdownlint-disable-file MD034 MD033 MD001 MD024 MD026-->
 
-## Requirements
+# Requirements
 
 All examples refer to the
 [workshop repository](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/what-is-my-ip-orig.nix)
@@ -22,31 +22,327 @@ See
 🪟 Windows Users: kindly asked to leave this presentation (since Nix is for Unix
 system) **or** use **WSL Ubuntu**.
 
----
+# Motivation
 
-# Introduction
+##  Why Nix?
 
-## Why Nix
+You start `python` and you get this:
 
-We will see in a minute!
+```bash
+>>> import numpy
+Segmentation fault (core dumped)
+```
 
 :::notes
 
-Before we jump into the presentation from Farid, lets do quickly short wrap up
-of the Nix language that you can read already some of the code he presents.
+Importing a package like `numpy` in python is not a trivial task as you might
+expect. `Numpy` heavily depends on build shared object files on your system,
+such as `LAPACK`, `BLAS`, which it tries to load when you import `python`.
+
+The error above is hard to identify, it might be due to misalignment of system
+libraries with your python environment etc.
+
+This will not happen with Nix, never!.
+
+But you might ask, what is with `conda` or `devcontainers` or `mamba`? They
+resolve these issues right?
 
 :::
 
 ---
 
-## What is Nix
+### 💣 It Works on My Machine
+
+:::{.center-content}
+
+![](${meta:include-base-dir}/assets/images/it-works-on-my-machine.jpg){width="80%"}
+
+:::
+
+::: notes
+
+Developer environments have become increasingly more complicated and the least
+what we want is to be stuck in the land of `it works on my machine`.
+
+Lets look at some technology which claim to setup reproducible developer
+environments.
+
+:::
+
+---
+
+### 🧪 Development Setups
+
+<br>
+
+:::{style=""}
+
+| Feature          | Local Development | [Mamba](https://mamba.readthedocs.io) | [Devcontainer](https://containers.dev/implementors/spec/) | [Nix/DevShell](https://www.youtube.com/watch?v=yQwW8dkuHqw) |
+| ---------------- | ----------------- | ------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------- |
+| Maintainenance   | ⚠️ **High**       | ⚡ Medium                             | ⚡ Medium                                                 | ⚡ Medium                                                   |
+| Reproducibility  | ❌ Low            | ⚠️ Medium                             | ⚡ Medium                                                 | ✅ **Very high**                                            |
+| Ease of Use      | ❌ Low            | ✅ Easy                               | ✅ Ok                                                     | ⚠️ Medium                                                   |
+| Dep. Mgmt.       | ❌                | ✅                                    | ⚡                                                        | ✅                                                          |
+| Portability      | 💣                | ⚠️                                    | ✅                                                        | ✅                                                          |
+| **CI Stability** | 💣                | ⚡                                    | ⚡                                                        | ✅ **Almost Perfect**                                       |
+
+:::
+
+[Full Table](https://swissdatasciencecenter.github.io/best-practice-documentation/docs/dev-enablement/dev-env)
+
+:::notes
+
+This table shows the comparison between different technologies for setting up
+development environment. There exists many more of course. This chart is maybe
+more for people using python setups.
+
+The main I want to highlight here is that with a local development you obviously
+dont get any benefit. You cannot reproduce anything and you are stuck in the
+land of `it works on my machine`.
+
+Also they are sometimes used together and mixed back and forth. So people might
+use the `brew` package manager on macOS to install some stuff, then at the same
+time use `mamba` or `conda` to install some better managed python environments,
+and might interleave that with a `.devcontainer` etc. This is even more complex
+and you can get rid of all this complexity once you have understood what Nix can
+give you, which a lot of package managers try to solve but they don't or cannot
+do it proper from the start.
+
+:::
+
+---
+
+###  What is **Nix**?
+
+**Nix** is a software package management & deployment infrastructure:
+
+::: incremental
+
+- 🏃🏻‍♂️Software is built and run in a **predictable and reproducible** way.
+
+- ✅ Builds are **reproducible** — same inputs give same results.
+
+- 🔄 Installs packages **without breaking** others.
+
+- 📦 Can create **isolated dev environments**.
+
+- 💻 Works on Linux, macOS.
+
+:::
+
+---
+
+## Nix started 2006 ...
+
+:::::::::{.columns}
+
+:::{.column width="50%" }
+
+![[Eelco Dolstra's PhD Thesis](https://edolstra.github.io/pubs/phd-thesis.pdf)](${meta:include-base-dir}/assets/images/phd-thesis.png){.border-light
+width="70%"}
+
+:::
+
+:::{.column width="50%" .fragment}
+
+![](${meta:include-base-dir}/assets/images/nix-explanation-meme.jpg){.border-light
+height="70%"}
+
+:::
+
+::::::
+
+::: notes
+
+Starting the Nix journey from 2006 with Eelco Dolstra's Phd might not be the
+best idea, not because of the thesis. But immediately jumping into academic and
+dense vocabulary about the ideas and technology that powers Nix might
+immediately turn off potential new Nix-enthusiasts.
+
+:::
+
+---
+
+## Learn Nix the Fun Way
+
+### Why I love Nix, and you should too! 💖
+
+::: notes
+
+We will do that by first learning in a nutshell the basics of the Nix language.
+Its not that difficult.
+
+This enables you to understand the key insights this talk leads to at the end of
+the presentation. So bare with me and remember that at the end there will be an
+**Aha**-moment.
+
+:::
+
+---
+
+## What Is My IP?
+
+```bash {.fragment}
+#! /usr/bin/env bash
+curl -s http://httpbin.org/get | jq --raw-output .origin
+```
+
+```shell {.fragment data-id="code-animation"}
+12.24.14.88
+```
+
+::: {.fragment}
+
+**What guarantees that `jq` or `curl` is available?**
+
+:::
+
+:::notes
+
+We have all written such innocuous tooling scripts like that for example to
+accomplish some tasks in a software repository or even for CI.
+
+- click
+
+The problem with this script comes first when you need to guarantee that the
+tools you use in the script are available and that they work.
+
+Lets have a look at how Nix would do that if you want to build a reproducible
+version of that script.
+
+:::
+
+---
+
+## Build It With Nix (1)
+
+```nix {line-numbers="10|11-13"}
+{
+  system ? builtins.currentSystem,
+  pkgs ?
+    import
+      (builtins.fetchTarball "https://github.com/NixOS/nixpkgs/archive/9684b53175fc6c09581e94cc85f05ab77464c7e3.tar.gz")
+      {
+        inherit system;
+      },
+}:
+pkgs.writeShellScriptBin "what-is-my-ip"
+''
+  ${pkgs.curl}/bin/curl -s http://httpbin.org/get | \
+    ${pkgs.jq}/bin/jq --raw-output .origin
+''
+```
+
+:::notes
+
+With out going now into what this does, this is the Nix code which will build
+the reproducible version of this script. You see there is a function
+`writeShellScriptBin` and a string which encodes basically what was the content
+of our script.
+
+:::
+
+---
+
+## Build It With Nix (2)
+
+Building this Nix code gives you a store path:
+
+```bash
+/nix/store/7x9hf9g95d4wjjvq853x25jhakki63bz-what-is-my-ip
+```
+
+::: {.fragment}
+
+which contains
+
+```bash {line-numbers="|1,3,5" }
+#!/nix/store/mc4485g4apaqzjx59dsmqscls1zc3p2w-bash-5.2p37/bin/bash
+
+/nix/store/zl7h70n70g5m57iw5pa8gqkxz6y0zfcf-curl-8.12.1-bin/bin/curl \
+  -s "http://httpbin.org/get" | \
+  /nix/store/y50rkdixqzgdgnps2vrc8g0f0kyvpb9w-jq-1.7.1-bin/bin/jq \
+    --raw-output ".origin"
+```
+
+:::
+
+[Nix has encoded the used executables with **store paths** (`/nix/store`).]{.fragment}
+
+:::{.fragment .quiz}
+
+_**Quiz:** Can you share this script with your colleague?_
+
+:::
+
+:::notes
+
+We will later on see how we build something with Nix.
+
+No you cannot directly share this script, we will see at the end of the
+presentation how this is done since Nix knows everything about the dependency?
+You might ask now Jeah, ok these paths are just in the `/nix/store`, what is it
+any good? Its just how other package manager would store the binaries somewhere
+for a tool like `jq`.
+
+But thats only the partial story what Nix does differently. Lets look into it.
+
+:::
+
+---
+
+## What Is This Hash ?
+
+::::::{.columns}
+
+:::{.column width="50%" style="align-content:center"}
+
+```bash
+/nix/store/7x9hf9g95d4wjjvq853x25jhakki63bz-what-is-my-ip
+```
+
+**Seeing `7x9hf9g95d4wjjvq853x25jhakki63bz` is an [extremely
+strong guarantee]{.emph} of the software graph down to the [commit and build instructions]{.emph}.**
+
+:::
+
+:::{.column width="50%" .fragment}
+
+![](${meta:include-base-dir}/assets/images/fractal.gif){width="100%"
+.border-light}
+
+:::
+
+::::::
+
+:::notes
+
+We see that Nix does some hashing here for the stuff it puts in the
+`/nix/store`.
+
+Seeing such a hash in Nix is an extremely strong guarantee of the software graph
+down to the commit and build instructions.
+
+- click
+
+Nix accomplishes that with the Nix language. Lets dive into the language and
+give you an "in-a-nutshell" introduction into the language itself to understand
+how this manifests itself.
+
+:::
+
+#  The Nix Language
+
+<h3>In a Nutshell</h3>
+
+##  The Nix Language
 
 :::incremental
 
 - A _domain-specific_ **functional** language (**no side-effects**).
 
 - Structurally similar to JSON but with
-  [_functions_](https://nixos.org/guides/nix-pills/05-functions-and-imports.html).
+  (https://nixos.org/guides/nix-pills/05-functions-and-imports.html).
 
 - Supports fundamental data types such as `string`, `integer`, `path`, `list`,
   and `attribute set`. See
@@ -67,9 +363,7 @@ floating-point types, which are unnecessary in this context.
 
 :::
 
----
-
-## Nix Language
+##  The Nix Language
 
 ::: incremental
 
@@ -300,7 +594,17 @@ Server) in your IDE to see "Go to definitions".
 
 :::
 
-## Fixed Point Combinator 🤯
+---
+
+## Exercises
+
+Try out the before shown examples your self with `nix repl`.
+
+**Time: `10min`**
+
+---
+
+## Appendix: Fixed Point Combinator 🤯
 
 In maths a fix point `x` of a function `f` is defined as:
 
@@ -337,7 +641,7 @@ $$
 
 ---
 
-## Fixed-Point Combinator 🤯
+## Appendix: Fixed-Point Combinator 🤯
 
 That is how recursive self-referential sets can be defined.
 
@@ -357,14 +661,6 @@ Seems recursive: `fix` calls `fix` again **but isn't 🤯**, because its lazy
 evaluated. More explanations here.
 
 Used in `pkgs.callPackage` in `nixpkgs`.
-
----
-
-## Learn Nix the Fun Way
-
-### [Learn Nix the Fun Way](https://fzakaria.github.io/learn-nix-the-fun-way)
-
----
 
 # Workshop
 
@@ -418,7 +714,7 @@ nix build -f ./examples/what-is-my-ip.nix --print-out-paths
 
 ::: {.fragment}
 
-Explore whats in this file
+Explore whats in
 `/nix/store/7x9hf9g95d4wjjvq853x25jhakki63bz-what-is-my-ip/bin/what-is-my-ip`:
 
 ```bash
@@ -428,14 +724,6 @@ Explore whats in this file
   /nix/store/y50rkdixqzgdgnps2vrc8g0f0kyvpb9w-jq-1.7.1-bin/bin/jq \
     --raw-output ".origin"
 ```
-
-Nix has encoded the executables used by **store paths** (`/nix/store`).
-
-:::
-
-:::{.fragment .quiz}
-
-_**Quiz:** Can you share this script with your colleague?_
 
 :::
 
@@ -449,9 +737,11 @@ Nix has all information (`nix copy`).
 
 :::
 
+---
+
 ## Building Our First Package (3)
 
-```nix
+```nix {line-numbers="1"}
 pkgs.writeShellScriptBin "what-is-my-ip" ''
   ${pkgs.curl}/bin/curl -s http://httpbin.org/get | \
     ${pkgs.jq}/bin/jq --raw-output .origin
@@ -497,41 +787,58 @@ derivation {
 Run
 
 ```bash
-nix run github:craigmbooth/nix-visualize -- \
-  -c tools/configs/nix-visualize/config.ini \
-  -s nix \
-  "$(nix build -f ./examples/what-is-my-ip.nix --print-out-paths)"
+nix-store --query --include-outputs --graph \
+  $(nix build -f ./examples/what-is-my-ip.nix --print-out-paths) > graph.dot
+
+dot -Grankdir=TB -Gconcentrate=true -Tpng graph.dot > graph.png
 ```
 
-and inspect `frame.png`.
-
-::: {.center-content .p-no-margin}
-
-![](https://media.githubusercontent.com/media/sdsc-ordes/nix-workshop/refs/heads/main/docs/assets/dependency-graph.png){width="50%"
-.border-light }
-
-:::
+and inspect `graph.png`.
 
 ---
 
-## Inspect the Dependency Graph (2)
+## Exercise: Inspect the Dependency Graph
+
+- Reproduce the commands for building `what-is-my-ip.nix` on your machine in the
+  [workshop repository](https://github.com/sdsc-ordes/nix-workshop).
+- Inspect the store path.
+- Explore the dependencies and answer the quiz below:
+
+**Time: 15-20min**
 
 :::{.quiz}
 
 _**Quiz:** What do you expect<br>
 `/nix/store/zl7h70n70g5m57iw5pa8gqkxz6y0zfcf-curl-8.12.1-bin/bin/curl`<br> links
-to and what does your system `curl` link to? <br><br> Use `ldd curl` to
-inspect._
+to and what does your system `curl` link to? <br><br> Use `ldd` to inspect._
 
 :::
 
 :::notes
 
+Before we go on with learning more on Nix, I want you to replicate the shown
+commands before.
+
+:::
+
+---
+
+## Inspect the Dependency Graph
+
+[![](${meta:include-base-dir}/assets/images/graph-whats-my-ip.svg){width="100%"
+.border-light}]{.center-content}
+
+:::notes
+
+The question is how does Nix know all this?
+
 Nix builds in a sandbox where only `/nix/store` (and some others, +no internet)
-is available. Any build tool which is used during the build of a Nix derivation
-will typically only pick up these libraries from the `/nix/store` (any linker
-will link to these files). For `pkgs.writeShellScriptBin` it will also analyze
-the output script for store paths and include these in the runtime dependencies.
+is available. Any build tool which is used during the build will only pick up
+libraries from the `/nix/store` (any linker will link to these files). For
+`pkgs.writeShellScriptBin` it will also analyze the output script for store
+paths and include these in the runtime dependencies.
+
+Show the output of `ldd curl` etc.
 
 :::
 
@@ -930,26 +1237,40 @@ An **installable** is a Flake output that can be realized in the Nix store.
 
 :::
 
+::: {.fragment}
+
 Most
 [modern Nix commands](https://nix.dev/manual/nix/2.24/command-ref/experimental-commands)
 accept **installables** as input, making them a fundamental concept in working
 with Flakes. **You should only use the modern commands, e.g.
 `nix <subcommand>`**. Stay away from the command `nix-env`.
 
+:::
+
 ---
 
 ## Exercise
 
-Eval/build/run the `treefmt` utility in the `packages` output in the flake
-inside
-[the root directory](https://github.com/sdsc-ordes/nix-workshop/blob/main).
+- Load the `flake` in the
+  [the root directory](https://github.com/sdsc-ordes/nix-workshop/blob/main) in
+  `nix repl` and use `:lf .`
 
-Hints:
+  - Inspect the attribute `inputs.nixpkgs`.
+  - Inspect the string `"${inputs.nixpkgs}"` and explore the output!
+  - Try to explain `import "${inputs.nixpkgs}" { system = "x86_64-linux"; }`.
 
-- `nix eval --impure --expr 'builtins.currentSystem'`
-- `packages.${system}.treefmt`
-- `nix run`
-- `"github:sdsc-ordes/nix-workshop#..."`
+- Eval/build/run the `treefmt` utility in the `packages` output in the flake
+  inside
+  [the root directory](https://github.com/sdsc-ordes/nix-workshop/blob/main).
+
+  Hints:
+
+  - `nix eval --impure --expr 'builtins.currentSystem'`
+  - `packages.${system}.treefmt`
+  - `nix run`
+  - `"github:sdsc-ordes/nix-workshop#..."`
+
+**Time: 15-20min**
 
 ---
 
@@ -1008,6 +1329,16 @@ nix develop "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#default" -
 ```
 
 :::
+
+---
+
+## Exercise: Modify the DevShell
+
+- Modify
+  [`./examples/flake-simple`](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/flake-simple/flake.nix)
+  to include your [package](https://search.nixos.org/packages?channel=unstable).
+
+**Time: 15min**
 
 ---
 
