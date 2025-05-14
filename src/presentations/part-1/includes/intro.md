@@ -606,36 +606,24 @@ Try out the before shown examples your self with `nix repl`.
 
 ## Appendix: Fixed Point Combinator 🤯
 
-In maths a fix point `x` of a function `f` is defined as:
+In maths a fix point `x` of a function `F` is defined as:
 
 $$
-x = f(x).
+x = F(x).
 $$
 
 :::{.fragment}
 
 In functional programming a fix-point **combinator** `fix` is a _higher-order_
-function.<br> It returns the fix point of a function `g`:
+function.<br> It returns the fix point of a function `F`:
 
 :::
 
 :::{.fragment}
 
 ```nix
- fix = g: g (fix g)
+fix = F: let x = F x in x
 ```
-
-:::
-
-:::{.fragment}
-
-Really?
-
-Apply `fix` to a function `f` and see what it returns:
-
-$$
-\underbrace{\text{fix}(f)}_{x} = f( \underbrace{\text{fix}(f)}_{x} )
-$$
 
 :::
 
@@ -647,20 +635,41 @@ That is how recursive self-referential sets can be defined.
 
 ```nix {line-numbers="2|5|7|9"}
 let
-  fix = g: g (fix g); # Fix-point combinator.
+  fix = F: let x = F x in x;
 
-  # Define the constructor.
+  # Define the constructor of the set.
   newSet = self: { path = "/bin"; full = self.path + "/my-app"; };
 
-  mySet = fix newEnv;               # fulfills: myEnv == fix myEnv;
+  mySet = fix newSet; # fulfills: mySet == fix mySet;
 in
   mySet.full
 ```
 
-Seems recursive: `fix` calls `fix` again **but isn't 🤯**, because its lazy
-evaluated. More explanations here.
+Seems recursive in `let x = F x` but **but isn't 🤯**, because its lazy
+evaluated.
+[What you need to know about laziness.](https://nixcademy.com/de/posts/what-you-need-to-know-about-laziness).
 
 Used in `pkgs.callPackage` in `nixpkgs`.
+
+---
+
+## Appendix: Why Nix is Lazy Evaluated?
+
+> The choice for lazy evaluation allows us to write Nix expressions in a
+> convenient and elegant style: Packages are described by Nix expressions and
+> these Nix expressions can freely be passed around in a Nix program – as long
+> as we do not access the contents of the package, no evaluation and thus no
+> build will occur. […] At the call site of a function, we can supply all
+> potential dependencies without having to worry that unneeded dependencies
+> might be evaluated. For instance, the whole of the Nix packages collection is
+> essentially one attribute set where each attribute maps to one package
+> contained in the collection. It is very convenient that at this point, we do
+> not have to deal with the administration of what exactly will be needed where.
+> Another benefit is that we can easily store meta information with packages,
+> such as name, version number, homepage, license, description and maintainer.
+> Without any extra effort, we can access such meta-information without having
+> to build the whole package.
+> [[Paper](https://edolstra.github.io/pubs/nixos-jfp-final.pdf)]
 
 # Workshop
 
