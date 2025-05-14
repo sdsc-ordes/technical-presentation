@@ -8,8 +8,8 @@
 // Include theme-specific fonts
 @import url("./fonts/museo/museo.css");
 @import url("./fonts/museo-sans/museo-sans.css");
-@import url("./fonts/fira-code/fira-code.css");
-@import url("./fonts/fira-sans/fira-sans.css");
+// Nerd Fonts
+@import url("./fonts/noto-sans/noto-sans.css");
 @import url("./fonts/jetbrains-mono/jetbrains-mono.css");
 
 // Company Colors
@@ -27,8 +27,10 @@ $headingColor: $companyBlueDark;
 $headingColorSub: $companyBlue;
 $headingTextTransform: none;
 
-$mainFont: "Museo", "Palatino Linotype", "Book Antiqua", "Palatino", serif;
-$headingFont: "Museo", "Palatin Linotype", "Book Antiqua", "Palatino", serif;
+$mainFont: "Museo", "Noto Sans", "Palatino Linotype", "Book Antiqua", "Palatino",
+  serif;
+$headingFont: "Museo", "Noto Sans", "Palatin Linotype", "Book Antiqua",
+  "Palatino", serif;
 $linkColor: $companyBlueLight;
 $linkColorHover: color.adjust($companyBlueLight, $lightness: 20%);
 
@@ -250,5 +252,11 @@ $codeFontSize: 16pt;
   figcaption {
     font-size: $figCaptionFontSize;
     font-style: italic;
+  }
+
+  // Make a special emoji.
+  // The fallback font for normal text also includes emojis.
+  .emoji {
+    font-family: "Noto Sans";
   }
 }

@@ -204,6 +204,12 @@ fn thread_example() {
 
 ---
 
+## []{.emoji} Emoji Support
+
+Emoji: <span></span>
+
+---
+
 ## Disclaimer
 
 Customized with ❤️ by Gabriel Nützi for SDSC.
