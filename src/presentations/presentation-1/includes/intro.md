@@ -115,6 +115,12 @@ using Func =             int(float); // Type: Function.
 
 ---
 
+## []{.emoji} Emoji Support
+
+Emoji: <span></span>
+
+---
+
 ## Disclaimer
 
 Customized with ❤️ by Gabriel Nützi for SDSC.
