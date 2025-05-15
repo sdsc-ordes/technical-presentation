@@ -32,7 +32,7 @@ notes: |
 lang: en
 
 date: |
-  May 8, 2025 (Updated: **May 11, 2025**), [Repository](https://github.com/sdsc-ordes/nix-workshop), [Slides](https://sdsc-ordes.github.io/technical-presentation/gh-pages/nix-workshop/part-1)
+  May 8, 2025 (Updated: **May 15, 2025**), [Repository](https://github.com/sdsc-ordes/nix-workshop), [Slides](https://sdsc-ordes.github.io/technical-presentation/gh-pages/nix-workshop/part-1)
 
 css: presentations/part-1/css/custom.css
 highlightjs-theme: railscasts

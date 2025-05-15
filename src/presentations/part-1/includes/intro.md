@@ -254,7 +254,7 @@ Building this Nix code gives you a store path:
 
 ::: {.fragment}
 
-which contains
+which contains the script and all needed dependencies
 
 ```bash {line-numbers="|1,3,5" }
 #!/nix/store/mc4485g4apaqzjx59dsmqscls1zc3p2w-bash-5.2p37/bin/bash
@@ -301,8 +301,13 @@ But thats only the partial story what Nix does differently. Lets look into it.
 /nix/store/7x9hf9g95d4wjjvq853x25jhakki63bz-what-is-my-ip
 ```
 
-**Seeing `7x9hf9g95d4wjjvq853x25jhakki63bz` is an [extremely
-strong guarantee]{.emph} of the software graph down to the [commit and build instructions]{.emph}.**
+::: {.fragment}
+
+Seeing `7x9hf9g95d4wjjvq853x25jhakki63bz` is an [extremely
+strong guarantee]{.emph} of the built software down to the [commit/version
+and build instructions including dependencies.]{.emph}
+
+:::
 
 :::
 
@@ -342,7 +347,7 @@ how this manifests itself.
 - A _domain-specific_ **functional** language (**no side-effects**).
 
 - Structurally similar to JSON but with
-  (https://nixos.org/guides/nix-pills/05-functions-and-imports.html).
+  [functions](https://nixos.org/guides/nix-pills/05-functions-and-imports.html).
 
 - Supports fundamental data types such as `string`, `integer`, `path`, `list`,
   and `attribute set`. See
@@ -396,7 +401,7 @@ floating-point types, which are unnecessary in this context.
 
 ## Examples
 
-Verify the next examples in the Nix REPL (Read-Eval-Print-Loop):
+Verify the next examples in the Nix REPL (interactive Nix shell):
 
 ```bash
 nix repl
@@ -695,7 +700,7 @@ pkgs.writeShellScriptBin "what-is-my-ip" ''
 
 ::: {.fragment .quiz}
 
-_**Quiz:** What returns `builtins.fetchTarball "..."`?_
+_**Quiz:** What returns `builtins.fetchTarball "..."` ?_
 
 :::
 
@@ -705,9 +710,45 @@ This function takes two parameters:
 
 - `system`: a string mostly `x86_64-linux` and defaulted to your current system)
   and
-- `pkgs`: an attribute set and defaulted to the main function of the `nixpkgs`
-  repository. The repository `nixpkgs` is the central package mono-repository
-  which maintains packages (_derivations_) for Nix.
+- `pkgs`: an attribute set and defaulted to the main function of the
+  [`nixpkgs`](https://nixos.org/manual/nixpkgs/stable/#preface) repository. The
+  repository [`nixpkgs`](https://nixos.org/manual/nixpkgs/stable/#preface) is
+  the central package mono-repository which maintains packages (_derivations_)
+  for Nix.
+
+- The `builtins.fetchTarball` returns the downloaded content of an URL in the
+  `/nix/store/...` Above it returns the content of `nixpkgs` repository at
+  commit `9684b53175fc6c09581e94cc85f05ab77464c7e3`. Try it out in the
+  `nix repl`.
+
+:::
+
+---
+
+## Wait! What is [`https://github.com/NixOS/nixpkgs`](https://nixos.org/manual/nixpkgs/stable/#preface) ?
+
+::: incremental
+
+- 󰳏 The repository [`nixpgkgs`](https://github.com/NixOS/nixpkgs) is a **giant**
+  mono-repository with Nix code to build over 130k software packages
+  (derivations).
+
+  - from basic C/C++ compiler (named `stdenv`) and infrastructure to bootstrap
+    tools of any Linux (`coreuitls` etc.) up to
+
+  - leaf-like packages like `signal`, `firefox`, etc.
+
+-  A commit on `nixpkgs` represents the **version** of **all** packages at that
+  **commit**.
+
+- Importing
+  [`default.nix`](https://github.com/NixOS/nixpkgs/blob/master/default.nix),
+  [1](https://github.com/NixOS/nixpkgs/blob/374e6bcc403e02a35e07b650463c01a52b13a7c8/pkgs/top-level/default.nix#L21)
+  from `nixpkgs` (see [`import`](#building-package)) returns a **function** to
+  instantiate this giant flat attribute set **`pkgs`** for your `system`.
+
+- Search [packages here](https://search.nixos.org/packages) and more
+  [granular here](https://www.nixhub.io/).
 
 :::
 
