@@ -7,7 +7,7 @@
     "present::browser-sync": "browser-sync start --index index.html --server --files . --ignore '.git/**' --port 3000",
     "pdf": "npm-run-all -s build pdf::start",
     "pdf::start": "concurrently --kill-others --success first \"npm run pdf::export\" \"npm run pdf::server\"",
-    "pdf::export": "delay 7 && \"$(pwd)/../tools/render-with-decktape.sh\" \"$npm_config_container_mgr\" 3030",
+    "pdf::export": "delay 7 && \"$(pwd)/../tools/render-with-decktape.sh\" \"$CONTAINER_MGR\" 3030",
     "pdf::server": "browser-sync start --index index.html --server --port 3030"
   },
   "devDependencies": {

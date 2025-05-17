@@ -33,13 +33,13 @@ function parse_args() {
 parse_args "$@"
 
 os=""
-osDist=""
-get_platform_os os osDist
+os_dist=""
+get_platform_os os os_dist
 
 print_info "Configuring time zone '$time_zone' ..."
 
 if [ "$os" = "linux" ] &&
-    [ "$osDist" = "alpine" ]; then
+    [ "$os_dist" = "alpine" ]; then
 
     sudo apk add tzdata || die "Could not install 'tzdata'."
 
@@ -48,6 +48,22 @@ if [ "$os" = "linux" ] &&
         sudo ln -snf "/usr/share/zoneinfo/$time_zone" /etc/localtime && echo "$time_zone" | sudo tee /etc/timezone
     fi
 
+elif [ "$os" = "linux" ] &&
+    [ "$os_dist" = "ubuntu" ]; then
+
+    sudo apt-get update &&
+        sudo DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata ||
+        die "Could not install 'tzdata'."
+
+    echo "Configure time zone to $time_zone"
+    if [ "$(cat '/etc/timezone' 2>/dev/null)" != "$time_zone" ]; then
+        if [ -n "$time_zone" ]; then
+            sudo ln -snf "/usr/share/zoneinfo/$time_zone" /etc/localtime && echo "$time_zone" | sudo tee /etc/timezone
+            sudo dpkg-reconfigure -f noninteractive tzdata
+        else
+            sudo dpkg-reconfigure tzdata
+        fi
+    fi
 else
     die "Operating system not supported:" "$os"
 fi
