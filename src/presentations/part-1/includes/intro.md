@@ -36,6 +36,10 @@ following.
 
 A few selling points for `python` programmers.
 
+- [`pydantic-core`] is fully rewrite in rust.
+- Many modern python toolchain are written in rust (`uv`, `ruff`, etc.).
+- You can do this as well for your python project! Rust can powerup your current python project seamlessly with [`pyo3`](https://pyo3.rs/v0.25.0/).
+
 ---
 
 ## Come on 🐨 show me syntax!
