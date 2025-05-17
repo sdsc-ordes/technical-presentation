@@ -29,7 +29,7 @@ $headingTextTransform: none;
 
 $mainFont: "Museo", "Noto Sans", "Palatino Linotype", "Book Antiqua", "Palatino",
   serif;
-$headingFont: $mainFont
+$headingFont: $mainFont;
 $linkColor: $companyBlueLight;
 $linkColorHover: color.adjust($companyBlueLight, $lightness: 20%);
 
@@ -72,8 +72,8 @@ $codeFontSize: 16pt;
 
   &::-webkit-scrollbar {
     border-radius: $radius;
-    width: 0px; // Hide the scrollbar by default
-    height: 0px; // Hide the scrollbar by default
+    width: 3px; // Hide the scrollbar by default
+    height: 3px; // Hide the scrollbar by default
   }
 
   &::-webkit-scrollbar-track {
@@ -83,13 +83,6 @@ $codeFontSize: 16pt;
 
   &::-webkit-scrollbar-thumb {
     background-color: color.adjust($background-color, $lightness: 35%);
-  }
-
-  &:hover {
-    &::-webkit-scrollbar {
-      width: 10px; // Show scrollbar on hover
-      height: 10px;
-    }
   }
 }
 
@@ -105,28 +98,32 @@ $codeFontSize: 16pt;
     right: auto;
   }
 
-  // Code in Lists
+  // Code in lists.
   ul {
     display: block;
   }
 
-  // Inline Code
+  // Inline code.
   code {
     border-radius: 7pt;
     background: #ededed;
     padding: 0ex;
     padding-left: 0.3ex;
     padding-right: 0.3ex;
-  }
 
-  // Highlight lines should only grey out a little.
-  code.has-highlights tr:not(.highlight-line) {
-    opacity: 0.8 !important;
+    .highlight-line {
+      background: #323232;
+    }
+
+    &.has-highlights tr:not(.highlight-line) {
+      opacity: 0.8 !important;
+    }
   }
 
   // Block Code
   pre {
-    @include scrollbar-style(#232323, 4pt);
+    // @include scrollbar-style(#232323, 4pt);
+    scrollbar-width: none;
 
     font-size: $codeFontSize;
     border-radius: 4pt;
@@ -136,16 +133,11 @@ $codeFontSize: 16pt;
     overflow-x: hidden;
     overflow-y: auto;
 
-    // &:hover {
-    //   border-top-right-radius: 0px;
-    //   border-bottom-right-radius: 0px;
-    // }
-  }
-
-  pre {
     code {
       scrollbar-width: none;
       overflow-x: auto;
+
+      max-height: 100%;
 
       font-size: inherit;
       line-height: normal;
@@ -181,6 +173,25 @@ $codeFontSize: 16pt;
         background-size: 18pt, 18pt;
         background-repeat: no-repeat;
       }
+    }
+
+    // Border color for non-compiling stuff.
+    &.no-compile code {
+      border-top: none;
+      border-inline: 0.4rem solid red;
+      border-right: none;
+    }
+    &.does-compile code {
+      border-top: none;
+      border-inline: 0.4rem solid green;
+      border-right: none;
+    }
+
+    .hljs-comment {
+      color: #5e5e5e;
+    }
+    .hljs-keyword {
+      font-weight: 600;
     }
   }
 
@@ -257,5 +268,13 @@ $codeFontSize: 16pt;
   // The fallback font for normal text also includes emojis.
   .emoji {
     font-family: "Noto Sans";
+  }
+
+  // Columns
+  .columns {
+    gap: min(0.5vw, 1em);
+  }
+  .column pre {
+    width: 100%;
   }
 }
