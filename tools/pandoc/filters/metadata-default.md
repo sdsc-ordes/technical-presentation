@@ -6,7 +6,7 @@ include-files:
   # default-format:
 
 svgbob:
-  font-family: Fira Mono
+  font-family: JetbrainsMono NFM
   font-size: 14
   scale: 1
   stroke-width: 2
