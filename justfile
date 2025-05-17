@@ -104,20 +104,20 @@ watch pres=presentation:
 # Build the presentation.
 build:
     cd "{{build_dir}}" && \
-      npm run build
+      pnpm run build
 
 # Present the presentation.
 alias serve := present
 present:
     cd "{{build_dir}}" && \
-      npm_config_container_mgr="{{container_mgr}}" \
-      npm run present
+      CONTAINER_MGR="{{container_mgr}}" \
+      pnpm run present
 
 # Convert the presentation to a `.pdf`.
 pdf:
     cd "{{build_dir}}" && \
-      npm_config_container_mgr="{{container_mgr}}" \
-      npm run pdf
+      CONTAINER_MGR="{{container_mgr}}" \
+      pnpm run pdf
 
 # Convert to `.pdf` and package into a `.zip` file which is standalone shareable.
 package file="presentation.zip": pdf
