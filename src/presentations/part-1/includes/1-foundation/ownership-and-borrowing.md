@@ -34,18 +34,18 @@ We have previously seen this example:
 ```rust
 fn main() {
     let a = String::from("hello");
-    let len = calculate_length(a);
+    let len = calc_length(a);
 
     println!("Length of '{}' is {}.", a, len);
 }
 
-fn calculate_length(s: String) -> usize {
+fn calc_length(s: String) -> usize {
     s.len()
 }
 ```
 
-- Does not compile ⇒ ownership of `a` is moved into `calculate_length` ⇒ no
-  longer available in `main`.
+- Does not compile ⇒ ownership of `a` is moved into `calc_length` ⇒ no longer
+  available in `main`.
 - We can use `Clone` to create an explicit copy.
 - We can give ownership back by returning the value.
 
@@ -60,12 +60,12 @@ In Python we have this:
 ```python {line-numbers="|8,9" fragment-index="1"}
 def main() {
     a = "hello";
-    l = calculate_length(a);
+    l = calc_length(a);
 
     print(f"Length of '{a}' is {l}.");
 }
 
-def calculate_length(s: str) -> int {
+def calc_length(s: str) -> int {
     return len(s)
 }
 ```

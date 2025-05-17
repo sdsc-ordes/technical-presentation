@@ -544,9 +544,9 @@ fn main() {
 A boxed dyn. Trait is totally fine and most of the time easier to deal with in
 code. The dynamic memory allocation should not be your premature optimization
 point! The pointer indirection is the same as in the stack-based dynamic
-dispatch, do not think about this, it is 80% premature optimization. Except if you
-are in a very hot loop where you do dynamic dispatch always, then
-think about it, in all other cases dont!.
+dispatch, do not think about this, it is 80% premature optimization. Except if
+you are in a very hot loop where you do dynamic dispatch always, then think
+about it, in all other cases dont!.
 
 :::
 

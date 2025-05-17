@@ -40,42 +40,21 @@ A few selling points for `python` programmers.
 
 ## Come on 🐨 show me syntax!
 
-The syntax\* is similar and as easy to read as in Python.
+The syntax\* is similar and as easy to read as in Python
 
 <!-- prettier-ignore-start -->
 
 :::::: {.columns}
-::: {.column width="50%"}
+::: {.column width="40%"}
 
-```rust
-#[derive(Debug)]
-struct Apple {
-  name: String
-}
-
-fn grow() -> Vec<Apple> {
-
-  let apples = vec![Apple{name: "a".to_string()},
-                    Apple{name: "b".to_string()}];
-
-  for b in &apples {
-    println!("Apple: {b:?}");
-  }
-
-  apples
-}
-```
-
-:::
-::: {.column width="50%"}
 
 ```python
 @dataclass
 class Apple:
   name: str
 
-def grow() -> List[Apple]:
 
+def grow() -> List[Apple]:
   apples = [Apple("a"),
             Apple("b")]
 
@@ -87,11 +66,32 @@ def grow() -> List[Apple]:
 ```
 
 :::
+::: {.column width="60%"}
+
+```rust
+#[derive(Debug)]
+struct Apple {
+  name: String
+}
+
+fn grow() -> Vec<Apple> {
+  let apples = vec![Apple{name: "a".to_string()},
+                    Apple{name: "b".to_string()} ];
+
+  for b in &apples {
+    println!("Apple: {b:?}");
+  }
+
+  apples
+}
+```
+
+:::
 ::::::
 
-<!-- prettier-ignore-end -->
-
 \*: 80% you will encounter is very readable (except macros etc.).
+
+<!-- prettier-ignore-end -->
 
 ---
 
@@ -222,8 +222,6 @@ variables bind to memory</small>)
 
   ::: {.column width="50%" .fragment}
 
-  Python:
-
   ```python {.smaller-code}
   def get_float(num: str | float) -> float:
     match (num):
@@ -236,8 +234,6 @@ variables bind to memory</small>)
   :::
 
   ::: {.column width="50%" .fragment}
-
-  Rust:
 
   ```rust {.smaller-code}
   enum StrOrFloat {

@@ -666,7 +666,7 @@ fn main() {
 ::: {.column width="50%"}
 
 ::: {.fragment}
-```rust {line-numbers=""}
+```rust {line-numbers="6"}
 fn main() {
     if 2 < 10 {
         42
@@ -676,7 +676,7 @@ fn main() {
 }
 ```
 
-**Answer:** [**No**]{.red} - It needs a `;` on line 2 because the `if`
+**Answer:** [**No**]{.red} - It needs a `;` on line 6 because the `if`
 expression returns a value which must be turned into statement
 with `};`
 

@@ -33,14 +33,14 @@ An executable **binary** (a file on your disk) will be loaded first into the mem
 
 - The **machine instructions** are loaded into the memory.
 
-- The **static data** in the binary (i.e. strings etc)
+- The [**static data**]{style="text-decoration-color:#D4E1F5;text-decoration-line: underline;text-decoration-thickness: 0.3rem"} in the binary (i.e. strings etc)
   is also loaded into memory.
 
 - The CPU starts fetching the instructions
   from the RAM and will start to execute the machine instructions.
 
 - Two memory mechanisms are at play when executing:
-  the **stack** and the **heap**
+  the [**stack**]{style="text-decoration-color:#FFD966;text-decoration-line: underline;text-decoration-thickness: 0.3rem"} and the [**heap**]{style="text-decoration-color:#D40000;text-decoration-line: underline;text-decoration-thickness: 0.3rem"}
 
 :::
 
@@ -410,12 +410,12 @@ error[E0382]: borrow of moved value: `a`
 fn main() {
   let a = String::from("hello");
 
-  let len = calculate_length(a);
+  let len = calc_length(a);
   println!("Length of '{}' is {}.",
            a, len);
 }
 
-fn calculate_length(s: String) -> usize {
+fn calc_length(s: String) -> usize {
   s.len()
 }
 ```
@@ -433,8 +433,8 @@ error[E0382]: borrow of moved value: `a`
   |       which does not implement the
   |       `Copy` trait
   |
-3 | let len = calculate_length(a);
-  |           value moved here -
+3 | let len = calc_length(a);
+  |      value moved here -
   |
 4 | println!("Length of '{}' is {}.",
   |          a, len);
@@ -470,12 +470,12 @@ We can return a value to move it out of the function
 ```rust
 fn main() {
     let a = String::from("hello");
-    let (len, a) = calculate_length(a);
+    let (len, a) = calc_length(a);
 
     println!("Length of '{}' is {}.", a, len);
 }
 
-fn calculate_length(s: String) -> (usize, String) {
+fn calc_length(s: String) -> (usize, String) {
     (s.len(), s)
 }
 ```
