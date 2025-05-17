@@ -10,7 +10,9 @@
 cargo new hello-world
 ```
 
-Cargo is the Rust package manager. Cargo downloads your Rust package’s dependencies, compiles your packages, makes distributable packages, and uploads them to [crates.io](https://crates.io), the Rust community’s package registry.
+Cargo is the Rust package manager. Cargo downloads your Rust package’s
+dependencies, compiles your packages, makes distributable packages, and uploads
+them to [crates.io](https://crates.io), the Rust community’s package registry.
 
 ```bash
 cd hello-world

@@ -36,9 +36,13 @@ following.
 
 A few selling points for `python` programmers.
 
-- [`pydantic-core`] is fully rewrite in rust.
-- Many modern python toolchain are written in rust (`uv`, `ruff`, etc.).
-- You can do this as well for your python project! Rust can powerup your current python project seamlessly with [`pyo3`](https://pyo3.rs/v0.25.0/).
+- [`pydantic-core`](https://pypi.org/project/pydantic-core) is fully rewrite in
+  rust.
+- Many modern python toolchain are written in rust
+  ([`uv`](https://docs.astral.sh/uv/concepts/tools),
+  [`ruff`](https://docs.astral.sh/ruff), etc.).
+- You can do this as well for your python project! Rust can powerup your current
+  python project seamlessly with [`pyo3`](https://pyo3.rs/v0.25.0/).
 
 ---
 
@@ -315,6 +319,7 @@ results often in a mess.
 - It’s not easy — but it’s worth it:
   - Exercise is tough, but it makes you stronger.
   - Junk food is easy, but it slows you down.
-  - Learning Rust is a challenge — but soon, you’ll feel like you’re bending the Matrix.
+  - Learning Rust is a challenge — but soon, you’ll feel like you’re bending the
+    Matrix.
 
 :::
