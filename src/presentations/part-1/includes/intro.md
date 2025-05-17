@@ -308,5 +308,9 @@ results often in a mess.
 - Rust is a young, but a quickly growing platform:
   - You can help shape its future.
   - Demand for Rust programmers will increase!
+- It’s not easy — but it’s worth it:
+  - Exercise is tough, but it makes you stronger.
+  - Junk food is easy, but it slows you down.
+  - Learning Rust is a challenge — but soon, you’ll feel like you’re bending the Matrix.
 
 :::
