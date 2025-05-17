@@ -111,7 +111,7 @@ using Func =             int(float); // Type: Function.
 
 ### Long Code
 
-```rust {line-numbers="8-12|42-45|47-51" .does-compile}
+```rust {line-numbers="8-12|42-45|47-51" .compile-yes}
 use std::fs::File;
 use std::io::{self, Read, Write};
 use std::thread;
@@ -204,7 +204,7 @@ fn thread_example() {
 
 :::{.column width="50%"}
 
-```rust {line-numbers="8-12|42-45|47-51" .does-compile}
+```rust {line-numbers="8-12|42-45|47-51" .compile-yes}
 use std::fs::File;
 use std::io::{self, Read, Write};
 use std::thread;
@@ -293,7 +293,7 @@ fn thread_example() {
 
 :::{.column width="50%"}
 
-```go {.no-compile}
+```go {.compile-no}
 package main
 
 import (

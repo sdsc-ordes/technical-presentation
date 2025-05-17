@@ -175,13 +175,15 @@ $codeFontSize: 16pt;
       }
     }
 
-    // Border color for non-compiling stuff.
-    &.no-compile code {
+    // Border color for non/compiling stuff.
+    &.execute-yes code,
+    &.compile-yes code {
       border-top: none;
       border-inline: 0.4rem solid red;
       border-right: none;
     }
-    &.does-compile code {
+    &.execute-yes code,
+    &.compile-no code {
       border-top: none;
       border-inline: 0.4rem solid green;
       border-right: none;
