@@ -41,8 +41,8 @@ A few selling points for `python` programmers.
 - Many modern python toolchain are written in rust
   ([`uv`](https://docs.astral.sh/uv/concepts/tools),
   [`ruff`](https://docs.astral.sh/ruff), etc.).
-- You can do this as well for your python project! Rust can powerup your current
-  python project seamlessly with [`pyo3`](https://pyo3.rs/v0.25.0/).
+- Your python project: Rust can powerup your current python project seamlessly
+  with [`pyo3`](https://pyo3.rs/v0.25.0/).
 
 ---
 
