@@ -18,6 +18,8 @@
 
 #### A **Compiled** Language Unlike Python
 
+::: incremental
+
 - The Rust compiler `rustc` 🦀 will convert your code to machine-code ⚙️. <br>
   Python is an interpreter.
 
@@ -27,8 +29,9 @@
 - It was invented in 2009 by Mozilla (Firefox) - Rust Foundation as the driver
   today.
 
-Note: 10% of Firefox is in Rust for good reasons you will realize in the
-following.
+:::
+
+[Note: 10% of Firefox is in Rust for good reasons you will realize in the following.]{.fragment}
 
 ---
 
@@ -36,13 +39,17 @@ following.
 
 A few selling points for `python` programmers.
 
-- [`pydantic-core`](https://pypi.org/project/pydantic-core) is fully rewrite in
-  rust.
-- Many modern python toolchain are written in rust
+::: incremental
+
+- [`pydantic-core`](https://pypi.org/project/pydantic-core) is fully rewritten
+  in Rust.
+- Modern `python` toolchains are in Rust:
   ([`uv`](https://docs.astral.sh/uv/concepts/tools),
   [`ruff`](https://docs.astral.sh/ruff), etc.).
-- Your python project: Rust can powerup your current python project seamlessly
-  with [`pyo3`](https://pyo3.rs/v0.25.0/).
+- Rust can powerup your python project seamlessly with
+  [`pyo3`](https://pyo3.rs).
+
+:::
 
 ---
 

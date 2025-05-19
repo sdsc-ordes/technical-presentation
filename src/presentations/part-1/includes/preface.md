@@ -67,7 +67,7 @@ OK, its a bit intimidating.
 
 ---
 
-## How I Learned?
+## How I Learned? [- [RsFluid](https://github.com/gabyx/rsfluid)]{.fragment}
 
 ::: {.center-content}
 
