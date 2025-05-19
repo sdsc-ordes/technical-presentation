@@ -33,7 +33,8 @@
 
 :::
 
-[Note: 10% of Firefox is in Rust for good reasons you will realize in the following.]{.fragment}
+[Note: 10% of Firefox is in Rust for good reasons you will realize in the
+following.]{.fragment}
 
 ---
 
@@ -196,6 +197,13 @@ Explain what a garbage collector does explain what the heap/stack are later.
 
   [**Question:** Is this error handling correct if: <br>
   `get_number_of_files = lambda: int(sys.argv[0])`{.python}]{.fragment}
+
+:::
+
+:::notes
+
+- You are reading `argv[0]` which is a string, namely the path of your
+  script/program.
 
 :::
 

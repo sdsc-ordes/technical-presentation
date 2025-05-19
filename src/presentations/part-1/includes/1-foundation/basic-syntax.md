@@ -403,8 +403,8 @@ fn main() {
 - Create an array by writing a comma-separated list of values inside brackets
 - Note unlike `python` it must always have a length defined at compile time and
   cannot be constructed dynamically
-- You can also construct an array using [value; repetitions] instead of having to
-  write out each value if you have a repeating value.
+- You can also construct an array using [value; repetitions] instead of having
+  to write out each value if you have a repeating value.
 - For the type declaration the element type and count are separated by a
   semicolon and written between brackets
 
@@ -434,7 +434,7 @@ fn main() {
     let mut y = 5;
     while y > 0 {
         y -= 1;
-        println!("y: {}", x);
+        println!("y: {}", y);
     }
 
     for i in [1, 2, 3, 4, 5] {
@@ -466,7 +466,7 @@ fn main() {
 
 ```rust
 fn add(a: i32, b: i32) -> i32 {
-    a + b // or: `return a+b`
+    a + b // or: `return a+b;`
 }
 
 fn returns_nothing() -> () {
@@ -488,7 +488,7 @@ fn also_returns_nothing() {
 - Type inference may be used in function body.
 - A function that returns nothing has the return type **_unit_ `()`**
 - Either return an expression on the **last line** with **no semicolon** (or
-  write `return expr`).
+  write `return expr;`).
 
 :::
 
@@ -803,8 +803,8 @@ Approx. Time: 20-45 min.
 
 Do the following exercises:
 
-- `basic-syntax`: all, 09 (optional: macros, read here:
-  https://doc.rust-lang.org/book/ch19-06-macros.html)
+- `basic-syntax`: all, 09 (optional: macros,
+  [read here](https://doc.rust-lang.org/book/ch19-06-macros.html))
 
 **Build/Run/Test:**
 

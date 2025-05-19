@@ -74,7 +74,7 @@ in functions.
   - Stack grows and shrinks, it follows **function calls**.
     Each function has its own stack frame for all its local variables.
 
-  - Values must have **fixed sizes known at compile time**.
+  - Variables must have **fixed sizes known at compile time**.
     (If the compiler doesn't know it cannot compute the stack frame size)
 
   - Access is extremely fast: offset the **stack pointer**.
@@ -200,8 +200,8 @@ The memory **management** on the **heap depends on the language** you write.
 
 ### Mechanics 🦀
 
-- [**Full Control and Safety**]{.green}: **Rust** - [Via compile
-  time enforcement of correct memory management.]{.emph}
+- [**Full Control and Safety**]{.green}: **Rust** - [Via compile time
+  enforcement of correct memory management.]{.emph}
 
   - It does this with an explicit ownership concept.
   - It tracks life times (of references).
