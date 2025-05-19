@@ -1,0 +1,59 @@
+/* Column Divs */
+.reveal .columns {
+  gap: min(2vw, 1em);
+}
+
+.reveal pre {
+  box-shadow: none !important;
+}
+
+.emph {
+  color: #6d7dd8;
+}
+
+.small {
+  font-size: smaller;
+}
+
+/* No paragraph margin after `.p-no-margin`*/
+.reveal .p-no-margin p,
+.reveal .p-no-margin img {
+  margin: 0;
+}
+
+/* No margin in code blocks */
+.reveal pre.code-no-margin {
+  margin: 0 !important;
+}
+
+/* Image border */
+.reveal img.border-light {
+  border: 3pt;
+  border-radius: 3pt;
+  border-color: #cbcbcb;
+  border-style: solid;
+}
+
+.reveal img.border-dark {
+  border: 3pt;
+  border-radius: 3pt;
+  border-color: var(--r-heading-color);
+  border-style: solid;
+}
+
+.center-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Some colors */
+.reveal .red {
+  color: #c0392b;
+}
+.reveal .green {
+  color: #196f3d;
+}
+.reveal .green {
+  color: #196f3d;
+}
