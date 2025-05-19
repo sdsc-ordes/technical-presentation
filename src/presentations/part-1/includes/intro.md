@@ -33,8 +33,7 @@
 
 :::
 
-[Note: 10% of Firefox is in Rust for good reasons you will realize in the
-following.]{.fragment}
+[Note: 10% of Firefox is in Rust for good reasons you will realize in the following.]{.fragment}
 
 ---
 

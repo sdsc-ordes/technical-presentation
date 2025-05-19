@@ -1,6 +1,6 @@
 ---
 title: Rust Workshop 🦀
-subtitle: "Part 1: From Python to Rust & Basics"
+subtitle: "Part 1: From Python to Rust - Fundamentals"
 
 author:
   "**Gabriel Nützi**,
