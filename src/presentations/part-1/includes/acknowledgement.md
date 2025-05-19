@@ -2,7 +2,7 @@
 
 Thanks to the following contributors who fixed typos and mistakes:
 
-- The ORDES Team at SDSC, who helped me fixing typos & bugs.
+- The ORDES Team (SDSC) and Jusong Yu (PSI), who helped me fixing typos & bugs.
 
 - Gerry Bräunlich, Michael Kefeder & Stefan Tüx who allowed me to attend the
   [Rust Fest](https://rustfest.ch) and pointing me to interesting teaching
