@@ -8,9 +8,11 @@
 
 ### A Multi-Paradigm Language
 
-- procedural like Python, i.e. _functions_ 󰊕, _loops_ 󰑙, ...
-- functional aspects, i.e. _iterators_ 🏃, _lambdas_ 󰡱 ...
-- object-oriented aspects but unlike Python ( its better ❤️)
+- Procedural like Python, i.e. _functions_ 󰊕, _loops_ 󰑙, ...
+
+- Functional aspects, i.e. _iterators_ 🏃, _lambdas_ 󰡱 ...
+
+- Object-oriented aspects but unlike Python ( its better ❤️) ...
 
 ---
 
@@ -31,7 +33,8 @@
 
 :::
 
-[Note: 10% of Firefox is in Rust for good reasons you will realize in the following.]{.fragment}
+[Note: 10% of Firefox is in Rust for good reasons you will realize in the
+following.]{.fragment}
 
 ---
 
@@ -43,9 +46,11 @@ A few selling points for `python` programmers.
 
 - [`pydantic-core`](https://pypi.org/project/pydantic-core) is fully rewritten
   in Rust.
+
 - Modern `python` toolchains are in Rust:
   ([`uv`](https://docs.astral.sh/uv/concepts/tools),
   [`ruff`](https://docs.astral.sh/ruff), etc.).
+
 - Rust can powerup your python project seamlessly with
   [`pyo3`](https://pyo3.rs).
 
@@ -124,10 +129,10 @@ fn grow() -> Vec<Apple> {
 
 :::{.center-content}
 
-1. **Pedal to the metal**
-2. **Comes with a warranty**
-3. **Beautiful code**
-4. **Rust is practical**
+1. **Pedal to the Metal**
+2. **Comes with a Warranty**
+3. **Beautiful Code**
+4. **Rust is Practical**
 
 :::
 
@@ -135,7 +140,7 @@ fn grow() -> Vec<Apple> {
 
 ---
 
-## Pedal to The Metal
+## Pedal to the Metal
 
 ::: incremental
 
