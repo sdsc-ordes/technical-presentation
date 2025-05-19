@@ -403,8 +403,8 @@ fn main() {
 - Create an array by writing a comma-separated list of values inside brackets
 - Note unlike `python` it must always have a length defined at compile time and
   cannot be constructed dynamically
-- You can also construct an array using [value; repetitions] instead of having
-  to write out each value if you have a repeating value.
+- You can also construct an array using [value; repetitions] instead of having to
+  write out each value if you have a repeating value.
 - For the type declaration the element type and count are separated by a
   semicolon and written between brackets
 

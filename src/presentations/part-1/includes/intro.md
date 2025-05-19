@@ -33,8 +33,7 @@
 
 :::
 
-[Note: 10% of Firefox is in Rust for good reasons you will realize in the
-following.]{.fragment}
+[Note: 10% of Firefox is in Rust for good reasons you will realize in the following.]{.fragment}
 
 ---
 
@@ -302,6 +301,16 @@ results often in a mess.
 - No invalid syntax.
 - Guaranteed thread safety.
 - Model your business logic with `struct` and `enums`.
+
+:::notes
+
+My experience with python and rust is it is depend on the developer to
+write/organize good or bad code, but it is easier (or lean to) write bad code in
+python, but it is hard to write bad rust code. The compiler is like a good
+teacher who hold your hands and help you writing performance and maintainable
+code. When it compiled it works.
+
+:::
 
 ---
 

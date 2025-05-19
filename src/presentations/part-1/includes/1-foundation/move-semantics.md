@@ -200,8 +200,8 @@ The memory **management** on the **heap depends on the language** you write.
 
 ### Mechanics 🦀
 
-- [**Full Control and Safety**]{.green}: **Rust** - [Via compile time
-  enforcement of correct memory management.]{.emph}
+- [**Full Control and Safety**]{.green}: **Rust** - [Via compile
+  time enforcement of correct memory management.]{.emph}
 
   - It does this with an explicit ownership concept.
   - It tracks life times (of references).
