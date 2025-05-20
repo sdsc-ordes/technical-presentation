@@ -814,3 +814,40 @@ just run <exercise> --bin 01
 just test <exercise> --bin 01
 just watch [build|run|test|watch] <exercise> --bin 01
 ```
+
+---
+
+## Did You Fight The Compiler?
+
+::::::{.columns}
+
+:::{.column width="50%"}
+
+::: {.center-content}
+
+<iframe width="315" height="560"
+src="https://www.youtube.com/embed/vavfBAasaHk?start=27&autoplay=1&mute=1"
+title="YouTube video player"
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+allowfullscreen></iframe>
+
+:::
+
+:::
+
+:::{.column width="50%" .fragment style="align-content:center;"}
+
+You will get better at this! 🦀 But it needs practice!
+
+:::
+
+::::::
+
+::: notes
+
+Its vital for your benefit of this workshop and to follow up on the more
+elaborate topics in the next sessions, its important to really do the exercises.
+We already do the minimal amount of them.
+
+:::

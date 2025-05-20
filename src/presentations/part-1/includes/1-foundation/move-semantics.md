@@ -69,7 +69,7 @@ Continuous areas of memory for local variables
 in functions.
 
 ::: incremental
-  - It is fixed in size.
+  - It is fixed in size (from start and OS dependant).
 
   - Stack grows and shrinks, it follows **function calls**.
     Each function has its own stack frame for all its local variables.
@@ -212,7 +212,7 @@ The memory **management** on the **heap depends on the language** you write.
 
 ```rust
 fn main() {
-    let i = 10; // `i` in scope.
+    let i: u32 = 10; // `i` in scope.
 
     if i > 5 {
         let j = i;
@@ -282,37 +282,44 @@ Strings (`a`) store data on the **heap** because they **can grow**.
 :::::: {.columns}
 ::: {.column width="50%" }
 
-```rust {line-numbers=}
+```rust {line-numbers="3"}
 fn foo() {
   let a = 5;
   let b = a;
 }
 ```
 
-Assignment of `a` to `b` **copies** `a` to `b`.
+[Assignment of `a` to `b` **copies** `a` to `b`.]{.fragment}
 
-:::{.center-content .p-no-margin}
+:::{.center-content .p-no-margin .fragment}
 ![](${meta:include-base-dir}/assets/images/A1-int-stack-copy.svgbob){.svgbob style="margin:0;"}
 :::
 
 :::
+
 ::: {.column width="50%" .fragment}
 
-```rust {line-numbers=}
+```rust {line-numbers="3"}
 fn foo() {
   let a = String::from("hello");
   let b = a;
 }
 ```
 
-Assign. `a` to `b` transfers ownership (**move**).
+[Assign. `a` to `b` transfers ownership (**move**).]{.fragment}
 
-:::{.center-content .p-no-margin}
+:::{.center-content .p-no-margin .fragment}
+
 ![](${meta:include-base-dir}/assets/images/A1-string-stack-copy.svgbob){.svgbob style="margin:0;"}
+
 :::
+
+::: incremental
 
 - When `a` out of scope: nothing happens.
 - When `b` goes out of scope: the string **data is deallocated**.
+
+:::
 
 :::
 :::::
@@ -323,22 +330,24 @@ Assign. `a` to `b` transfers ownership (**move**).
 
 ### Ownership (3)
 
-<!-- prettier-ignore-start -->
-
 :::::: {.columns}
+
 ::: {.column width="50%" }
-```rust {line-numbers=}
+
+```rust {line-numbers="4"}
 fn foo() {
   let a = String::from("hello");
   let b = a;
   println!("{}, world!", a);
-  //                     ^--- Nope!! ❌
+  //      Nope!! ❌ -----^
 }
 ```
-:::
-::: {.column width="50%" }
 
-```text
+:::
+
+::: {.column width="60%" .fragment}
+
+```text {line-numbers="4-8|10-12" style="font-size:14pt"}
 error[E0382]: borrow of moved value: `a`
 --> src/main.rs:4:28
   |
@@ -357,9 +366,8 @@ error[E0382]: borrow of moved value: `a`
 ```
 
 :::
-::::::
 
-<!-- prettier-ignore-end -->
+::::::
 
 ---
 
