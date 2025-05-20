@@ -1,3 +1,13 @@
+/* Make the code lines in `pre` take 100% space
+   (due to numbering the table could auto size the numbering bigger).
+*/
+.reveal code table {
+  width: 100%;
+}
+.hljs-ln-code {
+  width: 100%; /* Take all remaining space */
+}
+
 /* Column Divs */
 .reveal .columns {
   gap: min(2vw, 1em);
