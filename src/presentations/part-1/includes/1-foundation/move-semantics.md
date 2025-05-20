@@ -414,7 +414,7 @@ error[E0382]: borrow of moved value: `a`
 :::::: {.columns}
 ::: {.column width="50%" }
 
-```rust {line-numbers="2|4|9-11|5"}
+```rust {line-numbers="2|4|9-11|5-6"}
 fn main() {
   let a = String::from("hello");
 
@@ -427,6 +427,8 @@ fn calc_length(s: String) -> usize {
   s.len()
 }
 ```
+
+[What will happen when we print on line 5?]{.fragment}
 
 :::
 ::: {.column width="50%" .fragment}
@@ -475,7 +477,7 @@ We can return a value to move it out of the function
 
 :::{.column width="60%"}
 
-```rust
+```rust {line-numbers="8-10"}
 fn main() {
     let a = String::from("hello");
     let (len, a) = calc_length(a);
@@ -545,15 +547,15 @@ Length of 'hello' is 5.
 
 ::::::
 
-```rust
+```rust {line-numbers="3"}
 fn main() {
     let x = String::from("hellothisisaverylongstring...");
     let len = get_length(x.clone());
     println!("{}: {}", x, len);
 }
 
-fn get_length(arg: String) -> usize {
-    arg.len()
+fn get_length(s: String) -> usize {
+    s.len()
 }
 ```
 
@@ -579,7 +581,7 @@ In contrast to Rust, `python` hides when stuff gets copied or referenced:
 
 :::{.column width="50%"}
 
-```python {line-numbers=}
+```python {line-numbers="3-4"}
 # Python
 a = 1
 b = a
@@ -592,7 +594,7 @@ print(a) # `a` is unchanged
 
 :::{.column width="50%"}
 
-```python
+```python {line-numbers="3-4"}
 # Python
 a = {'a': 1}
 b = a    # `b` is a reference to `a`.

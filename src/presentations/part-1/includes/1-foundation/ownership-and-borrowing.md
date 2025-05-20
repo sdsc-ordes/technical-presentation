@@ -82,7 +82,7 @@ def calc_length(s: str) -> int {
 - If a value is **borrowed**, it is **not moved** and the ownership stays with
   the original owner.
 
-- To **borrow** in Rust, we create a **_reference_**
+- To **borrow** in Rust, we create a **_reference_ with `&`:**
 
 ```rust {line-numbers="all|3|8-10|all"}
 fn main() {
