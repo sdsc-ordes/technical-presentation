@@ -267,7 +267,8 @@ which contains the script and all needed dependencies
 
 :::
 
-[Nix has encoded the used executables with **store paths** (`/nix/store`).]{.fragment}
+[Nix has encoded the used executables with **store paths**
+(`/nix/store`).]{.fragment}
 
 :::{.fragment .quiz}
 
@@ -303,9 +304,9 @@ But thats only the partial story what Nix does differently. Lets look into it.
 
 ::: {.fragment}
 
-Seeing `7x9hf9g95d4wjjvq853x25jhakki63bz` is an [extremely
-strong guarantee]{.emph} of the built software down to the [commit/version
-and build instructions including dependencies.]{.emph}
+Seeing `7x9hf9g95d4wjjvq853x25jhakki63bz` is an [extremely strong
+guarantee]{.emph} of the built software down to the [commit/version and build
+instructions including dependencies.]{.emph}
 
 :::
 
@@ -660,6 +661,8 @@ Used in `pkgs.callPackage` in `nixpkgs`.
 
 ## Appendix: Why Nix is Lazy Evaluated?
 
+:::{style="font-size:14pt"}
+
 > The choice for lazy evaluation allows us to write Nix expressions in a
 > convenient and elegant style: Packages are described by Nix expressions and
 > these Nix expressions can freely be passed around in a Nix program – as long
@@ -675,6 +678,8 @@ Used in `pkgs.callPackage` in `nixpkgs`.
 > Without any extra effort, we can access such meta-information without having
 > to build the whole package.
 > [[Paper](https://edolstra.github.io/pubs/nixos-jfp-final.pdf)]
+
+:::
 
 # Workshop
 

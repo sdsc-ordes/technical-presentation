@@ -16,16 +16,6 @@ presentation := env("PRESENTATION", "presentation-1")
 develop *args:
     just nix-develop default "$@"
 
-# Enter the Nix development shell `$1` and execute the command `${@:2}`.
-nix-develop *args:
-    #!/usr/bin/env bash
-    set -eu
-    cd "{{root_dir}}"
-    shell="$1"; shift 1;
-    args=("$@") && [ "${#args[@]}" != 0 ] || args="$SHELL"
-    nix develop --no-pure-eval --accept-flake-config \
-        "{{flake_dir}}#$shell" \
-        --command "${args[@]}"
 
 # Format the project.
 format *args:
@@ -37,7 +27,51 @@ clean:
       rm -rf "{{build_dir}}" && \
       mkdir -p "{{build_dir}}"
 
+# Serve the presentation.
+# Runs `process-compose` with the task to serve the whole
+# presentation with automatic update etc.
+serve:
+    #!/usr/bin/env bash
+    set -eu
+    devenvup=$(nix build --no-pure-eval --no-link --print-out-paths -L "./tools/nix#devenv-up")
+    "$devenvup"
+
+# Build the reveal presentation.
+build: init
+    cd "{{build_dir}}" && \
+      pnpm run build
+
+# Convert the presentation to a `.pdf`.
+pdf: init
+    cd "{{build_dir}}" && \
+      CONTAINER_MGR="{{container_mgr}}" \
+      pnpm run pdf
+
+# Convert to `.pdf` and package into a `.zip` file which is standalone shareable.
+package file="presentation.zip": pdf
+    "{{root_dir}}/tools/scripts/package-presentation.sh" "{{container_mgr}}" "{{file}}"
+
+# Prepare a folder `name` to make later a PR to branch `publish` to serve your presentation.
+publish pres=presentation:
+    "{{root_dir}}/tools/scripts/publish-pages.sh" "{{pres}}"
+
+# Bake the logo into the style-sheets.
+bake-logo mime="svg":
+    cd "{{root_dir}}" && \
+      tools/scripts/bake-logo.sh "{{mime}}"
+
+# Build the container for `.devcontainer`.
+build-dev-container *args:
+    cd "{{root_dir}}" && \
+      "{{container_mgr}}" build \
+      --build-arg "REPOSITORY_COMMIT_SHA=$(git rev-parse --short=11 HEAD)" \
+      -f tools/nix/devcontainer/Containerfile \
+      -t technical-presentation:latest \
+      "$@" \
+      tools/nix
+
 # Init reveal.js into build folder.
+[private]
 init pres=presentation:
     #!/usr/bin/env bash
     set -eu
@@ -55,7 +89,30 @@ init pres=presentation:
     just pandoc "{{pres}}"
 
 
+# Syncs everything to the build folder, where pandoc is run and the
+# we build the presentation with reveal.js.
+[private]
+sync pres=presentation:
+    #!/usr/bin/env bash
+    set -eu
+    cd "{{root_dir}}"
+
+    sync() {
+      # Resolve all symlinks to make independent presentations.
+      rsync --checksum -a --copy-links "$@"
+    }
+
+    echo "Add additional 'npm' scripts."
+    jq -s '.[0] *= .[1] | .[0]' external/reveal.js/package.json src/package.json > build/package.json
+
+    # Cannot use symlink because `serve` does not like it.
+    mkdir -p "{{build_dir}}/presentations"
+    echo "Add additional files (styles, themes, etc.) ..."
+    sync "src/presentations/{{pres}}" "{{build_dir}}/presentations/"
+    sync src/mixin/ "{{build_dir}}/"
+
 # Watch the files in `src` and synchronize them into the `build` folder.
+[private]
 watch pres=presentation:
     #!/usr/bin/env bash
     set -eu
@@ -101,68 +158,9 @@ watch pres=presentation:
       done
     )
 
-# Build the presentation.
-build:
-    cd "{{build_dir}}" && \
-      npm run build
-
-# Present the presentation.
-alias serve := present
-present:
-    cd "{{build_dir}}" && \
-      npm_config_container_mgr="{{container_mgr}}" \
-      npm run present
-
-# Convert the presentation to a `.pdf`.
-pdf:
-    cd "{{build_dir}}" && \
-      npm_config_container_mgr="{{container_mgr}}" \
-      npm run pdf
-
-# Convert to `.pdf` and package into a `.zip` file which is standalone shareable.
-package file="presentation.zip": pdf
-    "{{root_dir}}/tools/scripts/package-presentation.sh" "{{container_mgr}}" "{{file}}"
-
-# Prepare a folder `name` to make later a PR to branch `publish` to serve your presentation.
-publish pres=presentation:
-    "{{root_dir}}/tools/scripts/publish-pages.sh" "{{pres}}"
-
-# Bake the logo into the style-sheets.
-bake-logo mime="svg":
-    cd "{{root_dir}}" && \
-      tools/scripts/bake-logo.sh "{{mime}}"
-
-# Build the container for `.devcontainer`.
-build-dev-container *args:
-    cd "{{root_dir}}" && \
-      "{{container_mgr}}" build \
-      --build-arg "REPOSITORY_COMMIT_SHA=$(git rev-parse --short=11 HEAD)" \
-      -f tools/nix/devcontainer/Containerfile \
-      -t technical-presentation:latest \
-      "$@" \
-      tools/nix
-
+# Render the presentation with pandoc
+# in the build folder.
 [private]
-sync pres=presentation:
-    #!/usr/bin/env bash
-    set -eu
-    cd "{{root_dir}}"
-
-    sync() {
-      # Resolve all symlinks to make independent presentations.
-      rsync --checksum -a --copy-links "$@"
-    }
-
-    echo "Add additional 'npm' scripts."
-    jq -s '.[0] *= .[1] | .[0]' external/reveal.js/package.json src/package.json > build/package.json
-
-    # Cannot use symlink because `serve` does not like it.
-    mkdir -p "{{build_dir}}/presentations"
-    echo "Add additional files (styles, themes, etc.) ..."
-    sync "src/presentations/{{pres}}" "{{build_dir}}/presentations/"
-    sync src/mixin/ "{{build_dir}}/"
-
-
 pandoc pres=presentation:
     #!/usr/bin/env bash
     set -eu
@@ -193,3 +191,21 @@ pandoc pres=presentation:
       echo "Pandoc converted successfully." || {
       echo "Pandoc failed!"
     }
+
+# Present the presentation.
+[private]
+present:
+    cd "{{build_dir}}" && \
+      pnpm run present
+
+# Enter the Nix development shell `$1` and execute the command `${@:2}`.
+[private]
+nix-develop *args:
+    #!/usr/bin/env bash
+    set -eu
+    cd "{{root_dir}}"
+    shell="$1"; shift 1;
+    args=("$@") && [ "${#args[@]}" != 0 ] || args="$SHELL"
+    nix develop --no-pure-eval --accept-flake-config \
+        "{{flake_dir}}#$shell" \
+        --command "${args[@]}"

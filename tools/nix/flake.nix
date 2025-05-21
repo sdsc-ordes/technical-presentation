@@ -42,19 +42,32 @@
     inputs:
     let
       root-dir = ../..;
-    in
-    inputs.snowfall-lib.mkFlake {
-      inherit inputs;
-      # The `src` must be the root of the flake.
-      src = "${root-dir}";
+      lib = inputs.snowfall-lib.mkLib {
+        inherit inputs;
+        # The `src` must be the root of the flake.
+        src = "${root-dir}";
 
-      snowfall = {
-        root = "${root-dir}" + "/tools/nix";
-        namespace = "technical-presentation";
-        meta = {
-          name = "technical-presentation";
-          title = "Repository Template";
+        snowfall = {
+          root = "${root-dir}" + "/tools/nix";
+          namespace = "technical-presentation";
+          meta = {
+            name = "technical-presentation";
+            title = "Repository Template";
+          };
         };
       };
+    in
+    lib.mkFlake {
+      outputs-builder =
+        channels:
+        let
+          system = channels.nixpkgs.system;
+          devShells = inputs.self.outputs.devShells;
+        in
+        {
+          packages = {
+            devenv-up = devShells.${system}.default.config.procfileScript;
+          };
+        };
     };
 }
