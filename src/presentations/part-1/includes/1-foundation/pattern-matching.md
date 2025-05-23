@@ -13,9 +13,9 @@
 
 ## Pattern Matching
 
-Using the `if let [pattern] = [value]` statement:
+Using the `if let <pattern> = <expr>` statement:
 
-```rust
+```rust {line-numbers="2"}
 fn accept_banana(fruit: Fruit) {
   if let Fruit::Banana(a, _) = fruit {
     println!("Got a banana: {}", a);
@@ -31,11 +31,11 @@ fn accept_banana(fruit: Fruit) {
 - The underscore (`_`) can be used to accept any value.
 - **Note:** Abbreviation for the above:
   [`let else`](https://doc.rust-lang.org/rust-by-example/flow_control/let_else.html).
+
   ```rust
-  let Fruit::Banana(a, _) = fruit else {
-      println!("not handled.")
-  };
+  let Fruit::Banana(a, _) = fruit else { println!("not handled.") };
   ```
+
 - There is also
   [`while let`](https://doc.rust-lang.org/rust-by-example/flow_control/while_let.html).
 
@@ -51,7 +51,7 @@ Pattern matching is very powerful if combined with the `match` statement:
 
 :::{.column width="50%"}
 
-```rust
+```rust {line-numbers="3|6|9|12"}
 fn accept_fruit(fruit: Fruit) {
   match fruit {
     Fruit::Banana(3) => {
@@ -102,15 +102,19 @@ The match statement can even be used as an expression:
 fn get_age(fruit: Fruit) {
   let age = match fruit {
     Fruit::Banana(a) => a,
-    Fruit::Apple(_) => 1, // _ matches the tuple.
+    Fruit::Apple(_) => 1, // `_` matches the tuple.
   };
 
   println!("The age is: {}", age);
 }
 ```
 
+:::incremental
+
 - All match arms **must return the same type**.
-- No catch all (`_ =>`) arm -> all cases are handled.
+- No catch all (`_ =>`) arm requires **all cases** handled.
+
+:::
 
 ---
 

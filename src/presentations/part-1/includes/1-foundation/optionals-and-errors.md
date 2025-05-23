@@ -126,9 +126,8 @@ fn divide(x: i64, y: i64) -> i64 {
 - An unwind can be stopped, but this is highly unusual to do and very expensive
 - In a multithreaded program unwinding is essential to make sure that any memory
   owned by that thread is freed, making sure you don't have any memory leaks
-- Rust programs are compiled such that if a panic does not occur, it doesn't add
-  any extra cost, but that does mean that if a panic does occur, it isn't very
-  fast
+- Rust programs are compiled that when no panic occurs its fast, but when one
+  occurs anyway then unwinding happens, but it isn't very fast.
 
 :::
 
@@ -229,8 +228,8 @@ fn div_zero_fails() {
 ::: incremental
 
 - Signature of `divide` function is **explicit** in how it can fail.
-- The user (call site) of it **can decide** what to do, even it decides is
-  panicking 🌻.
+- The user (call site) of it **decides** what to do, even if it decides to panic
+  🌻.
 
 - **Note:** just as with `Option`: `Result::Ok` and `Result::Err` are available
   globally.
@@ -246,11 +245,21 @@ fn div_zero_fails() {
 
 ---
 
+## `Option` vs. `Result`
+
+|           | `Option<T>`               | `Result<T, E>`  |
+| --------- | ------------------------- | --------------- |
+| **Usage** | Represent an empty state. | Error handling. |
+| ✅        | `Some(...)`               | `Ok(...)`       |
+| 🛑        | `None`                    | `Err(...)`      |
+
+---
+
 ## Handling Results
 
 When prototyping you can use `unwrap` or `expect` on `Option` and `Result`:
 
-```rust
+```rust {line-numbers="2,5"}
 fn div_zero_fails() {
   let div = divide(10, 0).unwrap();
   println!("{}", div);

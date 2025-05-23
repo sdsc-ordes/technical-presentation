@@ -9,7 +9,7 @@ author:
 lang: en
 
 date: |
-  August 14, 2024 (updated May 19, 25),
+  August 14, 2024 (updated May 23, 25),
   [Part 2](https://sdsc-ordes.github.io/technical-presentation/gh-pages/rust-workshop/part-2)
 
 css: presentations/part-1/css/custom.css

@@ -23,7 +23,7 @@ fn main() {
 
 :::::: {.columns}
 
-::: {.column width="40%"}
+::: {.column width="50%"}
 
 ```rust {line-numbers="6-10,14"}
 struct Banana
@@ -77,7 +77,7 @@ fn main() {
 
 ::: {.column width="55%"}
 
-```rust {line-numbers="all|4|6-8|11|14-16" style="font-size:14pt"}
+```rust {line-numbers="all|4|6-8|10|12-14" style="font-size:14pt"}
 struct Banana { size: f64; }
 
 impl Banana {
@@ -118,7 +118,33 @@ impl Banana {
 
 ## The `self` & `Self`: Application
 
+::::::{.columns}
+
+:::{.column width="60%"}
+
 ```rust
+struct Banana { size: f64; }
+
+impl Banana {
+    fn new(i: f64) -> Self { Self { size: i } }
+
+    fn consume(self) -> Self {
+        Self::new(self.size - 5.0)
+    }
+    // Take read reference of `Banana` instance.
+    fn borrow(&self) -> &f64 { &self.size }
+    // Take write reference of `Banana` instance.
+    fn borrow_mut(&mut self) -> &mut f64 {
+        &mut self.size
+    }
+}
+```
+
+:::
+
+:::{.column width="40%"}
+
+```rust {line-numbers="2|3|5|7|8"}
 fn main () {
   let mut f = Banana::new();
   println!("{}", f.borrow());
@@ -129,3 +155,7 @@ fn main () {
   println!("{}", g.borrow());
 }
 ```
+
+:::
+
+::::::
