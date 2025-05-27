@@ -350,7 +350,6 @@ Approx. Time: 40-50 min.
 
 Do the following exercises:
 
-- `traits`
 - `std-traits`
 - `blanket-implementation`
 - `drop-with-errors`
