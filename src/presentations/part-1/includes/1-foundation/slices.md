@@ -8,7 +8,7 @@
 
 Lets write a `sum` function for arrays `[i64; 10]`:
 
-```rust {data-id="sum" line-numbers=}
+```rust {data-id="sum" line-numbers="1"}
 fn sum(data: &[i64; 10]) -> i64 {
   let mut total = 0;
 
@@ -26,7 +26,7 @@ fn sum(data: &[i64; 10]) -> i64 {
 
 Or one for just vectors:
 
-```rust {data-id="sum" line-numbers=}
+```rust {data-id="sum" line-numbers="1"}
 fn sum(data: &Vec<i64>) -> i64 {
   let mut total = 0;
 
@@ -42,22 +42,22 @@ fn sum(data: &Vec<i64>) -> i64 {
 
 ## Slices
 
-There is better way.
+There is a better way.
 
-Slices are typed as `[T]`, where `T` is the type of the elements in the slice.
+**Slices** are typed as `[T]` : `T` is the type of the elements in the slice.
 
 ### Properties
 
 ::: incremental
 
-- A **slice** is a dynamically sized view into a **contiguous sequence**.
+A **slice** is a dynamically sized view into a **contiguous sequence**.
 
-- **Contiguous**: elements in memory are evenly spaced.
+- **󰞖 Contiguous**: elements in memory are evenly spaced.
 
-- **Dynamically Sized**: the size of the slice is not stored in the type. It is
-  determined at runtime.
+- **󰑮 Dynamically Sized**: the size of the slice is not stored in the type. It
+  is determined at runtime.
 
-- **View**: a slice is **never an owned data** structure.
+- **👀 View**: a slice is **never an owned data** structure.
 
 :::
 
@@ -176,10 +176,10 @@ Finished dev [unoptimized + debuginfo] target(s) in 0.89s
 - Types with known compile-time size implement the `Sized` trait, raw slices
   **do not**.
 
-- Slices must always be behind a reference type, i.e. `&[T]` and `&mut [T]` (but
-  also `Box<[T]>` etc.).
+- Slices must always be behind a reference type, i.e. `&[T]` and `&mut [T]`
+  <small>(but also `Box<[T]>` etc.).</small>
 
-- The length of the slice is always stored together with the reference
+- Length of the slice is always stored together with the reference.
 
 :::
 
@@ -231,7 +231,7 @@ Three possibilities:
 
 Using a borrow:
 
-```rust
+```rust {line-numbers="5"}
 fn sum(data: &[i32]) -> i32 { /* ... */ }
 
 fn main() {
@@ -250,9 +250,9 @@ Using ranges:
 
 :::::: {.columns}
 
-::: {.column style="width:50%; align-content:center;"}
+::: {.column style="width:52%; align-content:center;"}
 
-```rust
+```rust {line-numbers="5-8"}
 fn sum(data: &[i32]) -> i32 { /* ... */ }
 
 fn main() {
@@ -266,7 +266,7 @@ fn main() {
 
 :::
 
-::: {.column style="width:50%; align-content:center;"}
+::: {.column style="width:48%; align-content:center;"}
 
 - The range `start..end` is half-open, e.g. <br> `x` in `[s..e]` fulfills
   `s <= x < e`.
@@ -276,7 +276,7 @@ fn main() {
 - A range is a type
   [`std::ops::Range<T>`](https://doc.rust-lang.org/std/ops/struct.Range.html).
 
-  ```rust {.fragment}
+  ```rust {.fragment line-numbers="4"}
   use std::ops::Range;
 
   fn main() {
@@ -303,43 +303,52 @@ From a literal:
 ```rust {line-numbers="3-5,12|7-9,13|all"}
 fn sum(data: &[i32]) -> i32 { todo!("Sum all items in `data`") }
 
-fn get_v_arr() -> &'static [i32] {
+fn get_array() -> &'static [i32] {
     &[0, 1, 2, 3, 4, 5, 6]
 }
 
 fn main() {
-  let all = sum(get_v_arr());
+  let all = sum(get_array());
 }
 ```
 
-- Interestingly `get_v_arr` works, but **looks like it would only exist
+::: incremental
+
+- Interestingly `get_array` works, but **looks like it would only exist
   temporarily**.
 
 - Literals actually exist during the entire lifetime of the program.
 
-- `&'static` indicates: this slice exist for the **entire lifetime** of the
-  program (later more on lifetimes).
+- `'static` indicates: this slice/reference exist for the **entire lifetime** of
+  the program (later more).
+
+:::
 
 ---
 
-## Strings {id="more-on-strings"}
+## Strings {#strings-what-they-are}
 
 We have already seen the `String` type being used before, but let's dive a
-little deeper
+little deeper:
+
+:::incremental
 
 - Strings are used to represent text.
 
 - In Rust they are always valid UTF-8.
+
 - Their data is stored on the heap.
 
 - A `String` is similar to `Vec<u8>` with extra checks to prevent creating
   invalid text.
 
+:::
+
 ::: notes
 
 - We store data on the heap, so we can easily have strings of variable sizes and
   grow and shrink them as needed when they are modified.
-- In general we really don't care about the exact length of the string -->
+- In general we really don't care about the exact length of the string.
 
 :::
 

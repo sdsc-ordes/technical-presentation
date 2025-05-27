@@ -48,10 +48,14 @@ pub trait Sized { }
 
 :::
 
+:::{.fragment}
+
 Others:
 
 - `Sync`: Types of which references can be shared between threads.
 - `Send`: Types that can be transferred across thread boundaries.
+
+:::
 
 ---
 
@@ -59,21 +63,23 @@ Others:
 
 #### `std::default::Default`
 
-```rust{line-numbers="5|10-17"}
+```rust{line-numbers="5|10-12|15-17"}
 pub trait Default: Sized {
     fn default() -> Self;
 }
 
 #[derive(Default)] // Derive the trait
-struct MyCounter {
-  count: u32,
-}
+struct MyCounter { count: u32 }
 
 // Or, implement it (if you really need to)
 impl Default for MyCounter {
   fn default() -> Self {
     MyCounter { count: 1 }
   }
+}
+
+fn main() {
+  let d = MyCounter::default();
 }
 ```
 
@@ -215,7 +221,7 @@ pub trait Drop {
 
 :::{.column width="55%"}
 
-```rust {line-numbers="1-2|4-8|9-13|17"}
+```rust {line-numbers="1-2|4-8|9-13|17,18|21" style="font-size:14pt"}
 struct Inner;
 struct Outer { inner: Inner }
 
@@ -231,7 +237,11 @@ impl Drop for Outer {
 }
 
 fn main() {
-  // Explicit drop
+  {
+    let a = Outer { inner: Inner };
+  } // a.drop() called here.
+
+  // Explicitly calling drop.
   std::mem::drop(Outer { inner: Inner });
 }
 ```
@@ -247,10 +257,16 @@ Dropped outer
 Dropped inner
 ```
 
-- Destructor runs _before_ members are removed from stack.
+:::incremental
+
+- Compiler inserts calls to `Drop` at end of scope
+- `Drop` runs _before_ members are removed from stack.
 - Signature `&mut` prevents explicitly dropping `self` or its fields in
   destructor.
-- Compiler inserts `std::mem::drop` call at end of scope
+
+:::
+
+:::{.fragment}
 
 ```rust
 // Implementation of `std::mem::drop`
@@ -258,6 +274,8 @@ fn drop<T>(_x: T) {}
 ```
 
 **Question:** Why does `std::mem::drop` work?
+
+:::
 
 :::
 

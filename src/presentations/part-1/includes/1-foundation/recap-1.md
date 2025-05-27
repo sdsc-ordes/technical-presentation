@@ -81,7 +81,7 @@ Egg` which works because we do not access `egg_ref` after L15.]{.fragment}
 The `colorize` method is basically a method on `Egg` which takes a **exclusive
 reference** `&mut self` only for the duration of that function.
 
-```rust {line-numbers=}
+```rust {style="font-size:14pt;"}
 #[derive(Debug)]
 enum Color {None, Blue}
 struct Egg { color: Color }

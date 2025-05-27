@@ -56,7 +56,7 @@ fn main() {
 }                         // ---------+
 ```
 
-**Answer**: No, `r` points to `x` which is dropped in L6.
+**Answer**: No, `r` points to `x` which is dropped in L7.
 
 ---
 
@@ -190,13 +190,13 @@ to the borrow checker.
 
 ```rust {contenteditable="true"}
 fn main() {
-  let x = 3;                       // ------------+- 'a
-  {                                //                 |
-    let y = 10;                    // ------+--- 'b   |
-    let r: &i64 = longest(&x, &y); // --+- 'c     |   |  'l := min('a,'b) => 'l := 'b
-    println!("longest: {r}")       //   |         |   |
-  }                                // --+---------+   |
-}                                  // ----------------+
+  let x = "frickadel";            // ------------+- 'a
+  {                               //                 |
+    let y = "short";              // ------+--- 'b   |
+    let r: &i64 = longer(&x, &y); // --+- 'c     |   |  'l := min('a,'b) => 'l := 'b
+    println!("longer: {r}")       //   |         |   |
+  }                               // --+---------+   |
+}                                 // ----------------+
 ```
 
 Borrow checker checks if `r`'s lifetime fulfills `<= 'b`  `'c <= 'b`  ✅.
@@ -218,7 +218,7 @@ pub struct ContainsRef<'r> {
 
 :::incremental
 
-- Given an instance `let x: A = ...`, than constraint
+- Given an instance `let x: ContainsRef = ...`, <br>than constraint
   `lifetime(x.ref) >= lifetime(x)` must hold.
 
 :::

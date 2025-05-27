@@ -4,7 +4,14 @@
 
 ---
 
-## Put it in a `Box`
+## What is a Smart Pointer?
+
+- A wrapper type which manages a type `T`
+- `T` is allocated on the heap.
+
+---
+
+## Single Ownership - [`Box<T>`](https://doc.rust-lang.org/std/boxed/struct.Box.html)
 
 [`Box<T>`](https://doc.rust-lang.org/std/boxed/struct.Box.html) will allocate a
 type `T` on the heap and wrap the pointer underneath:
@@ -26,7 +33,7 @@ fn main() {
 
 ::: {.center-content .p-no-margin}
 
-![Smart Pointer to the Heap](${meta:include-base-dir}/assets/images/A1-smart-pointer.svgbob){.svgbob
+![Smart Pointer `Box<T>`](${meta:include-base-dir}/assets/images/A1-smart-pointer.svgbob){.svgbob
 #fig:smart-pointer-box}
 
 :::
@@ -47,7 +54,7 @@ fn main() {
 
 ---
 
-## Boxing
+## When to use `Box<T>`?
 
 Reasons to box a type `T` on the heap:
 
@@ -56,6 +63,8 @@ Reasons to box a type `T` on the heap:
 - When something is too large to move around ⏱️.
 
 - Need something dynamically sized (`dyn Trait` later).
+
+- You need single ownership.
 
 - For writing recursive data structures:
 
@@ -81,6 +90,54 @@ Reasons to box a type `T` on the heap:
   generally always have a limited size
 
 :::
+
+---
+
+## Shared Ownership - [`Arc<T>`](https://doc.rust-lang.org/std/sync/struct.Arc.html)
+
+An [`Arc<T>`](https://doc.rust-lang.org/std/sync/struct.Arc.html)
+(**A**tomic-**R**eference-**C**ounted)
+
+::::::{.columns}
+
+:::{.column width="55%" style="align-content:center;"}
+
+- allows shared ownership of a value of type `T`.
+- inner value `T` allocated on the heap.
+- disallows mutation of the inner value `T` (more in the docs).
+
+:::
+
+:::{.column width="45%"}
+
+![Smart Pointer `Arc<T>`](${meta:include-base-dir}/assets/images/A1-smart-pointer-arc.svgbob){.svgbob
+#fig:smart-pointer-arc}
+
+:::
+
+::::::
+
+---
+
+## Shared Ownership - [`Arc<T>`](https://doc.rust-lang.org/std/sync/struct.Arc.html) (2)
+
+```rust {line-numbers="4|7|11|12|15"}
+use std::sync::Arc;
+
+fn main() {
+    let data = Arc::new(vec![1, 2, 3]);
+
+    {
+      let data_other = data.clone();
+      // Is always a cheap pointer copy
+      // and does not copy the Vec!
+
+      println!("Owners: {}", Arc::strong_count(&data));
+      println!("Data: {:?}", data_other)
+    }
+
+} // data is last owner -> deallocated heap memory.
+```
 
 ---
 

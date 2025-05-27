@@ -403,8 +403,8 @@ fn distance<T: Distance>(container: &T) -> bool {
 }
 ```
 
-[If we would have chosen `trait Distance<Scalar>`](https://doc.rust-lang.org/rust-by-example/generics/assoc_items/the_problem.html)
-instead, the type `Scalar` need to be provided everywhere its used.
+[If chosen `trait Distance<Scalar>`](https://doc.rust-lang.org/rust-by-example/generics/assoc_items/the_problem.html)
+instead, the type `Scalar` needs to be provided at every usage.
 
 ---
 
