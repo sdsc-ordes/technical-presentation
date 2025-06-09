@@ -66,6 +66,23 @@ _What if don't know the concrete type implementing the trait at compile time?_
 
 :::{.column width="48%"}
 
+```rust {line-numbers="2|4-7|9" style="font-size:14pt"}
+fn main() {
+  let file: Option<PathBuf> = // args parsing...
+
+  let mut logger = match file {
+      Some(f) => FileLogger { log_file: f },
+      None => StdOutLogger,
+  };
+
+  log(&mut logger, "Hello, world!🦀");
+}
+```
+
+:::
+
+:::{.column width="50%"}
+
 ```rust {line-numbers="all|1-8|10-12" style="font-size:14pt"}
 use std::io::Write;
 use std::path::PathBuf;
@@ -78,23 +95,6 @@ impl Write for StdOutLogger { /* ... */}
 
 fn log<L: Write>(logger: &mut L, msg: &str) {
   write!(logger, "{}", msg);
-}
-```
-
-:::
-
-:::{.column width="50%"}
-
-```rust {line-numbers="2|4-7|9" style="font-size:14pt"}
-fn main() {
-  let file: Option<PathBuf> = // args parsing...
-
-  let mut logger = match file {
-      Some(f) => FileLogger { log_file: f },
-      None => StdOutLogger,
-  };
-
-  log(&mut logger, "Hello, world!🦀");
 }
 ```
 
@@ -237,7 +237,7 @@ On the surface,
   - Trait Objects: `dyn MyTrait` (covered in the next section)
   - Slices: `[T]`, `str`, and others.
 
-- DSTs can be **only** be used (local variable) **through a reference**: `&[T]`,
+- DSTs can **only** be used (local variable) **through a reference**: `&[T]`,
   `&str`, `&dyn MyTrait` (references are `Sized`).
 
 :::
@@ -284,8 +284,8 @@ fn main() {
 ## Quiz - Instantiate a Trait?
 
 ```rust {contenteditable="true"}
-struct A{}
 trait MyTrait { fn show(&self) {}; }
+struct A{}
 impl MyTrait for A {}
 
 fn main() {
@@ -314,29 +314,55 @@ fn main() {
 
 ---
 
+## Quiz - Correct Code
+
+So the correct code is this:
+
+```rust {contenteditable="true"}
+trait MyTrait { fn show(&self) {}; }
+struct A{}
+struct B{}
+impl MyTrait for A {}
+impl MyTrait for B {}
+
+fn main() {
+  let a: &dyn MyTrait = &A{};
+  let b: &dyn MyTrait = &B{};
+}
+```
+
+---
+
 ## Generics and `Sized` : How?
 
 ::: incremental
 
 - Given a concrete type you can always say if its `Sized` or `!Sized` (DST).
 
-- Whats with generics?
+- Generics?
 
-```rust {.fragment}
-fn generic_fn<T: Eq>(x: T) -> T { /*..*/ }
-```
+  All **generic type parameters** are **implicitly** `Sized` by default
+  (everywhere `structs`, `fn`s etc.):
 
-- If `T` is `Sized`, all is OK!.
+  For example:
 
-- If `T` is `!Sized`, then the definition of `generic_fn` is incorrect! (why?)
+  ```rust {.fragment}
+  fn generic_fn<T: Eq + Sized>(x: T) -> u32
+  // -------------------^^^^^ : Sized is obsolete here.
+  { /* ... */ }
+  ```
 
-:::
+  :::{.fragment}
 
-::: notes
+  ```rust
+  fn generic_fn(x: T) -> u32
+  where
+    T: Eq + Sized
+    // -----^^^^^ : Sized is obsolete here.
 
-It is incorrect because, you take a `T` which needs to be constructed on the
-stack ergo have a fixed-size at compile time! You also return a `T` which needs
-to have a fixed-size at compile time (also on the stack frame).
+  ```
+
+  :::
 
 :::
 
@@ -344,27 +370,28 @@ to have a fixed-size at compile time (also on the stack frame).
 
 ## Generics and `Sized`
 
-- All **generic type parameters** are **implicitly** `Sized` by default
-  (everywhere `structs`, `fn`s etc.):
+This default is problematic in the following:
 
-  For example:
+```rust
+fn generic_fn<T: Eq>(x: &T) -> T { /*..*/ }
+```
 
-  ```rust {.fragment}
-  fn generic_fn<T: Eq + Sized>(x: T) -> T { // Sized is obsolete here.
-    //...
-  }
-  ```
+:::incremental
 
-  or
+- If `T` is `Sized`, all is OK!.
 
-  ```rust {.fragment}
-  fn generic_fn<T>(x: &T) -> u32
-  where
-      T: Eq + Sized // Sized is obsolete here.
-  {
-    // ...
-  }
-  ```
+- If `T` is `!Sized`, then the definition of `generic_fn` **is incorrect**!<br>
+
+  [**But when does that happen?**]{.fragment}
+
+  ::: incremental
+
+  -  pass `a: &dyn MyTrait` as `generic_fn(a)`
+  -  `T := dyn MyTrait` which is `!Sized` -> incorrect.
+
+  :::
+
+:::
 
 ---
 
@@ -432,13 +459,13 @@ fn main() {
 
 ::: {.fragment}
 
-**Answer:** ❌ No - declaration `generic_fn` is invalid (line 5 is not the
+**Answer:** ❌ No - declaration `generic_fn` is invalid (**line 5** is not the
 problem!):
 
 ::: incremental
 
-- `T` can **potentially** be `dyn Eq`  leads to `x: dyn Eq` which is not
-  `Sized`  compile error.
+- The declaration is invalid for the compiler because `T` can **potentially** be
+  `dyn Eq`  leads to `x: dyn Eq` which is not `Sized`  compile error.
 - [**Remember: function parameter go onto the stack!**]{.emph}
 
 :::
@@ -457,7 +484,7 @@ How to print the type `T`?
 
 ::::::::{.columns}
 
-:::{.column width="50%"}
+:::{.column width="42%"}
 
 ```rust
 fn generic_fn<T: Eq>(x: T) -> u32 {
@@ -471,12 +498,14 @@ fn main() {
 
 :::
 
-:::{.column width="50%" .fragment}
+:::{.column width="58%" .fragment}
 
-```rust
-fn generic_fn<T: Eq + std::fmt::Display>(x: T) -> u32 {
-    println!(
-      "x: {} = '{x}'",
+```rust {line-numbers="5-6"}
+fn generic_fn(x: T) -> u32
+where
+  T: Eq + std::fmt::Display
+{
+    println!("x: {} = '{x}'",
       std::any::type_name::<T>());
 
     42
@@ -497,7 +526,34 @@ x: &str = 'hello world'
 
 ---
 
-## Dynamic Dispatch on the Heap (idiomatic)
+## Fixing Dynamic Logger
+
+- Trait objects `&dyn Trait`, `Box<dyn Trait>`, ... implement `Trait`!
+
+```rust {line-numbers="all|9-13|1-4"}
+// L no longer must be `Sized`, so to accept trait objects.
+fn log<L: Write + ?Sized>(entry: &str, logger: &mut L) {
+    write!(logger, "{}", entry);
+}
+
+fn main() {
+    let log_file: Option<PathBuf> = // ...
+
+    // Create a trait object on heap that impl. `Write`
+    let logger: Box<dyn Write> = match log_file {
+      Some(log_file) => Box::new(FileLogger{log_file}),
+      None => Box::new(StdOutLogger),
+    };
+    log("Hello, world!🦀", logger);
+}
+```
+
+And all is well!
+[Live Heap Dyn. Dispatch](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=cf8fdfe6a4b6672a938db4834bc83ace).
+
+---
+
+## Dynamic Dispatch on the [Heap](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=cf8fdfe6a4b6672a938db4834bc83ace).
 
 ::::::{.columns}
 
@@ -552,7 +608,7 @@ about it, in all other cases dont!.
 
 ---
 
-## Dynamic Dispatch on the Stack (esoteric)
+## Dynamic Dispatch on the [Stack<small>(adv.)</small>](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=2f631621994c6a685ecad19c59704647)
 
 ::::::{.columns}
 
@@ -602,40 +658,12 @@ performant -> this is 100% premature optimization!
 
 ---
 
-## Fixing Dynamic Logger
-
-- Trait objects `&dyn Trait`, `Box<dyn Trait>`, ... implement `Trait`!
-
-```rust {line-numbers="all|9-13|1-4"}
-// L no longer must be `Sized`, so to accept trait objects.
-fn log<L: Write + ?Sized>(entry: &str, logger: &mut L) {
-    write!(logger, "{}", entry);
-}
-
-fn main() {
-    let log_file: Option<PathBuf> = // ...
-
-    // Create a trait object that implements `Write`
-    let logger: &mut dyn Write = match log_file {
-        Some(log_file) => &mut FileLogger { log_file },
-        None => &mut StdOutLogger,
-    };
-    log("Hello, world!🦀", logger);
-}
-```
-
-And all is well!
-[Live Stack Dyn. Dispatch](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=2f631621994c6a685ecad19c59704647),
-[Live Heap Dyn. Dispatch](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=cf8fdfe6a4b6672a938db4834bc83ace).
-
----
-
 ## Forcing Dynamic Dispatch
 
 If one wants to enforce API users to use dynamic dispatch, use `&mut dyn Write`
 on `log`:
 
-```rust
+```rust {line-numbers="1"}
 fn log(entry: &str, logger: &mut dyn Write) {
     write!(logger, "{}", entry);
 }
@@ -655,7 +683,7 @@ fn main() {
 
 ---
 
-## Heterogeneous Collection on the Heap
+## Heterogeneous Collection: Heap
 
 ::::::{.columns}
 
@@ -701,11 +729,11 @@ fn main() {
 
 ::::::
 
-All set!
+[All set!]{.fragment}
 
 ---
 
-## Heterogeneous Collection on the Stack 🍭
+## Heterogeneous Collection: Stack 🍭
 
 ```rust
 fn main() {
@@ -714,7 +742,7 @@ fn main() {
 }
 ```
 
-All set!
+[All set!]{.fragment}
 
 ---
 
@@ -730,6 +758,45 @@ All set!
 
 ---
 
+## Summary - Static vs Dynamic Dispatch
+
+<table>
+<colgroup>
+<col >
+<col >
+<col style="width: 40%">
+<col >
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Technique</th>
+<th>Example</th>
+<th>With:</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Static</td>
+<td>Compile Time<br>(monomo.)</td>
+<td><code>fn add&lt;T: Addable&gt;(x: T)</code></td>
+<td>Generics and Trait Bounds</td>
+</tr>
+<tr class="even">
+<td>Dynamic</td>
+<td>Runtime (vtable)</td>
+<td><code>fn add(x &amp;dyn Addable)</code></td>
+<td><code>Box&lt;dyn Trait&gt;</code>or<br><code>&amp;dyn Trait</code></td>
+</tr>
+</tbody>
+</table>
+
+## Summary - Trait Object `dyn Trait`
+
+- Trait objects allow for dynamic dispatch and heterogeneous containers.
+- Trait objects introduce pointer indirection.
+- Traits need to be _dyn-compatible_ to make trait objects out of them.
+
 ## Static Dispatch or Dynamic Dispatch?
 
 When to use what is rarely a clear-cut, but broadly
@@ -738,37 +805,20 @@ When to use what is rarely a clear-cut, but broadly
   pass
 
   - a `let d: &dyn MyTrait` for a signature
-    `fn lib_func(s: impl MyTrait + ?Sized)`,
-  - or a concrete type `A` which implements `Trait`.
-
-- **For binaries**: you are writing final code  use dynamic dispatch (no
-  generics)  cleaner and faster compilable code with only marginal performance
-  cost.
-
----
-
-## Static Dispatch or Dynamic Dispatch?
-
-When to use what is rarely a clear-cut, but broadly
-
-- **In libraries**, use static dispatch for the user to decide if they want to
-  pass
-
-  - a `let d: &dyn MyTrait` for a signature
     `fn lib_func(s: impl MyTrait + ?Sized)`.
   - or a concrete type `A` which implements `Trait`.
 
-- **For binaries**, you are writing final code, and using dynamic dispatch (no
-  generics) gives cleaner code, faster compile.
+- **For binaries**, you are writing final code - use dynamic dispatch (no
+  generics)  cleaner code, faster compile with little performance cost.
 
 ---
 
 ## _Dyn-Compatible_ Trait
 
-A trait is **dyn-compatible** (formerly _object safe_) when it fulfills:
+A trait `T` is **dyn-compatible** (formerly _object safe_) when it fulfills:
 
-- Trait `T` must not be `Sized`: _Why?_
-- If `trait T: Y`, then`Y` must be dyn-compatible.
+- It does not require `Self: Sized`.
+- If `trait T: Y`, then`Y` must be _dyn-compatible_.
 - No associated constants allowed.
 - No associated types with generic allowed.
 - All associated functions must either be dispatchable from a trait object, or
@@ -779,7 +829,7 @@ Details in
 [The Rust Reference](https://doc.rust-lang.org/beta/reference/items/traits.html#dyn-compatibility).
 Read them!
 
-These seem to be compiler limitations.
+These seem to be compiler and combinatoric limitations.
 
 ---
 
@@ -787,14 +837,14 @@ These seem to be compiler limitations.
 
 ```rust {line-numbers="1-4|6|8-13|16-19"}
 trait Fruit {
-  fn create(&self) -> Self;
+  fn clone(&self) -> Self;
   fn show(&self) -> String;
 }
 
 struct Banana { color: i32 }
 
 impl Fruit for Banana {
-  fn create(&self) -> Self { Banana {} }
+  fn clone(&self) -> Self { Banana {} }
 
   fn show(&self) -> String {
       return format!("banana: color {}", self.color).to_string();
@@ -824,15 +874,26 @@ note: for a trait to be "dyn-compatible" it needs to
 
 1  | trait Fruit {
    |       ----- this trait cannot be made into an object...
-2  |   fn create(&self) -> Self;
-   |                       ^^^^ ...because method `create` references
+2  |   fn clone(&self) -> Self;
+   |                       ^^^^ ...because method `clone` references
                                 the `Self` type in its return type
 ```
 
 ---
 
-## Trait Object Summary
+## Exercise Time (9)
 
-- Trait objects allow for dynamic dispatch and heterogeneous containers.
-- Trait objects introduce pointer indirection.
-- Traits need to be _dyn-compatible_ to make trait objects out of them.
+Approx. Time: 20-40 min.
+
+Do the following exercises:
+
+- `config-reader`
+
+**Build/Run/Test:**
+
+```bash
+just build config-reader
+just run config-reader
+just test config-reader
+just watch [build|run|test|watch] config-reader
+```

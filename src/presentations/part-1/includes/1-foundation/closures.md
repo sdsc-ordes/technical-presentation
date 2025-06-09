@@ -234,6 +234,8 @@ fn main() {
 `Fn`, `FnMut` and `FnOnce` are traits which implement **different behaviors**
 for **closures**. _The compiler implements the appropriate ones!_
 
+::: {.center-content}
+
 ```mermaid {style="width:80%"}
 %%{
   init: {
@@ -246,8 +248,8 @@ for **closures**. _The compiler implements the appropriate ones!_
 classDiagram
 direction LR
 
-FnMut --|> FnOnce : subtrait of
-Fn --|> FnMut : subtrait of
+FnMut --|> FnOnce : subtrait of<br>(auto. implements)
+Fn --|> FnMut :  subtrait of<br>(auto. implements)
 
 class FnOnce {
     call_once(self, args)
@@ -261,6 +263,8 @@ class Fn {
     call(&self, args)
 }
 ```
+
+:::
 
 ::::::{.columns}
 
@@ -359,6 +363,27 @@ impl<'a> FnOnce<()> for Closure<'a> {
 :::
 
 ::::::
+
+:::notes
+
+1.  **`s += &t;`** This line is shorthand for `s.push_str(&t)`. The `push_str`
+    method requires a mutable reference to `s` (its signature is
+    `fn push_str(&mut self, string: &str)`).
+
+    - **Conclusion 1**: Because the closure _mutates_ `s`, it cannot be `Fn`. It
+      must be at least `FnMut`.
+
+2.  **`s`** This is the last expression in the closure's body, which means it's
+    the closure's **return value**. The variable `s` is a `String`, which is an
+    owned type. Returning an owned type by value _moves_ it.
+    - To be able to move `s` out of the closure, the closure must first **take
+      full ownership** of `s`. A mutable borrow (`&mut s`) is not enough—you
+      can't give away ownership of something you've only borrowed.
+    - **Conclusion 2**: Because the closure returns `s` by value, it must take
+      ownership of `s`. The only trait that allows a closure to take ownership
+      of a captured variable is `FnOnce`.
+
+:::
 
 ---
 
