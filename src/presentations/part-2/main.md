@@ -1,7 +1,7 @@
 ---
 title: Rust Workshop 🦀
 subtitle: |
-  Part 2: Create Engineering<br>
+  Part 2: Crate Engineering<br>
 
 author:
   "**Gabriel Nützi**,
