@@ -386,7 +386,7 @@ fn generic_fn<T: Eq>(x: &T) -> T { /*..*/ }
 
   ::: incremental
 
-  -  pass `a: &dyn MyTrait` as `generic_fn(a)`
+  -  pass `let a: &dyn MyTrait = ...` as `generic_fn(a)`
   -  `T := dyn MyTrait` which is `!Sized` -> incorrect.
 
   :::
@@ -434,7 +434,7 @@ fn main() {
 ::: incremental
 
 -  match `&T <-> &str`
--  `T := str`
+-  `T := str` which is `!Sized`
 -  `x: &str` which is `Sized`
 -  ✅ Yes it compiles.
 
@@ -465,7 +465,9 @@ problem!):
 ::: incremental
 
 - The declaration is invalid for the compiler because `T` can **potentially** be
-  `dyn Eq`  leads to `x: dyn Eq` which is not `Sized`  compile error.
+  `dyn Eq`  this leads to `x: dyn Eq` which is `!Sized` and gives a compile
+  error. It has nothing to do with the call of the function! The function
+  declaration is already wrong. So be careful when doing this.
 - [**Remember: function parameter go onto the stack!**]{.emph}
 
 :::
@@ -516,7 +518,7 @@ fn main() {
 }
 ```
 
-```
+```rust
 x: &str = 'hello world'
 ```
 
@@ -531,25 +533,80 @@ x: &str = 'hello world'
 - Trait objects `&dyn Trait`, `Box<dyn Trait>`, ... implement `Trait`!
 
 ```rust {line-numbers="all|9-13|1-4"}
-// L no longer must be `Sized`, so to accept trait objects.
+// L no longer must be `Sized`, so to accept also trait objects.
 fn log<L: Write + ?Sized>(entry: &str, logger: &mut L) {
     write!(logger, "{}", entry);
 }
 
 fn main() {
-    let log_file: Option<PathBuf> = // ...
+    let log_file: Option<PathBuf> = //...
 
-    // Create a trait object on heap that impl. `Write`
-    let logger: Box<dyn Write> = match log_file {
-      Some(log_file) => Box::new(FileLogger{log_file}),
-      None => Box::new(StdOutLogger),
+    // Create a trait object that implements `Write`
+    let logger: &mut dyn Write = match log_file {
+      Some(log_file) => &mut FileLogger{log_file},
+      None => &mut StdOutLogger,
     };
-    log("Hello, world!🦀", logger);
+
+    log(&mut logger, "Hello World!");
 }
 ```
 
 And all is well!
-[Live Heap Dyn. Dispatch](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=cf8fdfe6a4b6672a938db4834bc83ace).
+[Live Stack Dyn. Dispatch](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=2f631621994c6a685ecad19c59704647).
+
+---
+
+## Dynamic Dispatch on the [Stack<small>(adv.)</small>](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=2f631621994c6a685ecad19c59704647)
+
+::::::{.columns}
+
+:::{.column width="50%"}
+
+```rust {style="font-size:14pt;"}
+/// Same code as last slide
+fn main() {
+  let log_file: Option<PathBuf> = //...
+
+  // Create a trait object that implements `Write`
+  let logger: &mut dyn Write = match log_file {
+    Some(log_file) => &mut FileLogger{log_file},
+    None => &mut StdOutLogger,
+  };
+
+  log(&mut logger, "Hello World!");
+}
+```
+
+:::
+
+:::{.column width="50%" .p-no-margin}
+
+![](${meta:include-base-dir}/assets/images/A1-trait-object-layout.svgbob){.svgbob}
+
+:::
+
+::::::
+
+::: incremental
+
+- 💸 **Cost**: same as before.
+- 💰 **Benefit**: same as before.
+- 💻 **Memory**: `logger` is a **wide-pointer** which lives **only** on the
+  **stack**  🚀.
+
+:::
+
+::: notes
+
+- `&mut dyn Write` is called a **wide-pointer** because you have a pointer to
+  data and a pointer to the vtable with the functions. Do not think about the
+  pointer indirection, and less performant -> this is 100% premature
+  optimization!
+
+- Assigning `&FileLogger` to `&dyn Writer` is possible due to **unsized**
+  coercion which is a compiler intrinsic feature.
+
+:::
 
 ---
 
@@ -603,56 +660,6 @@ point! The pointer indirection is the same as in the stack-based dynamic
 dispatch, do not think about this, it is 80% premature optimization. Except if
 you are in a very hot loop where you do dynamic dispatch always, then think
 about it, in all other cases dont!.
-
-:::
-
----
-
-## Dynamic Dispatch on the [Stack<small>(adv.)</small>](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=2f631621994c6a685ecad19c59704647)
-
-::::::{.columns}
-
-:::{.column width="50%"}
-
-```rust {style="font-size:14pt;"}
-/// Same code as last slide
-fn main() {
-  let log_file: Option<PathBuf> = //...
-
-  // Create a trait object that implements `Write`
-  let logger: &mut dyn Write = match log_file {
-    Some(log_file) => &mut FileLogger{log_file},
-    None => &mut StdOutLogger,
-  };
-
-  log(&mut logger, "Hello World!");
-}
-```
-
-:::
-
-:::{.column width="50%" .p-no-margin}
-
-![](${meta:include-base-dir}/assets/images/A1-trait-object-layout.svgbob){.svgbob}
-
-:::
-
-::::::
-
-::: incremental
-
-- 💸 **Cost**: same as before.
-- 💰 **Benefit**: same as before.
-- 💻 **Memory**: `logger` is a **wide-pointer** which lives **only** on the
-  **stack**  🚀.
-
-:::
-
-::: notes
-
-Its called wide-pointer because you have a pointer to data and a pointer to the
-vtable with the functions. Do not think about the pointer indirection, and less
-performant -> this is 100% premature optimization!
 
 :::
 
@@ -777,15 +784,15 @@ fn main() {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Static</td>
-<td>Compile Time<br>(monomo.)</td>
+<td><emph>Static</emph></td>
+<td><emph>Compile Time</emph><br>(monomo.)</td>
 <td><code>fn add&lt;T: Addable&gt;(x: T)</code></td>
 <td>Generics and Trait Bounds</td>
 </tr>
 <tr class="even">
 <td>Dynamic</td>
 <td>Runtime (vtable)</td>
-<td><code>fn add(x &amp;dyn Addable)</code></td>
+<td><code>fn add(x: &amp;dyn Addable)</code></td>
 <td><code>Box&lt;dyn Trait&gt;</code>or<br><code>&amp;dyn Trait</code></td>
 </tr>
 </tbody>
@@ -881,7 +888,7 @@ note: for a trait to be "dyn-compatible" it needs to
 
 ---
 
-## Exercise Time (9)
+## Exercise Time (10)
 
 Approx. Time: 20-40 min.
 
