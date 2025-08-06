@@ -19,8 +19,8 @@ The basic requirements for working with this repository are:
 See
 [instructions](https://swissdatasciencecenter.github.io/best-practice-documentation/docs/dev-enablement/nix-and-nixos).
 
-🪟 Windows Users: kindly asked to leave this presentation (since Nix is for Unix
-system) **or** use **WSL Ubuntu**.
+🪟 Nix only supports Linux & macOS. Windows users might try installing Nix on
+**WSL Ubuntu** or run a Docker a container with Nix installed.
 
 # Motivation
 
@@ -79,12 +79,12 @@ environments.
 
 | Feature          | Local Development | [Mamba](https://mamba.readthedocs.io) | [Devcontainer](https://containers.dev/implementors/spec/) | [Nix/DevShell](https://www.youtube.com/watch?v=yQwW8dkuHqw) |
 | ---------------- | ----------------- | ------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------- |
-| Maintainenance   | ⚠️ **High**       | ⚡ Medium                             | ⚡ Medium                                                 | ⚡ Medium                                                   |
-| Reproducibility  | ❌ Low            | ⚠️ Medium                             | ⚡ Medium                                                 | ✅ **Very high**                                            |
-| Ease of Use      | ❌ Low            | ✅ Easy                               | ✅ Ok                                                     | ⚠️ Medium                                                   |
-| Dep. Mgmt.       | ❌                | ✅                                    | ⚡                                                        | ✅                                                          |
+| Maintainenance   | ⚠️ **High**       | ⚠️ Medium                             | ⚠️ Medium                                                 | ⚠️ Medium                                                   |
+| Reproducibility  | ❌ Low            | ⚠️ Medium                             | ⚠️ Medium                                                 | ✅ **Very high**                                            |
+| Ease of Use      | ❌ Low            | ✅ Easy                               | ✅ Ok                                                     | ❌ Low                                                      |
+| Dep. Mgmt.       | ❌                | ✅                                    | ⚠️                                                        | ✅                                                          |
 | Portability      | 💣                | ⚠️                                    | ✅                                                        | ✅                                                          |
-| **CI Stability** | 💣                | ⚡                                    | ⚡                                                        | ✅ **Almost Perfect**                                       |
+| **CI Stability** | 💣                | ⚠️                                    | ⚠️                                                        | ✅ **Almost Perfect**                                       |
 
 :::
 
@@ -267,8 +267,7 @@ which contains the script and all needed dependencies
 
 :::
 
-[Nix has encoded the used executables with **store paths**
-(`/nix/store`).]{.fragment}
+[Nix has encoded the used executables with **store paths** (`/nix/store`).]{.fragment}
 
 :::{.fragment .quiz}
 
@@ -304,9 +303,9 @@ But thats only the partial story what Nix does differently. Lets look into it.
 
 ::: {.fragment}
 
-Seeing `7x9hf9g95d4wjjvq853x25jhakki63bz` is an [extremely strong
-guarantee]{.emph} of the built software down to the [commit/version and build
-instructions including dependencies.]{.emph}
+Seeing `7x9hf9g95d4wjjvq853x25jhakki63bz` is an [extremely
+strong guarantee]{.emph} of the built software down to the [commit/version
+and build instructions including dependencies.]{.emph}
 
 :::
 
@@ -322,6 +321,8 @@ instructions including dependencies.]{.emph}
 ::::::
 
 :::notes
+
+Time: < 10minutes
 
 We see that Nix does some hashing here for the stuff it puts in the
 `/nix/store`.
@@ -381,14 +382,14 @@ floating-point types, which are unnecessary in this context.
 
   ```nix {line-numbers="2|3|4|5|6|7|8|9"}
   # myfunction.nix
-  banana:
-  let
-    aNumber = 1;  # A number.
-    aList = [ 1 2 3 "help"];  # A list with 4 elements.
-    anAttrSet = { a = 1; b.c.d = [1]; };  # A nested attribute set.
-    result = banana.getColor { v = aNumber; };  # Calls another function `args.myFunc`.
+  banana: # Function with one argument `banana`.
+  let     # Define variables.
+    number = 1;  # A number.
+    list = [ 1 2 3 "help"];  # A list with 4 elements.
+    set = { a = 1; b.c.d = [1]; };  # A nested attribute set.
+    result = banana.getColor { v = number; };  # Calls another function `banana.getColor`.
   in
-  { x = aNumber; y = anAttrSet.b.c.d; z = result; }
+  { x = number; y = set.b.c.d; z = result; } # Return an attribute set.
   ```
 
   returns an attribute set `{ x = ... }`.
@@ -400,7 +401,7 @@ floating-point types, which are unnecessary in this context.
 
 ---
 
-## Examples
+## Examples {#repl-instructions}
 
 Verify the next examples in the Nix REPL (interactive Nix shell):
 
@@ -434,9 +435,9 @@ echo '3' | just eval
 ```nix {line-numbers="2|3|5|6" .fragment}
 let # start for "procedural" statements
  mult = a: b: a * b;
- x10 = mult 10; # Bind the first arg.
+ mult10 = mult 10; # Bind the first arg.
 in
-x10 (mult 8 2)
+mult10 (mult 8 2)
 # -> 160
 ```
 
@@ -457,7 +458,7 @@ f { banana = "1"; orange = "2" }
 
 ```nix {line-numbers="2|2-4|7|8" .fragment}
 let
-f = { ban, ora, ...}: { # Destructuring
+f = { ban, ora, ... }: { # Destructuring
   a = ban + "-nice";
   b = ora + "-sour";
 };
@@ -468,7 +469,7 @@ f { ban = "1"; ora = "2"; berry ="3"; }
 
 ```nix {line-numbers="2|3|5|6" .fragment}
 let
-f = list: {
+f = { list ? [] }: {
   a = builtins.map (x: x*x) list;
 };
 in f [ 1 3 9 ]
@@ -504,7 +505,7 @@ rec {
   b = 2;
   c = b + d;
   d = 10;
-}
+} # Discouraged: prefer `inherit`.
 # -> { b = 2; c = 12; d = 10; }
 ```
 
@@ -571,7 +572,7 @@ in set.${key}.v
 
 ```nix {line-numbers="2|3|5"}
 let
-  dir = ./.github/workflows;    # A path. Nix makes them absolute!
+  dir = ./.github/workflows;     # A path. Nix makes them absolute!
   file = "${dir}/gh-pages.yaml"; # Interpolated path gets added into the `/nix/store`.
 in file
 # -> "/nix/store/w9il9gvki2nfdzfc1lrlbiv3xy3mx90a-workflows/gh-pages.yaml"
@@ -593,6 +594,13 @@ let
 in a
 ```
 
+:::notes
+
+There is an error due to how let bindings work in the Nix expression language:
+they are immutable and non-sequential.
+
+:::
+
 :::{.fragment}
 
 ✅ Configure [ `nixd` ](https://github.com/nix-community/nixd) (Nix Language
@@ -602,135 +610,62 @@ Server) in your IDE to see "Go to definitions".
 
 ---
 
-## Exercises
+## Questions & Exercise
 
-Try out the before shown examples your self with `nix repl`.
+Do you have questions?
 
-**Time: `10min`**
+Try out the examples shown before yourself with `nix repl`
+([see slide](#repl-instructions))
 
----
-
-## Appendix: Fixed Point Combinator 🤯
-
-In maths a fix point `x` of a function `F` is defined as:
-
-$$
-x = F(x).
-$$
-
-:::{.fragment}
-
-In functional programming a fix-point **combinator** `fix` is a _higher-order_
-function.<br> It returns the fix point of a function `F`:
-
-:::
-
-:::{.fragment}
-
-```nix
-fix = F: let x = F x in x
-```
-
-:::
+**Time: `5min`**
 
 ---
 
-## Appendix: Fixed-Point Combinator 🤯
-
-That is how recursive self-referential sets can be defined.
-
-```nix {line-numbers="2|5|7|9"}
-let
-  fix = F: let x = F x in x;
-
-  # Define the constructor of the set.
-  newSet = self: { path = "/bin"; full = self.path + "/my-app"; };
-
-  mySet = fix newSet; # fulfills: mySet == fix mySet;
-in
-  mySet.full
-```
-
-Seems recursive in `let x = F x` but **but isn't 🤯**, because its lazy
-evaluated.
-[What you need to know about laziness.](https://nixcademy.com/de/posts/what-you-need-to-know-about-laziness).
-
-Used in `pkgs.callPackage` in `nixpkgs`.
-
----
-
-## Appendix: Why Nix is Lazy Evaluated?
-
-:::{style="font-size:14pt"}
-
-> The choice for lazy evaluation allows us to write Nix expressions in a
-> convenient and elegant style: Packages are described by Nix expressions and
-> these Nix expressions can freely be passed around in a Nix program – as long
-> as we do not access the contents of the package, no evaluation and thus no
-> build will occur. […] At the call site of a function, we can supply all
-> potential dependencies without having to worry that unneeded dependencies
-> might be evaluated. For instance, the whole of the Nix packages collection is
-> essentially one attribute set where each attribute maps to one package
-> contained in the collection. It is very convenient that at this point, we do
-> not have to deal with the administration of what exactly will be needed where.
-> Another benefit is that we can easily store meta information with packages,
-> such as name, version number, homepage, license, description and maintainer.
-> Without any extra effort, we can access such meta-information without having
-> to build the whole package.
-> [[Paper](https://edolstra.github.io/pubs/nixos-jfp-final.pdf)]
-
-:::
-
-# Workshop
+# Revisit `whats-is-my-ip`
 
 ## Building Our First Package (1) {#building-package}
 
 Put the following in a script
 [`whats-is-my-ip.nix`](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/what-is-my-ip.nix):
 
-```nix {line-numbers="2|3|4-7" style="font-size:14pt"}
-{
-system ? builtins.currentSystem, # Mostly: x86_64-linux
-pkgs ?
-  import (builtins.fetchTarball
-    "https://github.com/NixOS/nixpkgs/archive/9684b53175fc6c09581e94cc85f05ab77464c7e3.tar.gz") {
-    inherit system;
-  },
-}:
+```nix {line-numbers="3|5-6|8-9|11|12-15" style="font-size:14pt"}
+let
+  system = builtins.currentSystem;
+
+  # Download something into the `/nix/store/...-source`
+  src = builtins.fetchTarball "https://github.com/NixOS/nixpkgs/archive/9684b53175fc6c09581e94cc85f05ab77464c7e3.tar.gz";
+
+  # Import the `default.nix` in the `/nix/store/...-source`
+  f = import src;
+
+  pkgs = f { inherit system; }; # This is the package attribute set of `nixpkgs`.
+in
 pkgs.writeShellScriptBin "what-is-my-ip" ''
   ${pkgs.curl}/bin/curl -s http://httpbin.org/get | \
     ${pkgs.jq}/bin/jq --raw-output .origin
 ''
 ```
 
-::: {.fragment .quiz}
-
-_**Quiz:** What returns `builtins.fetchTarball "..."` ?_
-
-:::
-
 :::notes
 
-This function takes two parameters:
-
 - `system`: a string mostly `x86_64-linux` and defaulted to your current system)
-  and
-- `pkgs`: an attribute set and defaulted to the main function of the
-  [`nixpkgs`](https://nixos.org/manual/nixpkgs/stable/#preface) repository. The
-  repository [`nixpkgs`](https://nixos.org/manual/nixpkgs/stable/#preface) is
-  the central package mono-repository which maintains packages (_derivations_)
-  for Nix.
 
 - The `builtins.fetchTarball` returns the downloaded content of an URL in the
   `/nix/store/...` Above it returns the content of `nixpkgs` repository at
   commit `9684b53175fc6c09581e94cc85f05ab77464c7e3`. Try it out in the
   `nix repl`.
 
+- `pkgs`: an attribute set and defaulted to the main function of the
+  [`nixpkgs`](https://nixos.org/manual/nixpkgs/stable/#preface) repository. The
+  repository [`nixpkgs`](https://nixos.org/manual/nixpkgs/stable/#preface) is
+  the central package mono-repository which maintains packages (_derivations_)
+  for Nix.
+
 :::
 
 ---
 
-## Wait! What is [`https://github.com/NixOS/nixpkgs`](https://nixos.org/manual/nixpkgs/stable/#preface) ?
+### Wait! What is [`github.com/NixOS/nixpkgs`](https://nixos.org/manual/nixpkgs/stable/#preface) ?
 
 ::: incremental
 
@@ -746,14 +681,24 @@ This function takes two parameters:
 -  A commit on `nixpkgs` represents the **version** of **all** packages at that
   **commit**.
 
+:::
+
+---
+
+### What is [`github.com/NixOS/nixpkgs`](https://nixos.org/manual/nixpkgs/stable/#preface) ?
+
+::: incremental
+
 - Importing
   [`default.nix`](https://github.com/NixOS/nixpkgs/blob/master/default.nix),
-  [1](https://github.com/NixOS/nixpkgs/blob/374e6bcc403e02a35e07b650463c01a52b13a7c8/pkgs/top-level/default.nix#L21)
+  [[1](https://github.com/NixOS/nixpkgs/blob/374e6bcc403e02a35e07b650463c01a52b13a7c8/pkgs/top-level/default.nix#L21)]
   from `nixpkgs` (see [`import`](#building-package)) returns a **function** to
   instantiate this giant flat attribute set **`pkgs`** for your `system`.
 
 - Search [packages here](https://search.nixos.org/packages) and more
   [granular here](https://www.nixhub.io/).
+
+- Search [functions here](https://noogle.dev).
 
 :::
 
@@ -769,8 +714,7 @@ nix build -f ./examples/what-is-my-ip.nix --print-out-paths
 
 ::: {.fragment}
 
-Explore whats in
-`/nix/store/7x9hf9g95d4wjjvq853x25jhakki63bz-what-is-my-ip/bin/what-is-my-ip`:
+Explore whats in `/nix/store/7x9hf9g95d...-what-is-my-ip/bin/what-is-my-ip`:
 
 ```bash
 #!/nix/store/mc4485g4apaqzjx59dsmqscls1zc3p2w-bash-5.2p37/bin/bash
@@ -804,36 +748,8 @@ pkgs.writeShellScriptBin "what-is-my-ip" ''
 ```
 
 The `pkgs.writeShellScriptBin` is a **trivial builder** function around the
-fundamental `derivation` command (see
-[./examples/what-is-my-ip-orig.nix](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/what-is-my-ip-orig.nix)):
-
----
-
-```nix {line-numbers="1|2|4|5|7-20|10|12-16|22,10" style="font-size:14pt;"}
-derivation {
-  inherit system;
-
-  name = "what-is-my-ip";
-  builder = "/bin/sh";
-
-  args = [
-    "-c"
-    ''
-      ${pkgs.coreutils}/bin/mkdir -p $out/bin
-
-      {
-        echo '#!/bin/sh'
-        echo '${pkgs.curl}/bin/curl -s http://httpbin.org/get | \
-        ${pkgs.jq}/bin/jq --raw-output .origin'
-      } > $out/bin/what-is-my-ip
-
-      ${pkgs.coreutils}/bin/chmod +x $out/bin/what-is-my-ip
-    ''
-  ];
-
-  outputs = [ "out" ];
-}
-```
+fundamental [`derivation`](#appendix-the-builtin-function-derviation) command
+(see [appendix](#appendix-the-builtin-function-derviation)).
 
 ---
 
@@ -845,14 +761,33 @@ Run
 nix-store --query --include-outputs --graph \
   $(nix build -f ./examples/what-is-my-ip.nix --print-out-paths) > graph.dot
 
-dot -Grankdir=TB -Gconcentrate=true -Tpng graph.dot > graph.png
+nix develop --command dot -Grankdir=TB -Gconcentrate=true -Tpng graph.dot > graph.png
 ```
 
 and inspect `graph.png`.
 
+## Inspect the Dependency Graph
+
+[![](${meta:include-base-dir}/assets/images/graph-whats-my-ip.svg){width="100%"
+.border-light}]{.center-content}
+
+:::notes
+
+The question is how does Nix know all this?
+
+Nix builds in a sandbox where only `/nix/store` (and some others, +no internet)
+is available. Any build tool which is used during the build will only pick up
+libraries from the `/nix/store` (any linker will link to these files). For
+`pkgs.writeShellScriptBin` it will also analyze the output script for store
+paths and include these in the runtime dependencies.
+
+Show the output of `ldd curl` etc.
+
+:::
+
 ---
 
-## Exercise: Inspect the Dependency Graph
+## Homework: Inspect the Dependency Graph
 
 - Reproduce the commands for building `what-is-my-ip.nix` on your machine in the
   [workshop repository](https://github.com/sdsc-ordes/nix-workshop).
@@ -873,27 +808,6 @@ to and what does your system `curl` link to? <br><br> Use `ldd` to inspect._
 
 Before we go on with learning more on Nix, I want you to replicate the shown
 commands before.
-
-:::
-
----
-
-## Inspect the Dependency Graph
-
-[![](${meta:include-base-dir}/assets/images/graph-whats-my-ip.svg){width="100%"
-.border-light}]{.center-content}
-
-:::notes
-
-The question is how does Nix know all this?
-
-Nix builds in a sandbox where only `/nix/store` (and some others, +no internet)
-is available. Any build tool which is used during the build will only pick up
-libraries from the `/nix/store` (any linker will link to these files). For
-`pkgs.writeShellScriptBin` it will also analyze the output script for store
-paths and include these in the runtime dependencies.
-
-Show the output of `ldd curl` etc.
 
 :::
 
@@ -1036,202 +950,58 @@ structure with built-in meaning.
 ## Evaluating a Derivation
 
 When Nix evaluates a derivation, it stores the result in the Nix store
-(`/nix/store`) as a **store derivation**
+(`/nix/store`) as a **store derivation** (`*.drv`)
 ([more details](https://nix.dev/manual/nix/2.24/glossary#gloss-store-derivation)).
 
 ```mermaid
 flowchart LR
-    A["<strong>Flake</strong><br><code>flake.nix</code>"] -->|"contains output attribute"| B["<strong><code>packages.x86_64-linux.mypackage</code></strong><br>Nix Expression returning Derivation"]
+    A["<strong>Flake</strong><br><code>flake.nix</code>"] -->|"contains output attributes"| B["<strong><code>packages.x86_64-linux.mypackage</code></strong><br>Nix Derivation"]
     B -->|"evaluate"| C["<strong>Store Derivation</strong><br><code>/nix/store/*.drv</code>"]
     C -->|"realize/build"| D["<strong>Output</strong><br>in<code>/nix/store/*</code>"]
 ```
 
----
-
-## Inspect a Derivation
-
-```bash
-nix eval "./examples/flake-simple#packages.x86_64-linux.mytool"
-
-> «derivation /nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv»
-```
-
-`./examples/flake-simple#packages.x86_64-linux.mytool` is an _installable_. More
-later!
-
-:::{.fragment}
-
-```bash
-# Inspect the store derivation.
-cat /nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv
-```
-
-:::
-
-:::notes
-
-Realize that even when you are on macOS `aarch64-darwin`, that we can evaluate
-the derivation for another architecture.
-
-:::
-
----
-
-## Inspect a Derivation (2)
-
-```bash
-> Derive([("out","/nix/store/5rvqlxk2vx0hx1yk8qdll2l8l62pfn8n-treefmt","","")],
-[("/nix/store/1fmb3b4cmr1bl1v6vgr8plw15rqw5jhf-treefmt.toml.drv",["out"]),
-("/nix/store/3avbfsh9rjq8psqbbplv2da6dr679cib-treefmt-2.1.0.drv",["out"]),
-("/nix/store/61fjldjpjn6n8b037xkvvrgjv4q8myhl-bash-5.2p37.drv",["out"]),
-("/nix/store/gp6gh2jn0x7y7shdvvwxlza4r5bmh211-stdenv-linux.drv",["out"])]
-,["/nix/store/v6x3cs394jgqfbi0a42pam708flxaphh-default-builder.sh"]
-,"x86_64-linux","/nix/store/8vpg72ik2kgxfj05lc56hkqrdrfl8xi9-bash-5.2p37/bin/bash",
-["-e","/nix/store/v6x3cs394jgqfbi0a42pam708flxaphh-default-builder.sh"],
-[ ("__structuredAttrs",""),("allowSubstitutes",""),
-("buildCommand","target=$out/bin/treefmt\nmkdir -p \"$(dirname \"$target\")\"\n\nif [ -e \"$textPath\" ]; then\n  mv \"$textPath\" \"$target\"\nelse\n  echo -n \"$text\" > \"$target\"\nfi\n\nif [ -n \"$executable\" ]; then\n  chmod +x \"$target\"\nfi\n\neval \"$checkPhase\"\n"),("buildInputs",""),("builder","/nix/store/8vpg72ik2kgxfj05lc56hkqrdrfl8xi9-bash-5.2p37/bin/bash"),("checkPhase","/nix/store/8vpg72ik2kgxfj05lc56hkqrdrfl8xi9-bash-5.2p37/bin/bash -n -O extglob \"$target\"\n"),("cmakeFlags",""),("configureFlags",""),("depsBuildBuild",""),("depsBuildBuildPropagated",""),("depsBuildTarget",""),("depsBuildTargetPropagated",""),("depsHostHost",""),("depsHostHostPropagated",""),("depsTargetTarget",""),("depsTargetTargetPropagated",""),("doCheck",""),("doInstallCheck",""),("enableParallelBuilding","1"),("enableParallelChecking","1"),("enableParallelInstalling","1"),("executable","1"),("mesonFlags",""),("name","treefmt"),("nativeBuildInputs",""),("out","/nix/store/5rvqlxk2vx0hx1yk8qdll2l8l62pfn8n-treefmt"),("outputs","out"),("passAsFile","buildCommand text"),("patches",""),("preferLocalBuild","1"),("propagatedBuildInputs",""),("propagatedNativeBuildInputs",""),("stdenv","/nix/store/hsxp8g7zdr6wxk1mp812g8nbzvajzn4w-stdenv-linux"),("strictDeps",""),("system","x86_64-linux"),("text","#!/nix/store/8vpg72ik2kgxfj05lc56hkqrdrfl8xi9-bash-5.2p37/bin/bash\nset -euo pipefail\nunset PRJ_ROOT\nexec /nix/store/0jcp33pgf85arjv3nbghws34mrmy7qq5-treefmt-2.1.0/bin/treefmt \\\n  --config-file=/nix/store/qk8rqccch6slk037dhnprryqwi8mv0xs-treefmt.toml \\\n  --tree-root-file=.git/config \\\n  \"$@\"\n\n")])
-```
-
-:::{.fragment}
-
-JSON output of the above:
-
-```bash
-nix derivation show /nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv
-```
-
-:::
-
-:::notes
-
-The output of `/nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv` above is
-the internal serialization of the formatter's derivation which **when built**
-can be used to format all files in this repository.
-
-:::
-
----
-
-## Inspect a Derivation ()
-
-```json {style="font-size:12pt"}
-{
-  "/nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv": {
-    "args": [
-      "-e",
-      "/nix/store/vj1c3wf9c11a0qs6p3ymfvrnsdgsdcbq-source-stdenv.sh",
-      "/nix/store/shkw4qm9qcw5sc5n1k5jznc83ny02r39-default-builder.sh"
-    ],
-    "builder": "/nix/store/9nw8b61s8lfdn8fkabxhbz0s775gjhbr-bash-5.2p37/bin/bash",
-    "env": {
-      "__structuredAttrs": "",
-      "allowSubstitutes": "",
-      "buildCommand": "target=$out/bin/mytool\nmkdir -p \"$(dirname \"$target\")\"\n\nif [ -e \"$textPath\" ]; then\n  mv \"$textPath\" \"$target\"\nelse\n  echo -n \"$text\" > \"$target\"\nfi\n\nif [ -n \"$executable\" ]; then\n  chmod +x \"$target\"\nfi\n\neval \"$checkPhase\"\n",
-      "buildInputs": "",
-      "builder": "/nix/store/9nw8b61s8lfdn8fkabxhbz0s775gjhbr-bash-5.2p37/bin/bash",
-      "checkPhase": "/nix/store/9nw8b61s8lfdn8fkabxhbz0s775gjhbr-bash-5.2p37/bin/bash -n -O extglob \"$target\"\n",
-      "cmakeFlags": "",
-      "configureFlags": "",
-      "depsBuildBuild": "",
-      "depsBuildBuildPropagated": "",
-      "depsBuildTarget": "",
-      "depsBuildTargetPropagated": "",
-      "depsHostHost": "",
-      "depsHostHostPropagated": "",
-      "depsTargetTarget": "",
-      "depsTargetTargetPropagated": "",
-      "doCheck": "",
-      "doInstallCheck": "",
-      "enableParallelBuilding": "1",
-      "enableParallelChecking": "1",
-      "enableParallelInstalling": "1",
-      "executable": "1",
-      "mesonFlags": "",
-      "name": "mytool",
-      "nativeBuildInputs": "",
-      "out": "/nix/store/blm702jzcwfppwrrj9925ivd9gxp4c9n-mytool",
-      "outputs": "out",
-      "passAsFile": "buildCommand text",
-      "patches": "",
-      "preferLocalBuild": "1",
-      "propagatedBuildInputs": "",
-      "propagatedNativeBuildInputs": "",
-      "stdenv": "/nix/store/npp9k9062ny7w0k1i03ij6xvqb7vhvjh-stdenv-linux",
-      "strictDeps": "",
-      "system": "x86_64-linux",
-      "text": "#!/nix/store/9nw8b61s8lfdn8fkabxhbz0s775gjhbr-bash-5.2p37/bin/bash\n\"/nix/store/xkk1gr9bw2dbdjna8391rj1zl1l3dmhq-cowsay-3.8.4/bin/cowsay\" \"Hello there ;)\"\necho \"-------------------------------------\"\n\"/nix/store/4ydiim4lfk6nyab4pdkjj9s33pgbigfd-figlet-2.2.5/bin/figlet\" \"Do you expect\"\n\"/nix/store/4ydiim4lfk6nyab4pdkjj9s33pgbigfd-figlet-2.2.5/bin/figlet\" \"something \"\n\"/nix/store/4ydiim4lfk6nyab4pdkjj9s33pgbigfd-figlet-2.2.5/bin/figlet\" \"useful ? \"\n\n"
-    },
-    "inputDrvs": {
-      "/nix/store/1fsd2cb5ab7ci01ks4j0gbbq254jw6sk-stdenv-linux.drv": {
-        "dynamicOutputs": {},
-        "outputs": ["out"]
-      },
-      "/nix/store/lrf9kbhlaf5mkvnlf3zr9wzvk7c2z72l-bash-5.2p37.drv": {
-        "dynamicOutputs": {},
-        "outputs": ["out"]
-      },
-      "/nix/store/phq4wh4490manblg905xixpc3gvwr149-figlet-2.2.5.drv": {
-        "dynamicOutputs": {},
-        "outputs": ["out"]
-      },
-      "/nix/store/wdpicivrj0bmzh935rr1hm1vlk18j0mp-cowsay-3.8.4.drv": {
-        "dynamicOutputs": {},
-        "outputs": ["out"]
-      }
-    },
-    "inputSrcs": [
-      "/nix/store/shkw4qm9qcw5sc5n1k5jznc83ny02r39-default-builder.sh",
-      "/nix/store/vj1c3wf9c11a0qs6p3ymfvrnsdgsdcbq-source-stdenv.sh"
-    ],
-    "name": "mytool",
-    "outputs": {
-      "out": {
-        "path": "/nix/store/blm702jzcwfppwrrj9925ivd9gxp4c9n-mytool"
-      }
-    },
-    "system": "x86_64-linux"
-  }
-}
-```
-
----
-
 ## Store Derivation
 
-> A **derivation** contains only **build instructions** for Nix to
-> **realize/build** it. This can be literally anything, e.g. a software package,
-> a wrapper shell script or only source files.
+> A store **derivation** (`*.drv`) contains only **build instructions** for Nix
+> to **realize/build** it. This can be literally anything, e.g. a software
+> package, a wrapper shell script or only source files.
 
-## Build A Derivation
+See [appendix](#inspect-a-derivation) for how to inspect the internal
+representation of a `*.drv` file.
 
-:::{.fragment}
+## Build A Derivation - Evaluating & Realizing It
 
-We can build the above derivation - or in other terms **realize it in the Nix
-store** - by doing:
-
-```bash
-nix build -L /nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv --print-out-paths
-```
-
-:::
-
-:::{.fragment}
-
-or directly
+We can build the above derivation - or in other terms **evaluate & realize it in
+the Nix store** - by doing:
 
 ```bash
 nix build -L "./examples/simple-flake#packages.x86_64-linux.mytool" \
   --print-out-paths --out-link ./mytool
 ```
 
+:::{.fragment}
+
+✅ **Short Form:** `nix build "./examples/simple-flake#mytool"` uses
+`builtins.currentSystem` (works also for macOS users).
+
 :::
 
 :::{.fragment}
 
-✅ **Short Form:** `nix build "./examples/simple-flake#mytool"` which uses
-`builtins.currentSystem` (works also for macOS users).
+or in steps
+
+```bash
+# Evaluate it.
+drvPath=$(nix eval "./examples/flake-simple#packages.x86_64-linux.mytool" --raw)
+# Realize it.
+nix build -L "$drvPath" --print-out-paths --out-link ./mytool
+```
 
 :::
+
+---
+
+## Build A Derivation - Evaluating & Realizing It (2)
 
 ::::::{.columns}
 
@@ -1304,7 +1074,19 @@ with Flakes. **You should only use the modern commands, e.g.
 
 ---
 
-## Exercise
+## Build/Run A Derivation - Github
+
+You can also specify `github` repositories and nested flakes and build/run
+derivations on them:
+
+```bash
+nix build -L "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#mytool"
+nix run "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#mytool"
+```
+
+---
+
+## Homework - Inspect a Flake
 
 - Load the `flake` in the
   [the root directory](https://github.com/sdsc-ordes/nix-workshop/blob/main) in
@@ -1451,3 +1233,259 @@ support `devenv.sh` Nix DevShells.
 ---
 
 ## Questions
+
+---
+
+# Appendix
+
+## Fixed Point Combinator 🤯
+
+In maths a fix point `x` of a function `F` is defined as:
+
+$$
+x = F(x).
+$$
+
+:::{.fragment}
+
+In functional programming a fix-point **combinator** `fix` is a _higher-order_
+function.<br> It returns the fix point of a function `F`:
+
+:::
+
+:::{.fragment}
+
+```nix
+fix = F: let x = F x in x
+```
+
+:::
+
+---
+
+## Fixed-Point Combinator 🤯
+
+That is how recursive self-referential sets can be defined.
+
+```nix {line-numbers="2|5|7|9"}
+let
+  fix = F: let x = F x in x;
+
+  # Define the constructor of the set.
+  newSet = self: { path = "/bin"; full = self.path + "/my-app"; };
+
+  mySet = fix newSet; # fulfills: mySet == fix mySet;
+in
+  mySet.full
+```
+
+Seems recursive in `let x = F x` but **but isn't 🤯**, because its lazy
+evaluated.
+[What you need to know about laziness.](https://nixcademy.com/de/posts/what-you-need-to-know-about-laziness).
+
+Used in `pkgs.callPackage` in `nixpkgs`.
+
+---
+
+## Why Nix is Lazy Evaluated?
+
+:::{style="font-size:14pt"}
+
+> The choice for lazy evaluation allows us to write Nix expressions in a
+> convenient and elegant style: Packages are described by Nix expressions and
+> these Nix expressions can freely be passed around in a Nix program – as long
+> as we do not access the contents of the package, no evaluation and thus no
+> build will occur. […] At the call site of a function, we can supply all
+> potential dependencies without having to worry that unneeded dependencies
+> might be evaluated. For instance, the whole of the Nix packages collection is
+> essentially one attribute set where each attribute maps to one package
+> contained in the collection. It is very convenient that at this point, we do
+> not have to deal with the administration of what exactly will be needed where.
+> Another benefit is that we can easily store meta information with packages,
+> such as name, version number, homepage, license, description and maintainer.
+> Without any extra effort, we can access such meta-information without having
+> to build the whole package.
+> [[Paper](https://edolstra.github.io/pubs/nixos-jfp-final.pdf)]
+
+:::
+
+---
+
+### The builtin function `derivation`
+
+This is what `pkgs.writeShellScriptBin` would expand to: (see
+[./examples/what-is-my-ip-orig.nix](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/what-is-my-ip-orig.nix)):
+
+```nix {line-numbers="1|2|4|5|7-20|10|12-16|22,10" style="font-size:12pt;"}
+derivation {
+  inherit system;
+
+  name = "what-is-my-ip";
+  builder = "/bin/sh";
+
+  args = [
+    "-c"
+    ''
+      ${pkgs.coreutils}/bin/mkdir -p $out/bin
+
+      {
+        echo '#!/bin/sh'
+        echo '${pkgs.curl}/bin/curl -s http://httpbin.org/get | \
+        ${pkgs.jq}/bin/jq --raw-output .origin'
+      } > $out/bin/what-is-my-ip
+
+      ${pkgs.coreutils}/bin/chmod +x $out/bin/what-is-my-ip
+    ''
+  ];
+
+  outputs = [ "out" ];
+}
+```
+
+---
+
+## Inspect a Derivation
+
+```bash
+nix eval "./examples/flake-simple#packages.x86_64-linux.mytool"
+
+> «derivation /nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv»
+```
+
+`./examples/flake-simple#packages.x86_64-linux.mytool` is an _installable_. More
+later!
+
+:::{.fragment}
+
+```bash
+# Inspect the store derivation.
+cat /nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv
+```
+
+:::
+
+:::notes
+
+Realize that even when you are on macOS `aarch64-darwin`, that we can evaluate
+the derivation for another architecture.
+
+:::
+
+---
+
+## Inspect a Derivation (2)
+
+```bash
+> Derive([("out","/nix/store/5rvqlxk2vx0hx1yk8qdll2l8l62pfn8n-treefmt","","")],
+[("/nix/store/1fmb3b4cmr1bl1v6vgr8plw15rqw5jhf-treefmt.toml.drv",["out"]),
+("/nix/store/3avbfsh9rjq8psqbbplv2da6dr679cib-treefmt-2.1.0.drv",["out"]),
+("/nix/store/61fjldjpjn6n8b037xkvvrgjv4q8myhl-bash-5.2p37.drv",["out"]),
+("/nix/store/gp6gh2jn0x7y7shdvvwxlza4r5bmh211-stdenv-linux.drv",["out"])]
+,["/nix/store/v6x3cs394jgqfbi0a42pam708flxaphh-default-builder.sh"]
+,"x86_64-linux","/nix/store/8vpg72ik2kgxfj05lc56hkqrdrfl8xi9-bash-5.2p37/bin/bash",
+["-e","/nix/store/v6x3cs394jgqfbi0a42pam708flxaphh-default-builder.sh"],
+[ ("__structuredAttrs",""),("allowSubstitutes",""),
+("buildCommand","target=$out/bin/treefmt\nmkdir -p \"$(dirname \"$target\")\"\n\nif [ -e \"$textPath\" ]; then\n  mv \"$textPath\" \"$target\"\nelse\n  echo -n \"$text\" > \"$target\"\nfi\n\nif [ -n \"$executable\" ]; then\n  chmod +x \"$target\"\nfi\n\neval \"$checkPhase\"\n"),("buildInputs",""),("builder","/nix/store/8vpg72ik2kgxfj05lc56hkqrdrfl8xi9-bash-5.2p37/bin/bash"),("checkPhase","/nix/store/8vpg72ik2kgxfj05lc56hkqrdrfl8xi9-bash-5.2p37/bin/bash -n -O extglob \"$target\"\n"),("cmakeFlags",""),("configureFlags",""),("depsBuildBuild",""),("depsBuildBuildPropagated",""),("depsBuildTarget",""),("depsBuildTargetPropagated",""),("depsHostHost",""),("depsHostHostPropagated",""),("depsTargetTarget",""),("depsTargetTargetPropagated",""),("doCheck",""),("doInstallCheck",""),("enableParallelBuilding","1"),("enableParallelChecking","1"),("enableParallelInstalling","1"),("executable","1"),("mesonFlags",""),("name","treefmt"),("nativeBuildInputs",""),("out","/nix/store/5rvqlxk2vx0hx1yk8qdll2l8l62pfn8n-treefmt"),("outputs","out"),("passAsFile","buildCommand text"),("patches",""),("preferLocalBuild","1"),("propagatedBuildInputs",""),("propagatedNativeBuildInputs",""),("stdenv","/nix/store/hsxp8g7zdr6wxk1mp812g8nbzvajzn4w-stdenv-linux"),("strictDeps",""),("system","x86_64-linux"),("text","#!/nix/store/8vpg72ik2kgxfj05lc56hkqrdrfl8xi9-bash-5.2p37/bin/bash\nset -euo pipefail\nunset PRJ_ROOT\nexec /nix/store/0jcp33pgf85arjv3nbghws34mrmy7qq5-treefmt-2.1.0/bin/treefmt \\\n  --config-file=/nix/store/qk8rqccch6slk037dhnprryqwi8mv0xs-treefmt.toml \\\n  --tree-root-file=.git/config \\\n  \"$@\"\n\n")])
+```
+
+:::{.fragment}
+
+JSON output of the above:
+
+```bash
+nix derivation show /nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv
+```
+
+:::
+
+:::notes
+
+The output of `/nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv` above is
+the internal serialization of the formatter's derivation which **when built**
+can be used to format all files in this repository.
+
+:::
+
+---
+
+## Inspect a Derivation (3)
+
+```json {style="font-size:12pt"}
+{
+  "/nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv": {
+    "args": [
+      "-e",
+      "/nix/store/vj1c3wf9c11a0qs6p3ymfvrnsdgsdcbq-source-stdenv.sh",
+      "/nix/store/shkw4qm9qcw5sc5n1k5jznc83ny02r39-default-builder.sh"
+    ],
+    "builder": "/nix/store/9nw8b61s8lfdn8fkabxhbz0s775gjhbr-bash-5.2p37/bin/bash",
+    "env": {
+      "__structuredAttrs": "",
+      "allowSubstitutes": "",
+      "buildCommand": "target=$out/bin/mytool\nmkdir -p \"$(dirname \"$target\")\"\n\nif [ -e \"$textPath\" ]; then\n  mv \"$textPath\" \"$target\"\nelse\n  echo -n \"$text\" > \"$target\"\nfi\n\nif [ -n \"$executable\" ]; then\n  chmod +x \"$target\"\nfi\n\neval \"$checkPhase\"\n",
+      "buildInputs": "",
+      "builder": "/nix/store/9nw8b61s8lfdn8fkabxhbz0s775gjhbr-bash-5.2p37/bin/bash",
+      "checkPhase": "/nix/store/9nw8b61s8lfdn8fkabxhbz0s775gjhbr-bash-5.2p37/bin/bash -n -O extglob \"$target\"\n",
+      "cmakeFlags": "",
+      "configureFlags": "",
+      "depsBuildBuild": "",
+      "depsBuildBuildPropagated": "",
+      "depsBuildTarget": "",
+      "depsBuildTargetPropagated": "",
+      "depsHostHost": "",
+      "depsHostHostPropagated": "",
+      "depsTargetTarget": "",
+      "depsTargetTargetPropagated": "",
+      "doCheck": "",
+      "doInstallCheck": "",
+      "enableParallelBuilding": "1",
+      "enableParallelChecking": "1",
+      "enableParallelInstalling": "1",
+      "executable": "1",
+      "mesonFlags": "",
+      "name": "mytool",
+      "nativeBuildInputs": "",
+      "out": "/nix/store/blm702jzcwfppwrrj9925ivd9gxp4c9n-mytool",
+      "outputs": "out",
+      "passAsFile": "buildCommand text",
+      "patches": "",
+      "preferLocalBuild": "1",
+      "propagatedBuildInputs": "",
+      "propagatedNativeBuildInputs": "",
+      "stdenv": "/nix/store/npp9k9062ny7w0k1i03ij6xvqb7vhvjh-stdenv-linux",
+      "strictDeps": "",
+      "system": "x86_64-linux",
+      "text": "#!/nix/store/9nw8b61s8lfdn8fkabxhbz0s775gjhbr-bash-5.2p37/bin/bash\n\"/nix/store/xkk1gr9bw2dbdjna8391rj1zl1l3dmhq-cowsay-3.8.4/bin/cowsay\" \"Hello there ;)\"\necho \"-------------------------------------\"\n\"/nix/store/4ydiim4lfk6nyab4pdkjj9s33pgbigfd-figlet-2.2.5/bin/figlet\" \"Do you expect\"\n\"/nix/store/4ydiim4lfk6nyab4pdkjj9s33pgbigfd-figlet-2.2.5/bin/figlet\" \"something \"\n\"/nix/store/4ydiim4lfk6nyab4pdkjj9s33pgbigfd-figlet-2.2.5/bin/figlet\" \"useful ? \"\n\n"
+    },
+    "inputDrvs": {
+      "/nix/store/1fsd2cb5ab7ci01ks4j0gbbq254jw6sk-stdenv-linux.drv": {
+        "dynamicOutputs": {},
+        "outputs": ["out"]
+      },
+      "/nix/store/lrf9kbhlaf5mkvnlf3zr9wzvk7c2z72l-bash-5.2p37.drv": {
+        "dynamicOutputs": {},
+        "outputs": ["out"]
+      },
+      "/nix/store/phq4wh4490manblg905xixpc3gvwr149-figlet-2.2.5.drv": {
+        "dynamicOutputs": {},
+        "outputs": ["out"]
+      },
+      "/nix/store/wdpicivrj0bmzh935rr1hm1vlk18j0mp-cowsay-3.8.4.drv": {
+        "dynamicOutputs": {},
+        "outputs": ["out"]
+      }
+    },
+    "inputSrcs": [
+      "/nix/store/shkw4qm9qcw5sc5n1k5jznc83ny02r39-default-builder.sh",
+      "/nix/store/vj1c3wf9c11a0qs6p3ymfvrnsdgsdcbq-source-stdenv.sh"
+    ],
+    "name": "mytool",
+    "outputs": {
+      "out": {
+        "path": "/nix/store/blm702jzcwfppwrrj9925ivd9gxp4c9n-mytool"
+      }
+    },
+    "system": "x86_64-linux"
+  }
+}
+```
