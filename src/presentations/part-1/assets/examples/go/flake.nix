@@ -18,7 +18,7 @@
         pkgs = import nixpkgs {
           inherit system;
         };
-        goModules = import ./go.nix {
+        goModules = import ./nix/go.nix {
           inherit pkgs;
         };
       in {
@@ -26,6 +26,7 @@
           inherit inputs pkgs;
           modules = goModules;
         };
+        packages = {};
       }
     );
 }
