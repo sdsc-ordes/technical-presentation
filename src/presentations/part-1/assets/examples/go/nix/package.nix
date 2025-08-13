@@ -5,7 +5,7 @@ pkgs.buildGoModule {
   pname = "go-demo";
   version = "0.1.0";
 
-  src = ./.;
+  src = ../.;
 
-  vendorSha256 = null;
+  vendorHash = pkgs.lib.fakeHash;
 }
