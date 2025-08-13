@@ -1,37 +1,54 @@
 {
-  description = "A golang devShell example";
+  description = "Go project with devShell and build, no flake-utils";
 
   inputs = {
     devenv.url = "github:cachix/devenv";
-    nixpkgs.url = "github:cachix/devenv-nixpkgs/rolling";
-    flake-utils.url = "github:numtide/flake-utils";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05"; # or another channel
   };
 
-  outputs = {
+  outputs = inputs @ {
+    self,
     nixpkgs,
-    flake-utils,
     devenv,
-    ...
-  } @ inputs:
-    flake-utils.lib.eachDefaultSystem (
-      system: let
-        pkgs = import nixpkgs {
+  }: let
+    supportedSystems = [
+      "aarch64-darwin"
+      "aarch64-linux"
+      "x86_64-darwin"
+      "x86_64-linux"
+    ];
+
+    forAllSystems = f:
+      nixpkgs.lib.genAttrs supportedSystems (system:
+        f {
           inherit system;
-        };
-        goModules = import ./nix/go.nix {
-          inherit pkgs;
-        };
-      in {
-        devShells.default = devenv.lib.mkShell {
-          inherit inputs pkgs;
-          modules = goModules;
-        };
-        packages.default = pkgs.buildGoModule {
-          pname = "go-demo";
-          version = "0.1.0";
+          pkgs = import nixpkgs {inherit system;};
+        });
+  in {
+    packages = forAllSystems ({
+      system,
+      pkgs,
+    }: {
+      default = pkgs.buildGoModule {
+        pname = "go-demo";
+        version = "0.1.0";
+        src = pkgs.lib.cleanSourceWith {
           src = ./.;
-          vendorHash = pkgs.lib.fakeHash;
+          filter = path: type: true;
         };
-      }
-    );
+        modRoot = ".";
+        vendorHash = null;
+      };
+    });
+
+    devShells = forAllSystems ({
+      system,
+      pkgs,
+    }: {
+      default = devenv.lib.mkShell {
+        inherit inputs pkgs;
+        modules = import ./nix/go.nix {inherit pkgs;};
+      };
+    });
+  };
 }
