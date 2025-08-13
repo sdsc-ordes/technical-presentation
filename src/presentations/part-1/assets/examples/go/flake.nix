@@ -21,30 +21,27 @@
     forAllSystems = f:
       nixpkgs.lib.genAttrs supportedSystems (system:
         f {
-          inherit system;
           pkgs = import nixpkgs {inherit system;};
         });
   in {
-    packages = forAllSystems ({
-      system,
-      pkgs,
-    }: {
-      default = pkgs.buildGoModule {
-        pname = "go-demo";
-        version = "0.1.0";
-        src = pkgs.lib.cleanSourceWith {
-          src = ./.;
-          filter = path: type: true;
+    packages = forAllSystems (
+      {pkgs, ...}: let
+        goSrc = pkgs.lib.fileset.toSource {
+          root = ./.;
+          fileset = pkgs.lib.fileset.gitTracked ./.;
         };
-        modRoot = ".";
-        vendorHash = null;
-      };
-    });
+      in {
+        default = pkgs.buildGoModule {
+          pname = "go-demo";
+          version = "0.1.0";
+          src = goSrc;
+          modRoot = ".";
+          vendorHash = null;
+        };
+      }
+    );
 
-    devShells = forAllSystems ({
-      system,
-      pkgs,
-    }: {
+    devShells = forAllSystems ({pkgs, ...}: {
       default = devenv.lib.mkShell {
         inherit inputs pkgs;
         modules = import ./nix/go.nix {inherit pkgs;};
