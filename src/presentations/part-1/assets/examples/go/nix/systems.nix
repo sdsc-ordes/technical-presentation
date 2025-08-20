@@ -1,6 +1,6 @@
 {
   pkgs,
-  f,
+  func,
 }: let
   supportedSystems = [
     "aarch64-darwin"
