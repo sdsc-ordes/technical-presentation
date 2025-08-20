@@ -6,7 +6,7 @@ This example Go module comes with a Nix flake that provides a go development
 shell. This ensures all developers work with the same toolchain and tooling
 versions (language server, linter, ...).
 
-Enter the devShell with `nix develop --impure .` and then build the go package
+Enter the Nix development shell with `nix develop --no-pure-eval .` and then build the go package
 with `go build main.go`.
 
 Inspect the devshell setup by looking at `flake.nix` and `nix/go.nix`.
