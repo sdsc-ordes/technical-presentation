@@ -1,5 +1,5 @@
 {
-  description = "Go project with devShell and build, no flake-utils";
+  description = "Go project with a development and package derivation";
 
   inputs = {
     devenv.url = "github:cachix/devenv";
