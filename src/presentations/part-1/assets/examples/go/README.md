@@ -2,7 +2,7 @@
 
 ## Development Shell
 
-This example go module comes with a nix flake that provides a go development
+This example Go module comes with a Nix flake that provides a go development
 shell. This ensures all developers work with the same toolchain and tooling
 versions (language server, linter, ...).
 
