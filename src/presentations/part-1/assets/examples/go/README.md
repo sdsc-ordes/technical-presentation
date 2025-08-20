@@ -15,5 +15,4 @@ Inspect the shell setup by looking at [`flake.nix`](nix/go.nix).
 
 In addition, the flake declares a package in its output (attribute `outputs.packages.${system}.default)`. To directly build the Go executable with Nix use `nix build ".#default"` or just `nix build .`
 
-If we go further, we could add a container image as flake output, and inject the
-binary into it.
+A further enhancement would be to add a container image as a flake output, e.g. attribute `outputs.packages.${system}.image`, and inject the executable derivation `outputs.packages.${system}.default` into it.
