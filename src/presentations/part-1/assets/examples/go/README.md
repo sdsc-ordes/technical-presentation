@@ -11,7 +11,7 @@ with `go build main.go`.
 
 Inspect the devshell setup by looking at `flake.nix` and `nix/go.nix`.
 
-## Nix builds
+## Nix Builds
 
 In addition, the flake declares a package in its output to directly build the go
 binary. The package can be built with nix using `nix build`
