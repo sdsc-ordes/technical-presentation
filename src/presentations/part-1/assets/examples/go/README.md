@@ -1,6 +1,6 @@
 # Go example
 
-## Development shell
+## Development Shell
 
 This example go module comes with a nix flake that provides a go development
 shell. This ensures all developers work with the same toolchain and tooling
