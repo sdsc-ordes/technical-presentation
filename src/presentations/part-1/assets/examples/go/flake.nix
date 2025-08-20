@@ -22,12 +22,12 @@
   in {
     packages = forAllSystems {
       pkgs = nixpkgs;
-      f = import ./nix/package.nix;
+      func = import ./nix/package.nix;
     };
 
     devShells = forAllSystems {
       pkgs = nixpkgs;
-      f = {pkgs, ...}: {
+      func = {pkgs, ...}: {
         default = devenv.lib.mkShell {
           inherit inputs pkgs;
           modules = import ./nix/go.nix {inherit pkgs;};
