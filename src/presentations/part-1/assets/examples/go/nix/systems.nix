@@ -10,6 +10,6 @@
   ];
 in
   pkgs.lib.genAttrs supportedSystems (system:
-    f {
+    func {
       pkgs = import pkgs {inherit system;};
     })
