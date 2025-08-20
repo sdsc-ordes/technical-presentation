@@ -3,10 +3,12 @@
 {pkgs}: [
   {
     packages = with pkgs; [
+      coreutils
       curl
-      eza
       fd
-      wget
+      findutils
+      git
+      just
     ];
 
     languages.go = {
