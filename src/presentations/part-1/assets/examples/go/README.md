@@ -9,7 +9,7 @@ versions (language server, linter, ...).
 Enter the Nix development shell with `nix develop --no-pure-eval .` and then build the go package
 with `go build main.go`.
 
-Inspect the devshell setup by looking at `flake.nix` and `nix/go.nix`.
+Inspect the shell setup by looking at [`flake.nix`](nix/go.nix).
 
 ## Nix Builds
 
