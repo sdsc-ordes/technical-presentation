@@ -1,4 +1,4 @@
-# Go example
+# Example Flake for Go
 
 ## Development Shell
 
