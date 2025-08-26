@@ -619,8 +619,6 @@ Try out the examples shown before yourself with `nix repl`
 
 **Time: `5min`**
 
----
-
 # Revisit `whats-is-my-ip`
 
 ## Building Our First Package (1) {#building-package}
@@ -817,7 +815,10 @@ commands before.
 
 You have seen files like `flake.nix` lying around in repositories already.
 
-A [`flake.nix`](./flake.nix) provides
+A [`flake.nix`](./flake.nix)
+\[[1](https://nix.dev/manual/nix/2.30/command-ref/new-cli/nix3-flake),
+[2](https://nixos-and-flakes.thiscute.world/other-usage-of-flakes/outputs)\]
+provides
 
 :::incremental
 
@@ -886,7 +887,8 @@ A flake
 - **Outputs**: A function that takes all `inputs` and returns an
   [](https://nixos-and-flakes.thiscute.world/other-usage-of-flakes/outputs),
   specifying what the flake provides (e.g., packages, modules, or NixOS
-  configurations).
+  configurations)
+  [\[doc\]](https://nix.dev/manual/nix/2.30/command-ref/new-cli/nix3-flake#flake-format).
 
 :::
 
@@ -903,6 +905,9 @@ A flake
 
   - Check `outputs.packages.x86_64-linux = { ... }`. It is a flat attribute set
     of Nix **derivations**.
+
+    **Note: Certain output attributes are `system` scoped, e.g.
+    `packages.x86_64-linux`**.
 
 :::
 
@@ -1109,6 +1114,91 @@ nix run "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#mytool"
 
 **Time: 15-20min**
 
+:::notes
+
+**Solutions**:
+
+Do `nix repl` and load `:lf github:sdsc-ordes/nix-workshop#treefmt` or (`:lf .`
+if you have a local clone). Inspecting the `inputs.nixpkgs` gives you something
+like this which is a attribute set representing a `flake`:
+
+```json
+{
+  _type = "flake";
+  checks = { ... };
+  devShells = { ... };
+  htmlDocs = { ... };
+  inputs = { ... };
+  lastModified = 1741862977;
+  lastModifiedDate = "20250313104937";
+  legacyPackages = { ... };
+  lib = { ... };
+  narHash = "sha256-prZ0M8vE/ghRGGZcflvxCu40ObKaB+ikn74/xQoNrGQ=";
+  nixosModules = { ... };
+  outPath = "/nix/store/vawkv67jxh8kl4flrqgpcsmn9inqgvjv-source";
+  outputs = { ... };
+  rev = "cdd2ef009676ac92b715ff26630164bb88fec4e0";
+  shortRev = "cdd2ef0";
+  sourceInfo = { ... };
+}
+```
+
+When you interpolate `${inputs.nixpkgs}`, it will store the whole flake into the
+Nix store giving you a store path, namely the **source of the `nixpkgs`
+repository**.
+
+```bash
+tree -L 1 /nix/store/vawkv67jxh8kl4flrqgpcsmn9inqgvjv-source
+> /nix/store/vawkv67jxh8kl4flrqgpcsmn9inqgvjv-source
+> ├── ci
+> ├── CONTRIBUTING.md
+> ├── COPYING
+> ├── default.nix
+> ├── doc
+> ├── flake.nix
+> ├── lib
+> ├── maintainers
+> ├── nixos
+> ├── pkgs
+> ├── README.md
+> └── shell.nix
+> 7 directories, 6 files
+```
+
+When you do `import "${inputs.nixpkgs}"` you load the `default.nix` file in that
+source directory. It will give you a function which will return the package
+attribute set of the `nixpkgs`-repository. When you call that function with
+`(import "${inputs.nixpkgs}) { system = "x86_64-linux"; }` you get the
+instantiated package set for the system `x86_64-linux`.
+[The function in `default.nix`](https://github.com/NixOS/nixpkgs/blob/bd3d85928a10c5b66b02e632e1d8acfdf1d7af2c/pkgs/top-level/impure.nix#L12)
+has some more possibilities to set platform settings for cross-compiling related
+things. The already instantiated package set can also be got from
+`inputs.nixpkgs.legacyPackages.${system}`. The name `legacyPackages` is an
+unfortunate naming and has nothing to do that packages are "legacy".
+
+Evaluating the `treefmt` utility in the `packages` output in the flake is giving
+you the build instruction (the derivation).
+
+```bash
+nix eval "github:sdsc-ordes/nix-workshop#treefmt#treefmt"
+> «derivation /nix/store/72zknv2ssr8pkvf5jrc0g5w64bqjvyq1-treefmt.drv»
+```
+
+Building and running `treefmt` can be done with
+
+```bash
+nix build ".#treefmt"
+nix run ".#treefmt"
+# or by doing it without a clone.
+nix build "github:sdsc-ordes/nix-workshop#treefmt"
+nix run "github:sdsc-ordes/nix-workshop#treefmt"
+```
+
+By the way: I consider `treefmt` the **ultimate gold standard** of formatting
+tools. [Check it out here.](https://github.com/numtide/treefmt-nix)
+
+:::
+
 ---
 
 ## What Is a DevShell?
@@ -1116,19 +1206,17 @@ nix run "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#mytool"
 Its a Nix **derivation** in the output attribute set `devShells` of the
 `flake.nix`:
 
-```nix { line-numbers="8-10" }
+```nix { line-numbers="7-9" }
 {
   inputs = { /* ... */ };
   outputs = inputs: {
-    packages = {
+    packages.x86_64-linux = {
       mytool = /* derivation */
     };
-
-    devShells = {
+    devShells.x86_64-linux = {
       banana-shell = /* derivation */
     };
-
-    # ... other output attributes ...
+    # ... other outputs ...
   }
 }
 ```
@@ -1142,7 +1230,7 @@ The flake in
 defines `devShells` an output:
 
 ```nix {line-numbers="2|3-12|4|5|7-10"}
- devShells = forAllSystems (system:
+devShells.x86_64-linux =
   let pkgs = inputs.nixpkgs-unstable.legacyPackages.${system}; in
   {
     default = pkgs.mkShell {
@@ -1169,45 +1257,104 @@ nix develop "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#default" -
 
 ---
 
-## Exercise: Modify the DevShell
+## Homework: Modify the DevShell
 
 - Modify
   [`./examples/flake-simple`](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/flake-simple/flake.nix)
-  to include your [package](https://search.nixos.org/packages?channel=unstable).
+  to include your
+  [package from `nixpkgs`](https://search.nixos.org/packages?channel=unstable).
 
-**Time: 15min**
+**Time: 5 min**
+
+:::notes
+
+**Solution:**
+
+Add for example `pkgs.zoxide` to `packages` by doing `inherit (pkgs) zoxide;`
+resulting in
+
+```nix
+packages = forAllSystems (
+  system:
+  let
+    # That import is the same as the above.
+    pkgs = (import inputs.nixpkgs-unstable) { inherit system; };
+
+    # Load some packages.
+    mypkgs = (import ./pkgs) pkgs;
+  in
+  {
+    inherit (mypkgs) mytool banana-icecream;
+    inherit (pkgs) zoxide;
+  }
+);
+```
+
+:::
 
 ---
 
-## Use [`devenv.sh`](https://devenv.sh)
+## Use [`devenv.sh`](https://devenv.sh) for Nix DevShells.
 
 Our
 [best-practice repository templates](https://github.com/sdsc-ordes/repository-template)
 support `devenv.sh` Nix DevShells.
 
-- Nix DevShells from `nixpkgs` (`pkgs.mkShell`) are quite raw and sometimes too
-  simplistic.
+:::incremental
 
-- Nix DevShells from `devenv` you can do a looot more stuff, better. To be
-  continued ...
+- 🚧 Nix DevShells from `nixpkgs` (`pkgs.mkShell`) are **raw** and **too
+  simplistic**.
 
-- They are configured based on the same mechanism which drives `NixOS` (NixOS
-  Modules).
+- 🌻Nix DevShells from [`devenv.sh`](https://devenv.sh) provides more concise
+  configuration.
+
+  - ❤️‍🔥Configuration based on the same mechanism which drives `NixOS` (NixOS
+    Modules).
+
+:::
+
+# Workshop: Build a Flake for a Go Project.
+
+We will do a guided hands-on session doing the following:
+
+1. Setup a `flake.nix` with for a Go Project.
+2. Write a function `forAllSystems`.
+3. Setup a Nix shell with [https://devenv.sh](https://devenv.sh).
+4. Add packages to the Nix shell.
+5. Add env. variables, shell hook etc to the Nix shell.
+6. [optional]: Define a custom `devenv` module options to conditionally activate
+   a `run-it` script.
+7. Build the Go executable into a derivation.
+8. Leverage `override` to build with another Go version.
+9. Build a simple Docker container containing your package.
+
+All steps are inside
+[`examples/flake-go/step-*`](https://github.com/sdsc-ordes/nix-workshop/tree/main/examples/flake-go)
+where each step is considered a **the root of the project repository**.
+
+---
+
+### 1. Setup a `flake.nix`
 
 ---
 
 ## References
 
+#### General
+
+- [Nix Manual](https://nix.dev/manual/nix/2.30/introduction.html)
 - [Nix Packages Search](https://search.nixos.org/packages?)
 - [Nix Packages Search for Version Pinning](https://nixhub.io)
+
+- [Nixpkgs Pull Request Tracker](https://nixpk.gs/pr-tracker.html)
+- [Nixpkgs-Lib Function Search](https://noogle.dev/)
+
+#### NixOS Related
 
 - [NixOS Manual](https://nixos.org/manual/nixos/stable/)
 - [NixOS Options Search](https://search.nixos.org/options?)
 - [NixOS With Flakes](https://nixos-and-flakes.thiscute.world/nixos-with-flakes)
 - [NixOS Status](https://status.nixos.org/)
-
-- [Nixpkgs Pull Request Tracker](https://nixpk.gs/pr-tracker.html)
-- [Nixpkgs-Lib Function Search](https://noogle.dev/)
 
 ---
 
