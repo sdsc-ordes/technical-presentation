@@ -11,7 +11,7 @@ export PATH="$1"
 
 print_info "Installing Zsh shell ..."
 
-LOCALE_ARCHIVE="$(nix eval --raw "/container-setup/tools/nix#devcontainer-deps")/lib/locale/locale-archive"
+LOCALE_ARCHIVE="$(nix eval --no-pure-eval --raw "/container-setup/tools/nix#devcontainer-deps")/lib/locale/locale-archive"
 export LOCALE_ARCHIVE
 
 print_info "Installing Zsh shell 2 ..."
