@@ -1327,15 +1327,14 @@ Time to get 🫵r fingers dirty with the following exercises:
 3. **Setup a Nix shell** with [https://devenv.sh](https://devenv.sh).
 4. **Add packages** to the Nix shell.
 5. **Add** Nix shell **capabilities**.
-6. \[opt.\] Define a custom `devenv` module options to conditionally activate a
-   `run-it` script.
+6. Add custom options to `devenv` for a `run-it` script \[optional\].
 
 :::
 
 :::{.column width="50%"}
 
 7. **Build** the Go executable into **a derivation**.
-8. \[opt.\] Leverage `override` to build with another Go compiler.
+8. Leverage `override` to build with another Go compiler \[optional\].
 9. **Build** a **Docker container** with Nix with your package.
 
 :::
