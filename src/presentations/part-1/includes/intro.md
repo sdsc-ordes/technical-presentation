@@ -3,24 +3,11 @@
 # Requirements
 
 All examples refer to the
-[workshop repository](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/what-is-my-ip-orig.nix)
-in the root directory.
+[workshop repository](https://github.com/sdsc-ordes/nix-workshop) in the root
+directory.
 
-Ensure that you have installed
-[`Nix`](https://swissdatasciencecenter.github.io/best-practice-documentation/docs/dev-enablement/nix-and-nixos#installing-nix)
-and
-[`direnv`](https://swissdatasciencecenter.github.io/best-practice-documentation/docs/dev-enablement/nix-and-nixos#installing-direnv).
-
-The basic requirements for working with this repository are:
-
-- `just`
-- `nix`
-
-See
-[instructions](https://swissdatasciencecenter.github.io/best-practice-documentation/docs/dev-enablement/nix-and-nixos).
-
-🪟 Nix only supports Linux & macOS. Windows users might try installing Nix on
-**WSL Ubuntu** or run a Docker a container with Nix installed.
+Ensure that you
+[have the requirements fulfilled](https://github.com/sdsc-ordes/nix-workshop#requirements).
 
 # Motivation
 
@@ -1334,7 +1321,7 @@ Time to get 🫵r fingers dirty with the following exercises:
 :::{.column width="50%"}
 
 7. **Build** the Go executable into **a derivation**.
-8. Leverage `override` to build with another Go compiler \[optional\].
+8. Version pin the Go compiler \[optional\].
 9. **Build** a **Docker container** with Nix with your package.
 
 :::
