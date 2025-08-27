@@ -1321,7 +1321,7 @@ We will do a guided hands-on session doing the following:
 
 :::{.column width="50%"}
 
-1. **Setup** a `flake.nix` with for a _Go_ project.
+1. **Setup** a `flake.nix` for a _Go_ project.
 2. **Write a function** `forAllSystems`.
 3. **Setup a Nix shell** with [https://devenv.sh](https://devenv.sh).
 4. **Add packages** to the Nix shell.
