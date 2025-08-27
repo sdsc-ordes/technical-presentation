@@ -1296,10 +1296,6 @@ packages = forAllSystems (
 
 ## Use [`devenv.sh`](https://devenv.sh) for Nix DevShells.
 
-Our
-[best-practice repository templates](https://github.com/sdsc-ordes/repository-template)
-support `devenv.sh` Nix DevShells.
-
 :::incremental
 
 - 🚧 Nix DevShells from `nixpkgs` (`pkgs.mkShell`) are **raw** and **too
@@ -1308,10 +1304,15 @@ support `devenv.sh` Nix DevShells.
 - 🌻Nix DevShells from [`devenv.sh`](https://devenv.sh) provides more concise
   configuration.
 
-  - ❤️‍🔥Configuration based on the same mechanism which drives `NixOS` (NixOS
-    Modules).
+  - ❤️‍🔥Configuration based on mechanics which drive `NixOS` (NixOS Modules).
 
 :::
+
+---
+
+## Questions
+
+---
 
 # Workshop 🏑
 
@@ -1345,7 +1346,7 @@ All steps are inside
 [`examples/flake-go/step-*`](https://github.com/sdsc-ordes/nix-workshop/tree/main/examples/flake-go)
 where each step is considered a **a root of an examples repository**.
 
-## Outlook
+# Outlook
 
 - 🦸[Devenv Nix Shell](https://devenv.sh) is **deterministic/reproducible** and
   with lots of power.
@@ -1362,6 +1363,8 @@ where each step is considered a **a root of an examples repository**.
   - Other commercial ( ‼️lock-in ) projects:
     [`devbox`](https://www.jetify.com/devbox), [flox](https://flox.dev).
 
+---
+
 ## Goodies 🍬 from SDSC
 
 We maintain _well-structured_, _state-of-the-art_, _`nix`-enabled_
@@ -1375,6 +1378,8 @@ for toolchains like:
 - etc.
 
 **The templates provide CI out of the box and are ready to use!**
+
+---
 
 ## Your Nix Journey
 
@@ -1392,9 +1397,9 @@ for toolchains like:
 
 :::
 
----
+# References
 
-## References
+## Links
 
 ::::::{.columns}
 
@@ -1423,14 +1428,6 @@ for toolchains like:
 :::
 
 ::::::
-
----
-
----
-
-## Questions
-
----
 
 # Appendix
 
