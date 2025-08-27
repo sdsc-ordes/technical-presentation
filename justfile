@@ -19,7 +19,7 @@ develop *args:
 
 # Format the project.
 format *args:
-    nix run --accept-flake-config {{flake_dir}}#treefmt -- "$@"
+    nix run --no-pure-eval --accept-flake-config {{flake_dir}}#treefmt -- "$@"
 
 # Clean the build folder.
 clean:
