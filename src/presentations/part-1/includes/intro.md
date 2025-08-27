@@ -1313,41 +1313,105 @@ support `devenv.sh` Nix DevShells.
 
 :::
 
-# Workshop: Build a Flake for a Go Project.
+# Workshop
 
 We will do a guided hands-on session doing the following:
 
-1. Setup a `flake.nix` with for a Go Project.
-2. Write a function `forAllSystems`.
-3. Setup a Nix shell with [https://devenv.sh](https://devenv.sh).
-4. Add packages to the Nix shell.
-5. Add env. variables, shell hook etc to the Nix shell.
-6. [optional]: Define a custom `devenv` module options to conditionally activate
-   a `run-it` script.
-7. Build the Go executable into a derivation.
-8. Leverage `override` to build with another Go version.
-9. Build a simple Docker container containing your package.
+::::::{.columns}
+
+:::{.column width="50%"}
+
+1. **Setup** a `flake.nix` with for a _Go_ project.
+2. **Write a function** `forAllSystems`.
+3. **Setup a Nix shell** with [https://devenv.sh](https://devenv.sh).
+4. **Add packages** to the Nix shell.
+5. **Add** Nix shell **capabilities**.
+6. \[opt.\] Define a custom `devenv` module options to conditionally activate a
+   `run-it` script.
+
+:::
+
+:::{.column width="50%"}
+
+7. **Build** the Go executable into **a derivation**.
+8. \[opt.\] Leverage `override` to build with another Go compiler.
+9. **Build** a **Docker container** with Nix with your package.
+
+:::
+
+::::::
 
 All steps are inside
 [`examples/flake-go/step-*`](https://github.com/sdsc-ordes/nix-workshop/tree/main/examples/flake-go)
-where each step is considered a **the root of the project repository**.
+where each step is considered a **a root of an examples repository**.
 
----
+## Outlook
 
-### 1. Setup a `flake.nix`
+- 🦸[Devenv Nix Shell](https://devenv.sh) is **deterministic/reproducible** and
+  with lots of power.
+
+  - Foundation of a `flake.nix` and integration of a Nix shell. Simpler approach
+    with [`devenv.nix`](https://devenv.sh/basics).
+
+  - Nix community is flourishing -
+    [contribute or support it](https://opencollective.com/nixos):
+
+    - [Discourse Forum](https://discourse.nixos.org)
+    - [Matrix Community](https://matrix.to/#/#space:nixos.org)
+
+  - Other commercial ( ‼️lock-in ) projects:
+    [`devbox`](https://www.jetify.com/devbox), [flox](https://flox.dev).
+
+## Goodies 🍬 from SDSC
+
+We maintain _well-structured_, _state-of-the-art_, _`nix`-enabled_
+[**repository templates**](https://github.com/sdsc-ordes/repository-templates)
+for toolchains like:
+
+- [Rust](https://github.com/sdsc-ordes/repository-template#rust-template)
+- [Go](https://github.com/sdsc-ordes/repository-template#go-template)
+- [Python](https://github.com/sdsc-ordes/repository-template#python-template)
+- [Generic](https://github.com/sdsc-ordes/repository-template#generic-template)
+- etc.
+
+**The templates provide CI out of the box and are ready to use!**
+
+## Your Nix Journey
+
+:::incremental
+
+- 🌍 Tackling non-reproducible software distribution is **hard** — but its
+  **essential**.
+
+- 🚀 Embrace **Nix** to gain reproducibility, consistency and healthy local
+  development & CI.
+
+- 🤝 The **Nix community** is welcoming and supportive — don’t hesitate to ask!
+
+- ✅ Check the references/resources provided (🤷‍♀️ sometimes its a mess, yes).
+
+:::
 
 ---
 
 ## References
 
+::::::{.columns}
+
+:::{.column width="50%"}
+
 #### General
 
+- [Official Wiki](https://wiki.nixos.org/wiki/NixOS_Wiki)
 - [Nix Manual](https://nix.dev/manual/nix/2.30/introduction.html)
 - [Nix Packages Search](https://search.nixos.org/packages?)
 - [Nix Packages Search for Version Pinning](https://nixhub.io)
-
 - [Nixpkgs Pull Request Tracker](https://nixpk.gs/pr-tracker.html)
 - [Nixpkgs-Lib Function Search](https://noogle.dev/)
+
+:::
+
+:::{.column width="50%"}
 
 #### NixOS Related
 
@@ -1356,26 +1420,11 @@ where each step is considered a **the root of the project repository**.
 - [NixOS With Flakes](https://nixos-and-flakes.thiscute.world/nixos-with-flakes)
 - [NixOS Status](https://status.nixos.org/)
 
----
-
-## Your Nix Journey
-
-:::incremental
-
-- ✅ Ask the people who set the `devShell` how to extend it if you don't know
-  yet.
-
-- ✅ Check the references.
-
-- More to come in part 2.
-
-- Changing the world of non-reproducible build systems is hard endeavour on its
-  own.
-
-- Embrace Nix as tool to give you better reproducibility. The Nix community is
-  always helpful.
-
 :::
+
+::::::
+
+---
 
 ---
 
