@@ -18,7 +18,11 @@ function cleanup() {
 trap cleanup EXIT
 
 function publish() {
+    ci::print_info "Set jekyll to no theme."
+    echo "theme: []" >"$docs_dir/_config.yaml"
+
     ci::print_info "Commit all assets onto temp branch..."
+    git add "$docs_dir/_config.yaml"
     git add -f "$target"
     git commit -m "feat: publish '$name'"
 
@@ -50,6 +54,8 @@ function publish() {
 }
 
 function main() {
+    cd "$ROOT_DIR"
+
     if ! git diff --quiet --exit-code; then
         ci::print_info "You are not in clean Git state."
         exit 1
@@ -73,7 +79,6 @@ function main() {
         git reset --hard "$current"
     fi
 
-    cd "$ROOT_DIR"
     ci::print_info "Render presentation"
     just presentation="$presentation" init
     just presentation="$presentation" sync
@@ -98,7 +103,8 @@ publish_settings="$ROOT_DIR/src/presentations/$presentation/.publish.yaml"
 name=$(yq ".name" "$publish_settings")
 base_path=$(yq ".base_path" "$publish_settings")
 
-pages_dir="docs/gh-pages"
+docs_dir="docs"
+pages_dir="$docs_dir/gh-pages"
 target="$pages_dir/$base_path/$name"
 current=$(git branch --show)
 publishBr="publish"
