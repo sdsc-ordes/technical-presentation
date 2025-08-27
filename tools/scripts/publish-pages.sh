@@ -11,13 +11,22 @@ export GITHOOKS_DISABLE=1
 
 function cleanup() {
     if git rev-parse "$temp" &>/dev/null; then
+        ci::print_info "Delete '$temp'"
         git branch -D "$temp" || true
+    fi
+
+    if [ -n "$initial_branch" ] &&
+        [ "$initial_branch" != "$(git branch --show || true)" ]; then
+        ci::print_info "Move to initial branch '$initial_branch'"
+        git checkout "$initial_branch"
     fi
 }
 
 trap cleanup EXIT
 
 function publish() {
+    initial_branch=$(git branch --show)
+
     ci::print_info "Set jekyll to no theme."
     echo "theme: []" >"$docs_dir/_config.yaml"
 
@@ -98,6 +107,7 @@ function main() {
     fi
 }
 
+initial_branch=""
 presentation="${1:-presentation-1}"
 publish_settings="$ROOT_DIR/src/presentations/$presentation/.publish.yaml"
 name=$(yq ".name" "$publish_settings")
