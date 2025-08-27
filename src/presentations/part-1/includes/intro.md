@@ -1313,9 +1313,9 @@ support `devenv.sh` Nix DevShells.
 
 :::
 
-# Workshop
+# Workshop 🏑
 
-We will do a guided hands-on session doing the following:
+Time to get 🫵r fingers dirty with the following exercises:
 
 ::::::{.columns}
 
