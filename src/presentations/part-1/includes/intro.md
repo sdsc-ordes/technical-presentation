@@ -167,11 +167,13 @@ the presentation. So bare with me and remember that at the end there will be an
 
 ---
 
-## What Is My IP?
+## Tool Dependencies
+
+I am building a script to find my IP:
 
 ```bash {.fragment}
 #! /usr/bin/env bash
-curl -s http://httpbin.org/get | jq --raw-output .origin
+curl -s http://ipinfo.io | jq --raw-output .ip
 ```
 
 ```shell {.fragment data-id="code-animation"}
@@ -201,9 +203,9 @@ version of that script.
 
 ---
 
-## Build It With Nix (1)
+## Package It Nix (1)
 
-```nix {line-numbers="10|11-13"}
+```nix {line-numbers="10|11-14"}
 {
   system ? builtins.currentSystem,
   pkgs ?
@@ -215,8 +217,8 @@ version of that script.
 }:
 pkgs.writeShellScriptBin "what-is-my-ip"
 ''
-  ${pkgs.curl}/bin/curl -s http://httpbin.org/get | \
-    ${pkgs.jq}/bin/jq --raw-output .origin
+  ${pkgs.curl}/bin/curl -s http://ipinfo.io | \
+    ${pkgs.jq}/bin/jq --raw-output .ip
 ''
 ```
 
@@ -231,7 +233,7 @@ of our script.
 
 ---
 
-## Build It With Nix (2)
+## Package It Nix (2)
 
 Building this Nix code gives you a store path:
 
@@ -247,9 +249,9 @@ which contains the script and all needed dependencies
 #!/nix/store/mc4485g4apaqzjx59dsmqscls1zc3p2w-bash-5.2p37/bin/bash
 
 /nix/store/zl7h70n70g5m57iw5pa8gqkxz6y0zfcf-curl-8.12.1-bin/bin/curl \
-  -s "http://httpbin.org/get" | \
+  -s "http://ipinfo.io" | \
   /nix/store/y50rkdixqzgdgnps2vrc8g0f0kyvpb9w-jq-1.7.1-bin/bin/jq \
-    --raw-output ".origin"
+    --raw-output ".ip"
 ```
 
 :::
@@ -282,7 +284,7 @@ But thats only the partial story what Nix does differently. Lets look into it.
 
 ::::::{.columns}
 
-:::{.column width="50%" style="align-content:center"}
+:::{.column width="70%" style="align-content:center"}
 
 ```bash
 /nix/store/7x9hf9g95d4wjjvq853x25jhakki63bz-what-is-my-ip
@@ -290,15 +292,23 @@ But thats only the partial story what Nix does differently. Lets look into it.
 
 ::: {.fragment}
 
-Seeing `7x9hf9g95d4wjjvq853x25jhakki63bz` is an [extremely
-strong guarantee]{.emph} of the built software down to the [commit/version
-and build instructions including dependencies.]{.emph}
+The hash `7x9hf9g95d4wjjvq853x25jhakki63bz` of your built package includes:
+
+::: incremental
+
+- source code of the package (the bash script)
+- dependencies down to the commit level (`curl`, `jq`)
+- all build instructions (`nix` code, including dependencies)
 
 :::
 
 :::
 
-:::{.column width="50%" .fragment}
+[**⛓️ Deterministic software packaging.**]{.fragment}
+
+:::
+
+:::{.column width="30%" .fragment}
 
 ![](${meta:include-base-dir}/assets/images/fractal.gif){width="100%"
 .border-light}
@@ -626,8 +636,8 @@ let
   pkgs = f { inherit system; }; # This is the package attribute set of `nixpkgs`.
 in
 pkgs.writeShellScriptBin "what-is-my-ip" ''
-  ${pkgs.curl}/bin/curl -s http://httpbin.org/get | \
-    ${pkgs.jq}/bin/jq --raw-output .origin
+  ${pkgs.curl}/bin/curl -s http://ipinfo.io | \
+    ${pkgs.jq}/bin/jq --raw-output .ip
 ''
 ```
 
@@ -704,9 +714,9 @@ Explore whats in `/nix/store/7x9hf9g95d...-what-is-my-ip/bin/what-is-my-ip`:
 ```bash
 #!/nix/store/mc4485g4apaqzjx59dsmqscls1zc3p2w-bash-5.2p37/bin/bash
 /nix/store/zl7h70n70g5m57iw5pa8gqkxz6y0zfcf-curl-8.12.1-bin/bin/curl \
-  -s "http://httpbin.org/get" | \
+  -s "http://ipinfo.io" | \
   /nix/store/y50rkdixqzgdgnps2vrc8g0f0kyvpb9w-jq-1.7.1-bin/bin/jq \
-    --raw-output ".origin"
+    --raw-output ".ip"
 ```
 
 :::
@@ -727,8 +737,8 @@ Nix has all information (`nix copy`).
 
 ```nix {line-numbers="1"}
 pkgs.writeShellScriptBin "what-is-my-ip" ''
-  ${pkgs.curl}/bin/curl -s http://httpbin.org/get | \
-    ${pkgs.jq}/bin/jq --raw-output .origin
+  ${pkgs.curl}/bin/curl -s http://ipinfo.io | \
+    ${pkgs.jq}/bin/jq --raw-output .ip
 ''
 ```
 
@@ -1028,6 +1038,8 @@ nix run "./examples/flake-simple#mytool"
 ---
 
 ## What Is an Installable
+
+<!-- TODO: Make this easier, installable -> something you can install/put into the Nix store -->
 
 :::{.fragment}
 
@@ -1509,8 +1521,8 @@ derivation {
 
       {
         echo '#!/bin/sh'
-        echo '${pkgs.curl}/bin/curl -s http://httpbin.org/get | \
-        ${pkgs.jq}/bin/jq --raw-output .origin'
+        echo '${pkgs.curl}/bin/curl -s http://ipinfo.io | \
+        ${pkgs.jq}/bin/jq --raw-output .ip'
       } > $out/bin/what-is-my-ip
 
       ${pkgs.coreutils}/bin/chmod +x $out/bin/what-is-my-ip
