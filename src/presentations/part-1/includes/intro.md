@@ -40,11 +40,7 @@ resolve these issues right?
 
 ### 💣 It Works on My Machine
 
-:::{.center-content}
-
-![](${meta:include-base-dir}/assets/images/it-works-on-my-machine.jpg){width="80%"}
-
-:::
+[![](${meta:include-base-dir}/assets/images/it-works-on-my-machine.jpg){width="30%"}]{.center-content}
 
 ::: notes
 
@@ -203,7 +199,7 @@ version of that script.
 
 ---
 
-## Package It Nix (1)
+## Package It with Nix (1)
 
 ```nix {line-numbers="10|11-14"}
 {
@@ -233,7 +229,7 @@ of our script.
 
 ---
 
-## Package It Nix (2)
+## Package It with Nix (2)
 
 Building this Nix code gives you a store path:
 
@@ -361,6 +357,8 @@ how this manifests itself.
 
 :::notes
 
+Gabyx: takeover.
+
 The Nix language is specifically designed for deterministic software building
 and distribution. Due to its narrow scope, it lacks certain features, such as
 floating-point types, which are unnecessary in this context.
@@ -395,31 +393,6 @@ floating-point types, which are unnecessary in this context.
   for the basic building block.
 
 :::
-
----
-
-## Examples {#repl-instructions}
-
-Verify the next examples in the Nix REPL (interactive Nix shell):
-
-```bash
-nix repl
-```
-
-or pass std. input to `nix eval`:
-
-```bash
-echo '
-  let a = 3; in a
-' | nix eval --file -
-```
-
-**In
-[workshop repository](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/what-is-my-ip-orig.nix)**:
-
-```bash
-echo '3' | just eval
-```
 
 ---
 
@@ -614,18 +587,50 @@ Do you have questions?
 Try out the examples shown before yourself with `nix repl`
 ([see slide](#repl-instructions))
 
-**Time: `5min`**
+::::::{.columns}
+
+:::{.column width="50%"}
+
+Verify in the interactive Nix shell:
+
+```bash
+nix repl
+```
+
+:::
+
+:::{.column width="50%"}
+
+Or pass standard input to `nix eval`:
+
+```bash
+echo '
+  let a = 3; in a
+' | nix eval --file -
+```
+
+:::
+
+::::::
+
+**Time: `3min`**
 
 # Revisit `whats-is-my-ip`
+
+:::notes
+
+cmdoret: takeover.
+
+:::
 
 ## Building Our First Package (1) {#building-package}
 
 Put the following in a script
 [`whats-is-my-ip.nix`](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/what-is-my-ip.nix):
 
-```nix {line-numbers="3|5-6|8-9|11|12-15" style="font-size:14pt"}
+```nix {line-numbers="2|4-5|7-8|10|12-15" style="font-size:14pt"}
 let
-  system = builtins.currentSystem;
+  system = builtins.currentSystem; # e.g. `x86_64-linux`
 
   # Download something into the `/nix/store/...-source`
   src = builtins.fetchTarball "https://github.com/NixOS/nixpkgs/archive/9684b53175fc6c09581e94cc85f05ab77464c7e3.tar.gz";
@@ -662,21 +667,34 @@ pkgs.writeShellScriptBin "what-is-my-ip" ''
 
 ### Wait! What is [`github.com/NixOS/nixpkgs`](https://nixos.org/manual/nixpkgs/stable/#preface) ?
 
-::: incremental
+󰳏 [`nixpgkgs`](https://github.com/NixOS/nixpkgs) is a mono-repository with Nix
+code to build software packages (> 130k derivations).
 
-- 󰳏 The repository [`nixpgkgs`](https://github.com/NixOS/nixpkgs) is a **giant**
-  mono-repository with Nix code to build over 130k software packages
-  (derivations).
+::::::{.columns}
 
-  - from basic C/C++ compiler (named `stdenv`) and infrastructure to bootstrap
-    tools of any Linux (`coreuitls` etc.) up to
+:::{.column width="50%"}
 
-  - leaf-like packages like `signal`, `firefox`, etc.
-
--  A commit on `nixpkgs` represents the **version** of **all** packages at that
-  **commit**.
+```mermaid
+flowchart TD
+  nixpkgs((nixpkgs))
+  nixpkgs --- BuildTools[Build Tools]
+  BuildTools --- compilers[Compilers]
+  BuildTools --- libraries[Libraries]
+  nixpkgs --- systemPackages[System Packages]
+  systemPackages --- firefox[Firefox]
+  systemPackages --- signal[Signal]
+```
 
 :::
+
+:::{.column width="50%" style="align-content:center"}
+
+ A commit on `nixpkgs` represents the **version** of **all** packages at that
+**commit**.
+
+:::
+
+::::::
 
 ---
 
@@ -686,14 +704,25 @@ pkgs.writeShellScriptBin "what-is-my-ip" ''
 
 - Importing
   [`default.nix`](https://github.com/NixOS/nixpkgs/blob/master/default.nix),
-  [[1](https://github.com/NixOS/nixpkgs/blob/374e6bcc403e02a35e07b650463c01a52b13a7c8/pkgs/top-level/default.nix#L21)]
-  from `nixpkgs` (see [`import`](#building-package)) returns a **function** to
-  instantiate this giant flat attribute set **`pkgs`** for your `system`.
+  from `nixpkgs` (see [`import`](#building-package),
+  [[1](https://github.com/NixOS/nixpkgs/blob/374e6bcc403e02a35e07b650463c01a52b13a7c8/pkgs/top-level/default.nix#L21)])
 
-- Search [packages here](https://search.nixos.org/packages) and more
-  [granular here](https://www.nixhub.io/).
+  - Returns a **function**.
+  - Returns a flat attribute set **`pkgs`** for your `system` (e.g
+    `"x86_64-linux"`).
 
-- Search [functions here](https://noogle.dev).
+- Package Search:
+
+  - [https://search.nixos.org/packages](https://search.nixos.org/packages)
+  - [https://www.nixhub.io](https://www.nixhub.io).
+
+- Function Search: [https://noogle.dev](https://noogle.dev).
+
+:::
+
+:::notes
+
+Skip this.
 
 :::
 
@@ -742,9 +771,9 @@ pkgs.writeShellScriptBin "what-is-my-ip" ''
 ''
 ```
 
-The `pkgs.writeShellScriptBin` is a **trivial builder** function around the
-fundamental [`derivation`](#appendix-the-builtin-function-derviation) command
-(see [appendix](#appendix-the-builtin-function-derviation)).
+- `pkgs.writeShellScriptBin` is a **trivial builder function** around the
+  [`derivation`](#appendix-the-builtin-function-derviation) command
+  ([see appendix](#appendix-the-builtin-function-derviation)).
 
 ---
 
@@ -782,32 +811,6 @@ Show the output of `ldd curl` etc.
 
 ---
 
-## Homework: Inspect the Dependency Graph
-
-- Reproduce the commands for building `what-is-my-ip.nix` on your machine in the
-  [workshop repository](https://github.com/sdsc-ordes/nix-workshop).
-- Inspect the store path.
-- Explore the dependencies and answer the quiz below:
-
-**Time: 15-20min**
-
-:::{.quiz}
-
-_**Quiz:** What do you expect<br>
-`/nix/store/zl7h70n70g5m57iw5pa8gqkxz6y0zfcf-curl-8.12.1-bin/bin/curl`<br> links
-to and what does your system `curl` link to? <br><br> Use `ldd` to inspect._
-
-:::
-
-:::notes
-
-Before we go on with learning more on Nix, I want you to replicate the shown
-commands before.
-
-:::
-
----
-
 ## What Is a Flake?
 
 You have seen files like `flake.nix` lying around in repositories already.
@@ -828,9 +831,14 @@ provides
 
 :::{.fragment}
 
-[Remember `fetchTarball "..."` in `what-is-my-ip.nix`](#building-package) which
-locks `pkgs` to a certain commit on the `nixpkgs` repository, a flake is a
-better way to manage locked inputs.
+[🌻 Remember `fetchTarball ".../NixOS/nixpkgs/..."` in `what-is-my-ip.nix`](#building-package),
+a flake is a better way to manage a locked input.
+
+:::
+
+:::notes
+
+gabyx: takeover.
 
 :::
 
@@ -895,13 +903,13 @@ A flake
 
 :::incremental
 
-- Nix can evaluate a `flake.nix` by calling the `outputs` function passing all
-  `inputs`.
+- Nix evaluates a `flake.nix` by calling the `outputs` with `inputs`.
 
-  - Try `nix repl .` to load all outputs of `./flake.nix` in directory `.`.
+  - Try `nix repl` and `:lf .` to load the `./flake.nix` in directory `.`.
 
-  - Check `outputs.packages.x86_64-linux = { ... }`. It is a flat attribute set
-    of Nix **derivations**.
+  - Check `outputs.packages.x86_64-linux = { ... }`.
+
+    Flat attribute set of Nix **derivations**.
 
     **Note: Certain output attributes are `system` scoped, e.g.
     `packages.x86_64-linux`**.
@@ -910,8 +918,8 @@ A flake
 
 :::notes
 
-Another method is to start the `nix repl` and then type `:lf .` which is almost
-the same except that the available attributes are now `inputs` and `outputs`:
+Another method is to start the `nix repl .` which is almost the same except that
+the available `outputs` attribute name are available directly.
 
 :::
 
@@ -940,70 +948,65 @@ structure with built-in meaning.
 
 ---
 
-## Derivation Definition
+## Whats a Derivation
 
-> A **derivation** is an instruction that Nix uses to realize a package. Created
-> using a special `derivation` function in the Nix language, it can depend on
-> multiple other derivations and produce one or more outputs. The complete set
-> of dependencies required to build a derivation—including its transitive
-> dependencies—is called a **closure**.
+> **A [derivation](https://zero-to-nix.com/concepts/derivations)** is a **build
+> instruction** to realize a **package in the `/nix/store`** using a
+> [special `derivation` function](https://noogle.dev/f/builtins/derivation).
+>
+> - Can depend on multiple other
+>   [derivations](https://zero-to-nix.com/concepts/derivations).
+> - Produce one or more outputs.
+>
+> The complete set of dependencies required to build a derivation—including its
+> transitive dependencies—is called a **closure**.
 > [[Ref]](https://zero-to-nix.com/concepts/derivations)
 
-## Evaluating a Derivation
+---
 
-When Nix evaluates a derivation, it stores the result in the Nix store
-(`/nix/store`) as a **store derivation** (`*.drv`)
-([more details](https://nix.dev/manual/nix/2.24/glossary#gloss-store-derivation)).
+## Evaluate & Build a Derivation
 
 ```mermaid
 flowchart LR
     A["<strong>Flake</strong><br><code>flake.nix</code>"] -->|"contains output attributes"| B["<strong><code>packages.x86_64-linux.mypackage</code></strong><br>Nix Derivation"]
     B -->|"evaluate"| C["<strong>Store Derivation</strong><br><code>/nix/store/*.drv</code>"]
-    C -->|"realize/build"| D["<strong>Output</strong><br>in<code>/nix/store/*</code>"]
+    C -->|"realize/build"| D["<strong>Outputs</strong><br>in<code>/nix/store/*</code>"]
 ```
 
-## Store Derivation
+::: incremental
 
-> A store **derivation** (`*.drv`) contains only **build instructions** for Nix
-> to **realize/build** it. This can be literally anything, e.g. a software
-> package, a wrapper shell script or only source files.
+- **Evaluating**: Store build instructions in the `/nix/store`<br> (a store
+  derivation `*.drv`,
+  [more details](https://nix.dev/manual/nix/2.24/glossary#gloss-store-derivation)).
 
-See [appendix](#inspect-a-derivation) for how to inspect the internal
-representation of a `*.drv` file.
+- **Building**: Realizing outputs of the derivation in the `/nix/store`.
 
-## Build A Derivation - Evaluating & Realizing It
+:::
 
-We can build the above derivation - or in other terms **evaluate & realize it in
-the Nix store** - by doing:
+## Build A Derivation
+
+Build the example derivation - eval. & realize it in the Nix store - by doing:
 
 ```bash
 nix build -L "./examples/simple-flake#packages.x86_64-linux.mytool" \
   --print-out-paths --out-link ./mytool
 ```
 
-:::{.fragment}
+or in steps [see appendix](#evaluate-build-a-derivation).
 
-✅ **Short Form:** `nix build "./examples/simple-flake#mytool"` uses
-`builtins.currentSystem` (works also for macOS users).
+::: incremental
 
-:::
+- ℹ️ The string `./examples/simple-flake#packages.x86_64-linux.mytool` is called
+  an **installable** ([see appendix](#what-is-an-installable)).
 
-:::{.fragment}
-
-or in steps
-
-```bash
-# Evaluate it.
-drvPath=$(nix eval "./examples/flake-simple#packages.x86_64-linux.mytool" --raw)
-# Realize it.
-nix build -L "$drvPath" --print-out-paths --out-link ./mytool
-```
+- 🩳 **Short Form:** `nix build "./examples/simple-flake#mytool"` uses
+  `builtins.currentSystem` (works also for macOS users).
 
 :::
 
 ---
 
-## Build A Derivation - Evaluating & Realizing It (2)
+## Build A Derivation (2)
 
 ::::::{.columns}
 
@@ -1037,47 +1040,6 @@ nix run "./examples/flake-simple#mytool"
 
 ---
 
-## What Is an Installable
-
-<!-- TODO: Make this easier, installable -> something you can install/put into the Nix store -->
-
-:::{.fragment}
-
-The path `./examples/flake-simple#packages.x86_64-linux.mytool` is referred to
-as a
-[Flake output attribute installable](https://nix.dev/manual/nix/2.24/command-ref/new-cli/nix#flake-output-attribute),
-or simply an
-[_installable_](https://nix.dev/manual/nix/2.24/command-ref/new-cli/nix#installables).
-
-:::
-
-:::{.fragment}
-
-An **installable** is a Flake output that can be realized in the Nix store.
-
-:::
-
-::: incremental
-
-- `./examples/flake-simple` refers to this repository’s
-  [`flake.nix`](./flake.nix) directory.
-- `packages.x86_64-linux.mytool` following `#` is an output attribute defined
-  within the flake.
-
-:::
-
-::: {.fragment}
-
-Most
-[modern Nix commands](https://nix.dev/manual/nix/2.24/command-ref/experimental-commands)
-accept **installables** as input, making them a fundamental concept in working
-with Flakes. **You should only use the modern commands, e.g.
-`nix <subcommand>`**. Stay away from the command `nix-env`.
-
-:::
-
----
-
 ## Build/Run A Derivation - Github
 
 You can also specify `github` repositories and nested flakes and build/run
@@ -1088,119 +1050,9 @@ nix build -L "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#mytool"
 nix run "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#mytool"
 ```
 
----
+# Nix Development Shells
 
-## Homework - Inspect a Flake
-
-- Load the `flake` in the
-  [the root directory](https://github.com/sdsc-ordes/nix-workshop/blob/main) in
-  `nix repl` and use `:lf .`
-
-  - Inspect the attribute `inputs.nixpkgs`.
-  - Inspect the string `"${inputs.nixpkgs}"` and explore the output!
-  - Try to explain `import "${inputs.nixpkgs}" { system = "x86_64-linux"; }`.
-
-- Eval/build/run the `treefmt` utility in the `packages` output in the flake
-  inside
-  [the root directory](https://github.com/sdsc-ordes/nix-workshop/blob/main).
-
-  Hints:
-
-  - `nix eval --impure --expr 'builtins.currentSystem'`
-  - `packages.${system}.treefmt`
-  - `nix run`
-  - `"github:sdsc-ordes/nix-workshop#..."`
-
-**Time: 15-20min**
-
-:::notes
-
-**Solutions**:
-
-Do `nix repl` and load `:lf github:sdsc-ordes/nix-workshop#treefmt` or (`:lf .`
-if you have a local clone). Inspecting the `inputs.nixpkgs` gives you something
-like this which is a attribute set representing a `flake`:
-
-```json
-{
-  _type = "flake";
-  checks = { ... };
-  devShells = { ... };
-  htmlDocs = { ... };
-  inputs = { ... };
-  lastModified = 1741862977;
-  lastModifiedDate = "20250313104937";
-  legacyPackages = { ... };
-  lib = { ... };
-  narHash = "sha256-prZ0M8vE/ghRGGZcflvxCu40ObKaB+ikn74/xQoNrGQ=";
-  nixosModules = { ... };
-  outPath = "/nix/store/vawkv67jxh8kl4flrqgpcsmn9inqgvjv-source";
-  outputs = { ... };
-  rev = "cdd2ef009676ac92b715ff26630164bb88fec4e0";
-  shortRev = "cdd2ef0";
-  sourceInfo = { ... };
-}
-```
-
-When you interpolate `${inputs.nixpkgs}`, it will store the whole flake into the
-Nix store giving you a store path, namely the **source of the `nixpkgs`
-repository**.
-
-```bash
-tree -L 1 /nix/store/vawkv67jxh8kl4flrqgpcsmn9inqgvjv-source
-> /nix/store/vawkv67jxh8kl4flrqgpcsmn9inqgvjv-source
-> ├── ci
-> ├── CONTRIBUTING.md
-> ├── COPYING
-> ├── default.nix
-> ├── doc
-> ├── flake.nix
-> ├── lib
-> ├── maintainers
-> ├── nixos
-> ├── pkgs
-> ├── README.md
-> └── shell.nix
-> 7 directories, 6 files
-```
-
-When you do `import "${inputs.nixpkgs}"` you load the `default.nix` file in that
-source directory. It will give you a function which will return the package
-attribute set of the `nixpkgs`-repository. When you call that function with
-`(import "${inputs.nixpkgs}) { system = "x86_64-linux"; }` you get the
-instantiated package set for the system `x86_64-linux`.
-[The function in `default.nix`](https://github.com/NixOS/nixpkgs/blob/bd3d85928a10c5b66b02e632e1d8acfdf1d7af2c/pkgs/top-level/impure.nix#L12)
-has some more possibilities to set platform settings for cross-compiling related
-things. The already instantiated package set can also be got from
-`inputs.nixpkgs.legacyPackages.${system}`. The name `legacyPackages` is an
-unfortunate naming and has nothing to do that packages are "legacy".
-
-Evaluating the `treefmt` utility in the `packages` output in the flake is giving
-you the build instruction (the derivation).
-
-```bash
-nix eval "github:sdsc-ordes/nix-workshop#treefmt#treefmt"
-> «derivation /nix/store/72zknv2ssr8pkvf5jrc0g5w64bqjvyq1-treefmt.drv»
-```
-
-Building and running `treefmt` can be done with
-
-```bash
-nix build ".#treefmt"
-nix run ".#treefmt"
-# or by doing it without a clone.
-nix build "github:sdsc-ordes/nix-workshop#treefmt"
-nix run "github:sdsc-ordes/nix-workshop#treefmt"
-```
-
-By the way: I consider `treefmt` the **ultimate gold standard** of formatting
-tools. [Check it out here.](https://github.com/numtide/treefmt-nix)
-
-:::
-
----
-
-## What Is a DevShell?
+## What Is a Nix DevShell?
 
 Its a Nix **derivation** in the output attribute set `devShells` of the
 `flake.nix`:
@@ -1221,6 +1073,12 @@ Its a Nix **derivation** in the output attribute set `devShells` of the
 ```
 
 The `banana-shell` derivation is meant to be consumed by `nix develop`.
+
+:::notes
+
+gabyx: takeover.
+
+:::
 
 ## Create A DevShell
 
@@ -1256,43 +1114,6 @@ nix develop "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#default" -
 
 ---
 
-## Homework: Modify the DevShell
-
-- Modify
-  [`./examples/flake-simple`](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/flake-simple/flake.nix)
-  to include your
-  [package from `nixpkgs`](https://search.nixos.org/packages?channel=unstable).
-
-**Time: 5 min**
-
-:::notes
-
-**Solution:**
-
-Add for example `pkgs.zoxide` to `packages` by doing `inherit (pkgs) zoxide;`
-resulting in
-
-```nix
-packages = forAllSystems (
-  system:
-  let
-    # That import is the same as the above.
-    pkgs = (import inputs.nixpkgs-unstable) { inherit system; };
-
-    # Load some packages.
-    mypkgs = (import ./pkgs) pkgs;
-  in
-  {
-    inherit (mypkgs) mytool banana-icecream;
-    inherit (pkgs) zoxide;
-  }
-);
-```
-
-:::
-
----
-
 ## Use [`devenv.sh`](https://devenv.sh) for Nix DevShells.
 
 :::incremental
@@ -1311,7 +1132,7 @@ packages = forAllSystems (
 
 ## Questions
 
----
+[![](${meta:include-base-dir}/assets/images/questions.png){style="width:30%"}]{.center-content}
 
 # Workshop 🏑
 
@@ -1427,6 +1248,181 @@ for toolchains like:
 
 ::::::
 
+# Homework
+
+Solutions in the [notes](#help).
+
+## Inspect the Dependency Graph
+
+- Reproduce the commands for building `what-is-my-ip.nix` on your machine in the
+  [workshop repository](https://github.com/sdsc-ordes/nix-workshop).
+- Inspect the store path.
+- Explore the dependencies and answer the quiz below:
+
+**Time: 15-20min**
+
+:::{.quiz}
+
+_**Quiz:** What do you expect<br>
+`/nix/store/zl7h70n70g5m57iw5pa8gqkxz6y0zfcf-curl-8.12.1-bin/bin/curl`<br> links
+to and what does your system `curl` link to? <br><br> Use `ldd` to inspect._
+
+:::
+
+:::notes
+
+Before we go on with learning more on Nix, I want you to replicate the shown
+commands before.
+
+:::
+
+---
+
+## Inspect a Flake
+
+- Load the `flake` in the
+  [the root directory](https://github.com/sdsc-ordes/nix-workshop/blob/main) in
+  `nix repl` and use `:lf .`
+
+  - Inspect the attribute `inputs.nixpkgs`.
+  - Inspect the string `"${inputs.nixpkgs}"` and explore the output!
+  - Try to explain `import "${inputs.nixpkgs}" { system = "x86_64-linux"; }`.
+
+- Eval/build/run the `treefmt` utility in the `packages` output in the flake
+  inside
+  [the root directory](https://github.com/sdsc-ordes/nix-workshop/blob/main).
+
+  Hints:
+
+  - `nix eval --impure --expr 'builtins.currentSystem'`
+  - `packages.${system}.treefmt`
+  - `nix run`
+  - `"github:sdsc-ordes/nix-workshop#..."`
+
+**Time: 15-20min**
+
+:::notes
+
+**Solutions**:
+
+Do `nix repl` and load `:lf github:sdsc-ordes/nix-workshop#treefmt` or (`:lf .`
+if you have a local clone). Inspecting the `inputs.nixpkgs` gives you something
+like this which is a attribute set representing a `flake`:
+
+```json
+{
+  _type = "flake";
+  checks = { ... };
+  devShells = { ... };
+  htmlDocs = { ... };
+  inputs = { ... };
+  lastModified = 1741862977;
+  lastModifiedDate = "20250313104937";
+  legacyPackages = { ... };
+  lib = { ... };
+  narHash = "sha256-prZ0M8vE/ghRGGZcflvxCu40ObKaB+ikn74/xQoNrGQ=";
+  nixosModules = { ... };
+  outPath = "/nix/store/vawkv67jxh8kl4flrqgpcsmn9inqgvjv-source";
+  outputs = { ... };
+  rev = "cdd2ef009676ac92b715ff26630164bb88fec4e0";
+  shortRev = "cdd2ef0";
+  sourceInfo = { ... };
+}
+```
+
+When you interpolate `${inputs.nixpkgs}`, it will store the whole flake into the
+Nix store giving you a store path, namely the **source of the `nixpkgs`
+repository**.
+
+```bash
+tree -L 1 /nix/store/vawkv67jxh8kl4flrqgpcsmn9inqgvjv-source
+> /nix/store/vawkv67jxh8kl4flrqgpcsmn9inqgvjv-source
+> ├── ci
+> ├── CONTRIBUTING.md
+> ├── COPYING
+> ├── default.nix
+> ├── doc
+> ├── flake.nix
+> ├── lib
+> ├── maintainers
+> ├── nixos
+> ├── pkgs
+> ├── README.md
+> └── shell.nix
+> 7 directories, 6 files
+```
+
+When you do `import "${inputs.nixpkgs}"` you load the `default.nix` file in that
+source directory. It will give you a function which will return the package
+attribute set of the `nixpkgs`-repository. When you call that function with
+`(import "${inputs.nixpkgs}) { system = "x86_64-linux"; }` you get the
+instantiated package set for the system `x86_64-linux`.
+[The function in `default.nix`](https://github.com/NixOS/nixpkgs/blob/bd3d85928a10c5b66b02e632e1d8acfdf1d7af2c/pkgs/top-level/impure.nix#L12)
+has some more possibilities to set platform settings for cross-compiling related
+things. The already instantiated package set can also be got from
+`inputs.nixpkgs.legacyPackages.${system}`. The name `legacyPackages` is an
+unfortunate naming and has nothing to do that packages are "legacy".
+
+Evaluating the `treefmt` utility in the `packages` output in the flake is giving
+you the build instruction (the derivation).
+
+```bash
+nix eval "github:sdsc-ordes/nix-workshop#treefmt#treefmt"
+> «derivation /nix/store/72zknv2ssr8pkvf5jrc0g5w64bqjvyq1-treefmt.drv»
+```
+
+Building and running `treefmt` can be done with
+
+```bash
+nix build ".#treefmt"
+nix run ".#treefmt"
+# or by doing it without a clone.
+nix build "github:sdsc-ordes/nix-workshop#treefmt"
+nix run "github:sdsc-ordes/nix-workshop#treefmt"
+```
+
+By the way: I consider `treefmt` the **ultimate gold standard** of formatting
+tools. [Check it out here.](https://github.com/numtide/treefmt-nix)
+
+:::
+
+---
+
+## Modify the DevShell
+
+- Modify
+  [`./examples/flake-simple`](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/flake-simple/flake.nix)
+  to include your
+  [package from `nixpkgs`](https://search.nixos.org/packages?channel=unstable).
+
+**Time: 5 min**
+
+:::notes
+
+**Solution:**
+
+Add for example `pkgs.zoxide` to `packages` by doing `inherit (pkgs) zoxide;`
+resulting in
+
+```nix
+packages = forAllSystems (
+  system:
+  let
+    # That import is the same as the above.
+    pkgs = (import inputs.nixpkgs-unstable) { inherit system; };
+
+    # Load some packages.
+    mypkgs = (import ./pkgs) pkgs;
+  in
+  {
+    inherit (mypkgs) mytool banana-icecream;
+    inherit (pkgs) zoxide;
+  }
+);
+```
+
+:::
+
 # Appendix
 
 ## Fixed Point Combinator 🤯
@@ -1531,6 +1527,28 @@ derivation {
 
   outputs = [ "out" ];
 }
+```
+
+---
+
+## Store Derivation
+
+> A store **derivation** (`*.drv`) contains only **build instructions** for Nix
+> to **realize/build** it. This can be literally anything, e.g. a software
+> package, a wrapper shell script or only source files.
+
+See [appendix](#inspect-a-derivation) for how to inspect the internal
+representation of a `*.drv` file.
+
+---
+
+## Evaluate & Build a Derivation
+
+```bash
+# Evaluate it.
+drvPath=$(nix eval "./examples/flake-simple#packages.x86_64-linux.mytool" --raw)
+# Realize it.
+nix build -L "$drvPath" --print-out-paths --out-link ./mytool
 ```
 
 ---
@@ -1680,3 +1698,42 @@ can be used to format all files in this repository.
   }
 }
 ```
+
+---
+
+## What Is an Installable
+
+:::{.fragment}
+
+The path `./examples/flake-simple#packages.x86_64-linux.mytool` is referred to
+as a
+[Flake output attribute installable](https://nix.dev/manual/nix/2.24/command-ref/new-cli/nix#flake-output-attribute),
+or simply an
+[_installable_](https://nix.dev/manual/nix/2.24/command-ref/new-cli/nix#installables).
+
+:::
+
+:::{.fragment}
+
+An **installable** is a Flake output that can be realized in the Nix store.
+
+:::
+
+::: incremental
+
+- `./examples/flake-simple` refers to this repository’s
+  [`flake.nix`](./flake.nix) directory.
+- `packages.x86_64-linux.mytool` following `#` is an output attribute defined
+  within the flake.
+
+:::
+
+::: {.fragment}
+
+Most
+[modern Nix commands](https://nix.dev/manual/nix/2.24/command-ref/experimental-commands)
+accept **installables** as input, making them a fundamental concept in working
+with Flakes. **You should only use the modern commands, e.g.
+`nix <subcommand>`**. Stay away from the command `nix-env`.
+
+:::
