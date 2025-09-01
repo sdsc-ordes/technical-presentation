@@ -10,23 +10,21 @@ ROOT_DIR=$(git rev-parse --show-toplevel)
 export GITHOOKS_DISABLE=1
 
 function cleanup() {
-    if git rev-parse "$temp" &>/dev/null; then
-        ci::print_info "Delete '$temp'"
-        git branch -D "$temp" || true
-    fi
-
     if [ -n "$initial_branch" ] &&
         [ "$initial_branch" != "$(git branch --show || true)" ]; then
         ci::print_info "Move to initial branch '$initial_branch'"
-        git checkout "$initial_branch"
+        git checkout "$initial_branch" || true
+    fi
+
+    if git rev-parse "$temp" &>/dev/null; then
+        ci::print_info "Delete '$temp'"
+        git branch -D "$temp" || true
     fi
 }
 
 trap cleanup EXIT
 
 function publish() {
-    initial_branch=$(git branch --show)
-
     ci::print_info "Set jekyll to no theme."
     echo "theme: []" >"$docs_dir/_config.yaml"
 
@@ -64,6 +62,8 @@ function publish() {
 
 function main() {
     cd "$ROOT_DIR"
+
+    initial_branch=$(git branch --show)
 
     if ! git diff --quiet --exit-code; then
         ci::print_info "You are not in clean Git state."
