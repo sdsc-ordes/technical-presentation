@@ -35,7 +35,7 @@ function publish() {
 
     # Commit onto publish.
     ci::print_info "Removing old version from 'publish'..."
-    if ! git rev-parse "$publishBr"; then
+    if ! git rev-parse "$publishBr" 2>/dev/null; then
         ci::print_info "Creating branch 'publish' from 'main'."
         git branch "$publishBr" "$mainBr"
         git push origin "$publishBr"
@@ -78,7 +78,7 @@ function main() {
         "with name '$name' to '$target'."
 
     if ci::is_running; then
-        if ! git rev-parse "$temp"; then
+        if ! git rev-parse "$temp" 2>/dev/null; then
             ci::print_info "Creating branch '$temp'."
             git checkout -b "$temp"
         fi
