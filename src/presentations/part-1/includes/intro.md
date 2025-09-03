@@ -1161,9 +1161,8 @@ Time to get 🫵r fingers dirty with the following exercises:
 
 ::::::
 
-All steps are inside
-[`examples/flake-go/step-*`](https://github.com/sdsc-ordes/nix-workshop/tree/main/examples/flake-go)
-where each step is considered a **a root of an examples repository**.
+Follow the steps in
+[`examples/flake-go/README.md`](https://github.com/sdsc-ordes/nix-workshop/tree/main/examples/flake-go/README.md).
 
 # Outlook
 
