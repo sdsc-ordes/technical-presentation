@@ -6,6 +6,24 @@ All examples refer to the
 [workshop repository](https://github.com/sdsc-ordes/nix-workshop) in the root
 directory.
 
+::::::{.columns}
+
+:::{.column width="50%" style="text-align:center;"}
+
+[Workshop Repository](https://github.com/sdsc-ordes/nix-workshop)<br>
+![](${meta:include-base-dir}/assets/images/qr-tag-repo.svg){height="8em"}
+
+:::
+
+:::{.column width="50%" style="text-align:center;"}
+
+[Slides](https://sdsc-ordes.github.io/technical-presentation/gh-pages/nix-workshop/part-1)<br>
+![](${meta:include-base-dir}/assets/images/qr-tag-slides.svg){height="8em"}
+
+:::
+
+::::::
+
 Ensure that you
 [have the requirements fulfilled](https://github.com/sdsc-ordes/nix-workshop#requirements).
 
