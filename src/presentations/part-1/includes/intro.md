@@ -820,9 +820,7 @@ Show the output of `ldd curl` etc.
 
 :::
 
----
-
-## What Is a Flake?
+# What Is a Flake?
 
 You have seen files like `flake.nix` lying around in repositories already.
 
