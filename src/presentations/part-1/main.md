@@ -10,24 +10,7 @@ author:
     [cyril.matthey-doret@epfl.ch](mailto:cyril.matthey-doret@epfl.ch)"
 
 notes: |
-  - Welcome ...
-
-  - As we have been using Nix for quite a while now, in quite some repositories
-    (I would say to a successful extent), I have been deploying a Gitlab Runner VM
-    with Nix etc, I thought its now a good time to give you some more terminology
-    and explanations what Nix is, what a flake is and what the hack a DevShell is.
-
-  - This will be structured possibly in two parts 1, since when I prepared the slides
-    from the Markdown write-up I figured out it needs some more examples/explanations.
-    So we do the first part today, or at least try which should give you
-    some better understanding of what Nix does for you.
-
-  - So I hope after this presentation you will be a bit more prepped towards working with
-    this tool. Not to say its rather a methodology than a tool!
-
-  - It's good to keep this slides open next to you during the presentation, as
-    I will give you some time to checkout the examples your-self,
-    so you can directly copy paste.
+  cmdoret: start
 
 lang: en
 

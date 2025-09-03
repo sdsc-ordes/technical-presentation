@@ -254,11 +254,11 @@ which contains the script and all needed dependencies
 
 [Nix has encoded the used executables with **store paths** (`/nix/store`).]{.fragment}
 
-:::{.fragment .quiz}
-
-_**Quiz:** Can you share this script with your colleague?_
-
-:::
+<!-- :::{.fragment .quiz} -->
+<!---->
+<!-- _**Quiz:** Can you share this script with your colleague?_ -->
+<!---->
+<!-- ::: -->
 
 :::notes
 
@@ -288,7 +288,8 @@ But thats only the partial story what Nix does differently. Lets look into it.
 
 ::: {.fragment}
 
-The hash `7x9hf9g95d4wjjvq853x25jhakki63bz` of your built package includes:
+The hash `7x9hf9g95d4wjjvq853x25jhakki63bz` of your built package **depends
+on**:
 
 ::: incremental
 
@@ -335,6 +336,12 @@ how this manifests itself.
 
 <h3>In a Nutshell</h3>
 
+:::notes
+
+gabyx: takeover.
+
+:::
+
 ##  The Nix Language
 
 :::incremental
@@ -356,8 +363,6 @@ how this manifests itself.
 :::
 
 :::notes
-
-Gabyx: takeover.
 
 The Nix language is specifically designed for deterministic software building
 and distribution. Due to its narrow scope, it lacks certain features, such as
@@ -589,7 +594,7 @@ Try out the examples shown before yourself with `nix repl`
 
 ::::::{.columns}
 
-:::{.column width="50%"}
+:::{.column width="40%"}
 
 Verify in the interactive Nix shell:
 
@@ -599,14 +604,12 @@ nix repl
 
 :::
 
-:::{.column width="50%"}
+:::{.column width="60%"}
 
 Or pass standard input to `nix eval`:
 
 ```bash
-echo '
-  let a = 3; in a
-' | nix eval --file -
+echo 'let a = 3; in a' | nix eval --file -
 ```
 
 :::
@@ -628,12 +631,13 @@ cmdoret: takeover.
 Put the following in a script
 [`whats-is-my-ip.nix`](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/what-is-my-ip.nix):
 
-```nix {line-numbers="2|4-5|7-8|10|12-15" style="font-size:14pt"}
+```nix {line-numbers="2|4-6|8-9|11|13-16" style="font-size:14pt"}
 let
   system = builtins.currentSystem; # e.g. `x86_64-linux`
 
   # Download something into the `/nix/store/...-source`
-  src = builtins.fetchTarball "https://github.com/NixOS/nixpkgs/archive/9684b53175fc6c09581e94cc85f05ab77464c7e3.tar.gz";
+  src = builtins.fetchTarball
+    "https://github.com/NixOS/nixpkgs/archive/9684b53175fc6c09581e94cc85f05ab77464c7e3.tar.gz";
 
   # Import the `default.nix` in the `/nix/store/...-source`
   f = import src;
@@ -668,7 +672,7 @@ pkgs.writeShellScriptBin "what-is-my-ip" ''
 ### Wait! What is [`github.com/NixOS/nixpkgs`](https://nixos.org/manual/nixpkgs/stable/#preface) ?
 
 󰳏 [`nixpgkgs`](https://github.com/NixOS/nixpkgs) is a mono-repository with Nix
-code to build software packages (> 130k derivations).
+code to build software packages (> 130k).
 
 ::::::{.columns}
 
@@ -689,8 +693,8 @@ flowchart TD
 
 :::{.column width="50%" style="align-content:center"}
 
- A commit on `nixpkgs` represents the **version** of **all** packages at that
-**commit**.
+ A commit in `nixpkgs` represents the **version** of **all** packages at that
+**commit** (a big tree).
 
 :::
 
@@ -702,13 +706,13 @@ flowchart TD
 
 ::: incremental
 
-- Importing
-  [`default.nix`](https://github.com/NixOS/nixpkgs/blob/master/default.nix),
-  from `nixpkgs` (see [`import`](#building-package),
-  [[1](https://github.com/NixOS/nixpkgs/blob/374e6bcc403e02a35e07b650463c01a52b13a7c8/pkgs/top-level/default.nix#L21)])
+- Statement [`f = import src;`](#building-package) imports
+  [`default.nix`](https://github.com/NixOS/nixpkgs/blob/master/default.nix) from
+  `nixpkgs`
+  [[1](https://github.com/NixOS/nixpkgs/blob/374e6bcc403e02a35e07b650463c01a52b13a7c8/pkgs/top-level/default.nix#L21)]
 
-  - Returns a **function**.
-  - Returns a flat attribute set **`pkgs`** for your `system` (e.g
+  - Returns a **function `f`**.
+  - When called returns attribute set **`pkgs`** for your `system` (e.g
     `"x86_64-linux"`).
 
 - Package Search:
@@ -717,12 +721,6 @@ flowchart TD
   - [https://www.nixhub.io](https://www.nixhub.io).
 
 - Function Search: [https://noogle.dev](https://noogle.dev).
-
-:::
-
-:::notes
-
-Skip this.
 
 :::
 
@@ -842,7 +840,7 @@ gabyx: takeover.
 
 :::
 
-## What Is a Flake (2)
+## What Is a Flake? (2)
 
 A flake
 
@@ -948,7 +946,7 @@ structure with built-in meaning.
 
 ---
 
-## Whats a Derivation
+## Whats a Derivation?
 
 > **A [derivation](https://zero-to-nix.com/concepts/derivations)** is a **build
 > instruction** to realize a **package in the `/nix/store`** using a
@@ -979,7 +977,8 @@ flowchart LR
   derivation `*.drv`,
   [more details](https://nix.dev/manual/nix/2.24/glossary#gloss-store-derivation)).
 
-- **Building**: Realizing outputs of the derivation in the `/nix/store`.
+- **Building**: Realizing outputs of the derivation in the `/nix/store`. _This
+  can literally be anything!_
 
 :::
 
@@ -1052,6 +1051,12 @@ nix run "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#mytool"
 
 # Nix Development Shells
 
+:::notes
+
+cmdoret: takeover.
+
+:::
+
 ## What Is a Nix DevShell?
 
 Its a Nix **derivation** in the output attribute set `devShells` of the
@@ -1073,12 +1078,6 @@ Its a Nix **derivation** in the output attribute set `devShells` of the
 ```
 
 The `banana-shell` derivation is meant to be consumed by `nix develop`.
-
-:::notes
-
-gabyx: takeover.
-
-:::
 
 ## Create A DevShell
 
@@ -1130,7 +1129,7 @@ nix develop "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#default" -
 
 ---
 
-## Questions
+## Questions ?
 
 [![](${meta:include-base-dir}/assets/images/questions.png){style="width:30%"}]{.center-content}
 
@@ -1203,15 +1202,20 @@ for toolchains like:
 
 :::incremental
 
-- 🌍 Tackling non-reproducible software distribution is **hard** — but its
-  **essential**.
+- 🌍 Tackling non-reproducible software distribution is **hard** — but
+  **essential**
 
-- 🚀 Embrace **Nix** to gain reproducibility, consistency and healthy local
-  development & CI.
+- 🚀 Embrace **Nix** to gain
 
-- 🤝 The **Nix community** is welcoming and supportive — don’t hesitate to ask!
+  - reproducibility
+  - consistency
+  - healthy local development
+  - CI for free (when you fix something with  its fixed!)
 
-- ✅ Check the references/resources provided (🤷‍♀️ sometimes its a mess, yes).
+- 🤝 The **Nix community** is welcoming and supportive — don't hesitate to ask!
+
+- ✅ Check the references/resources provided (🤷‍♀️ sometimes its a mess, but gets
+  better).
 
 :::
 
@@ -1223,14 +1227,14 @@ for toolchains like:
 
 :::{.column width="50%"}
 
-#### General
+#### Nix & Nixpkgs
 
 - [Official Wiki](https://wiki.nixos.org/wiki/NixOS_Wiki)
-- [Nix Manual](https://nix.dev/manual/nix/2.30/introduction.html)
-- [Nix Packages Search](https://search.nixos.org/packages?)
-- [Nix Packages Search for Version Pinning](https://nixhub.io)
-- [Nixpkgs Pull Request Tracker](https://nixpk.gs/pr-tracker.html)
-- [Nixpkgs-Lib Function Search](https://noogle.dev/)
+- [Official Manual](https://nix.dev/manual/nix/2.30/introduction.html)
+- [Official Package Search](https://search.nixos.org/packages?)
+- [Function Search](https://noogle.dev/)
+- [Packages Search for Version Pinning](https://nixhub.io)
+- [Pull Request Tracker](https://nixpk.gs/pr-tracker.html)
 
 :::
 
@@ -1238,10 +1242,10 @@ for toolchains like:
 
 #### NixOS Related
 
-- [NixOS Manual](https://nixos.org/manual/nixos/stable/)
-- [NixOS Options Search](https://search.nixos.org/options?)
-- [NixOS With Flakes](https://nixos-and-flakes.thiscute.world/nixos-with-flakes)
-- [NixOS Status](https://status.nixos.org/)
+- [Manual](https://nixos.org/manual/nixos/stable/)
+- [Options Search](https://search.nixos.org/options?)
+- [With Flakes](https://nixos-and-flakes.thiscute.world/nixos-with-flakes)
+- [Status](https://status.nixos.org/)
 
 :::
 
@@ -1535,9 +1539,6 @@ derivation {
 > A store **derivation** (`*.drv`) contains only **build instructions** for Nix
 > to **realize/build** it. This can be literally anything, e.g. a software
 > package, a wrapper shell script or only source files.
-
-See [appendix](#inspect-a-derivation) for how to inspect the internal
-representation of a `*.drv` file.
 
 ---
 
