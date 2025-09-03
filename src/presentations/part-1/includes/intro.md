@@ -839,7 +839,7 @@ gabyx: takeover.
 
 ## What Is a Flake? (2)
 
-A flake
+A flake `flake.nix`:
 
 ::::::{.columns}
 
@@ -847,14 +847,14 @@ A flake
 
 :::incremental
 
-- references external Nix functions - called
-  [**inputs**](https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-configuration-explained#_1-flake-inputs).
+- References external Nix functions - called
+  [**`inputs`**](https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-configuration-explained#_1-flake-inputs).
 
   - Other repositories, local files, or URLs with a `flake.nix`.
 
-- defines structured
-  [**outputs**](https://nixos-and-flakes.thiscute.world/other-usage-of-flakes/outputs)
-  (a function)
+- Defines structured
+  [**`outputs`**](https://nixos-and-flakes.thiscute.world/other-usage-of-flakes/outputs)
+  (a function).
 
   - Specifies what the flake provides.
 
@@ -864,7 +864,8 @@ A flake
 
 :::{.column width="50%"}
 
-```nix
+```nix {line-numbers="3,5"}
+# flake.nix
 {
   inputs = { /* ... */ };
 
@@ -900,7 +901,9 @@ A flake
 
 - Nix evaluates a `flake.nix` by calling the `outputs` with `inputs`.
 
-  - Try `nix repl` and `:lf .` to load the `./flake.nix` in directory `.`.
+  - Try `nix repl` and `:lf .` to load the
+    [`./flake.nix`](https://github.com/sdsc-ordes/nix-workshop/blob/main/flake.nix)
+    in directory `.`.
 
   - Check `outputs.packages.x86_64-linux = { ... }`.
 
