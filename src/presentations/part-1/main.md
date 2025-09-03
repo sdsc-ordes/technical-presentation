@@ -1,5 +1,6 @@
 ---
 title: Nix Workshop 
+pagetitle: Nix Workshop
 subtitle: |
   Part 1: Nix, Flakes & Nix DevShell<br>
 
