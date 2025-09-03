@@ -346,19 +346,18 @@ gabyx: takeover.
 
 :::incremental
 
-- A _domain-specific_ **functional** language (**no side-effects**).
+- _Domain-specific_ **functional** language (**no side-effects**).
 
 - Structurally similar to JSON but with
   [functions](https://nixos.org/guides/nix-pills/05-functions-and-imports.html).
 
-- Supports fundamental data types such as `string`, `integer`, `path`, `list`,
-  and `attribute set`. See
-  [Nix Language Basics](https://nixos.org/guides/nix-pills/04-basics-of-language.html#basics-of-language).
+- [Fundamental data types](https://nixos.org/guides/nix-pills/04-basics-of-language.html#basics-of-language)
+  such as `string`, `integer`, `path`, `list`, and `attribute set`.
 
-- **Lazy evaluated**, _expression evaluation delayed until needed_.
+- **Lazy Evaluated**: _expression evaluation delayed until needed_.
 
-- ⚠️The Nix language is **specifically designed** for
-  **deterministic/reproducible** software deployment.
+- ⚠️**Specifically designed** for **deterministic/reproducible** software
+  deployment.
 
 :::
 
@@ -374,11 +373,11 @@ floating-point types, which are unnecessary in this context.
 
 ::: incremental
 
-- Nix files have suffix `.nix` and contain mostly 1
+- Nix files `*.nix` - contain mostly one
   [_function_](https://nixos.org/guides/nix-pills/05-functions-and-imports.html).
 
-- The function `args: ...` in file `myfunction.nix` takes one argument `banana`
-  and
+- The function below takes one argument `banana` and returns an attribute set
+  `{ x = ... }`:
 
   ```nix {line-numbers="2|3|4|5|6|7|8|9"}
   # myfunction.nix
@@ -392,10 +391,8 @@ floating-point types, which are unnecessary in this context.
   { x = number; y = set.b.c.d; z = result; } # Return an attribute set.
   ```
 
-  returns an attribute set `{ x = ... }`.
-
-- Watch this [short introduction](https://www.youtube.com/watch?v=HiTgbsFlPzs)
-  for the basic building block.
+- For later: Watch this
+  [short introduction](https://www.youtube.com/watch?v=HiTgbsFlPzs).
 
 :::
 
@@ -416,7 +413,7 @@ mult10 (mult 8 2)
 # -> 160
 ```
 
-```nix {line-numbers="2|2-4|7|8" .fragment}
+```nix {line-numbers="2|3-4|7|8" .fragment}
 let
 f = args: {
   a = args.banana + "-nice";
@@ -431,7 +428,7 @@ f { banana = "1"; orange = "2" }
 
 :::{.column width="50%"}
 
-```nix {line-numbers="2|2-4|7|8" .fragment}
+```nix {line-numbers="2|3-4|7|8" .fragment}
 let
 f = { ban, ora, ... }: { # Destructuring
   a = ban + "-nice";
@@ -493,7 +490,7 @@ rec {
 let
   x = abort "fail";
 in
-if false then x else 42
+if true then 42 else x
 # -> 42
 ```
 
