@@ -582,9 +582,7 @@ Server) in your IDE to see "Go to definitions".
 
 ---
 
-## Questions & Exercise
-
-Do you have questions?
+## Questions ?
 
 Try out the examples shown before yourself with `nix repl`
 ([see slide](#repl-instructions))
@@ -985,7 +983,8 @@ flowchart LR
 
 ## Build A Derivation
 
-Build the example derivation - eval. & realize it in the Nix store - by doing:
+Build the [example derivation](https://github.com/sdsc-ordes/nix-workshop) -
+eval. & realize it in the Nix store:
 
 ```bash
 nix build -L "./examples/simple-flake#packages.x86_64-linux.mytool" \
