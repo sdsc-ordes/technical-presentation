@@ -829,12 +829,11 @@ You have seen files like `flake.nix` lying around in repositories already.
 A [`flake.nix`](./flake.nix)
 \[[1](https://nix.dev/manual/nix/2.30/command-ref/new-cli/nix3-flake),
 [2](https://nixos-and-flakes.thiscute.world/other-usage-of-flakes/outputs)\]
-provides
 
 :::incremental
 
-- a **deterministic** way to manage dependencies and configurations in Nix
-  [(Slide of the Nix Founder)](https://www.youtube.com/live/yhfDtRRTmY8?si=xTjOKKIWIZPIwoU3&t=18317).
+- provides a **deterministic** way to manage dependencies and configurations
+  \[[1](https://www.youtube.com/live/yhfDtRRTmY8?si=xTjOKKIWIZPIwoU3&t=18317)\].
 
 - comes with a `flake.lock` file which locks dependencies.
 
@@ -842,8 +841,9 @@ provides
 
 :::{.fragment}
 
-[🌻 Remember `fetchTarball ".../NixOS/nixpkgs/..."` in `what-is-my-ip.nix`](#building-package),
-a flake is a better way to manage a locked input.
+Remember
+[`fetchTarball ".../NixOS/nixpkgs/..."` in `what-is-my-ip.nix`](#building-package).<br>
+🌻 A `flake.nix` is a better method for locked inputs.
 
 :::
 
@@ -863,7 +863,7 @@ A flake `flake.nix`:
 
 :::incremental
 
-- References external Nix functions - called
+- References external Nix code - called
   [**`inputs`**](https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-configuration-explained#_1-flake-inputs).
 
   - Other repositories, local files, or URLs with a `flake.nix`.
@@ -1001,11 +1001,13 @@ flowchart LR
 
 ## Build A Derivation
 
-Build the [example derivation](https://github.com/sdsc-ordes/nix-workshop) -
+Build the
+[example derivation](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/flake-simple/pkgs/default.nix) -
 eval. & realize it in the Nix store:
 
 ```bash
-nix build -L "./examples/simple-flake#packages.x86_64-linux.mytool" \
+cd nix-workshop
+nix build -L "./examples/flake-simple#packages.x86_64-linux.mytool" \
   --print-out-paths --out-link ./mytool
 ```
 
@@ -1013,10 +1015,10 @@ or in steps [see appendix](#evaluate-build-a-derivation).
 
 ::: incremental
 
-- ℹ️ The string `./examples/simple-flake#packages.x86_64-linux.mytool` is called
+- ℹ️ The string `./examples/flake-simple#packages.x86_64-linux.mytool` is called
   an **installable** ([see appendix](#what-is-an-installable)).
 
-- 🩳 **Short Form:** `nix build "./examples/simple-flake#mytool"` uses
+- 🩳 **Short Form:** `nix build "./examples/flake-simple#mytool"` uses
   `builtins.currentSystem` (works also for macOS users).
 
 :::
@@ -1131,7 +1133,7 @@ nix develop "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#default" -
 
 ---
 
-## Use [`devenv.sh`](https://devenv.sh) for Nix DevShells.
+## Use [`devenv.sh`](https://devenv.sh) for Nix DevShells
 
 :::incremental
 
