@@ -12,6 +12,19 @@ author:
 notes: |
   cmdoret: start
 
+  - Why did we invest so much time for this workshop?
+    We have been using Nix now successfully for some time in our team for
+    development workflows/CI/packaging etc,
+    some of us even run their laptops on NixOS to drive a deterministic/reproducible workflow.
+    The Nix technology solves a lot of headaches around the phrase `it works on my machine`
+    but comes with a steeper learning curve. To give something back to the OSS-community and to
+    maybe bring more people into the Nix ecosphere:
+    This workshop tries to target the basics in a fun way with some hands on session after this
+    45minutes introduction.
+  - All examples refer to the workshop repository.
+  - Check out the appendix after the workshop which contains more in depth details for the curious.
+  - Its good to keep questions to the slide breaks we put in or after the intro.
+
 lang: en
 
 date: |
