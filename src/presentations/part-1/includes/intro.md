@@ -917,7 +917,8 @@ A flake `flake.nix`:
 :::notes
 
 Another method is to start the `nix repl .` which is almost the same except that
-the available `outputs` attribute name are available directly.
+the available attribute names on `outputs` are directly available and not
+`output.*` scoped.
 
 :::
 
