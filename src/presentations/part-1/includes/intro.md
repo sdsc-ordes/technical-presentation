@@ -80,7 +80,7 @@ environments.
 
 | Feature          | Local Development | [Mamba](https://mamba.readthedocs.io) | [Devcontainer](https://containers.dev/implementors/spec/) | [Nix/DevShell](https://www.youtube.com/watch?v=yQwW8dkuHqw) |
 | ---------------- | ----------------- | ------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------- |
-| Maintainenance   | ⚠️ **High**       | ⚠️ Medium                             | ⚠️ Medium                                                 | ⚠️ Medium                                                   |
+| Maintenance      | ⚠️ **High**       | ⚠️ Medium                             | ⚠️ Medium                                                 | ⚠️ Medium                                                   |
 | Reproducibility  | ❌ Low            | ⚠️ Medium                             | ⚠️ Medium                                                 | ✅ **Very high**                                            |
 | Ease of Use      | ❌ Low            | ✅ Easy                               | ✅ Ok                                                     | ❌ Low                                                      |
 | Dep. Mgmt.       | ❌                | ✅                                    | ⚠️                                                        | ✅                                                          |
