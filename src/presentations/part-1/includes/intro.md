@@ -1755,3 +1755,26 @@ with Flakes. **You should only use the modern commands, e.g.
 `nix <subcommand>`**. Stay away from the command `nix-env`.
 
 :::
+
+---
+
+## More on Strings
+
+Nix distinguishes between
+
+- normal `string`s: just text,
+- and _`string`s with context_ : text + **set of references to store paths**.
+
+Strings _with context_ are always created when derivations are involved:
+
+```nix
+{pkgs, ...}: {
+  mytool = pkgs.writeShellScriptBin "tool"
+    # String with context, due to referencing `pkgs.coreutils`:
+    ''
+      echo "hello" | "${pkgs.coreutils}/bin/tee" -a test.log
+    '';
+}
+```
+
+**Note:** Use `builtins.getContext` to inspect a string with context.
