@@ -796,7 +796,8 @@ Run
 nix-store --query --include-outputs --graph \
   $(nix build -f ./examples/what-is-my-ip.nix --print-out-paths) > graph.dot
 
-nix develop --command dot -Grankdir=TB -Gconcentrate=true -Tpng graph.dot > graph.png
+nix shell "github:nixos/nixpkgs#graphviz" --command dot \
+  --args -Grankdir=TB -Gconcentrate=true -Tpng graph.dot > graph.png
 ```
 
 and inspect `graph.png`.
@@ -869,7 +870,6 @@ A flake `flake.nix`:
 - Defines structured
   [**`outputs`**](https://nixos-and-flakes.thiscute.world/other-usage-of-flakes/outputs)
   (a function).
-
   - Specifies what the flake provides.
 
 :::
@@ -1140,7 +1140,6 @@ nix develop "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#default" -
 
 - 🌻Nix DevShells from [`devenv.sh`](https://devenv.sh) provides more concise
   configuration.
-
   - ❤️‍🔥Configuration based on mechanics which drive `NixOS` (NixOS Modules).
 
 :::
