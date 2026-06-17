@@ -27,8 +27,8 @@ $headingColor: $companyBlueDark;
 $headingColorSub: $companyBlue;
 $headingTextTransform: none;
 
-$mainFont: "Museo", "Noto Sans", "Palatino Linotype", "Book Antiqua", "Palatino",
-  serif;
+$mainFont:
+  "Museo", "Noto Sans", "Palatino Linotype", "Book Antiqua", "Palatino", serif;
 $headingFont: $mainFont;
 $linkColor: $companyBlueLight;
 $linkColorHover: color.adjust($companyBlueLight, $lightness: 20%);

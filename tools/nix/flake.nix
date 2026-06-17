@@ -27,7 +27,6 @@
     # Format the repo with nix-treefmt.
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Snowfall provides a structured way of creating a flake output.
