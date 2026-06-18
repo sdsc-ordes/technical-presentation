@@ -270,7 +270,8 @@ which contains the script and all needed dependencies
 
 :::
 
-[Nix has encoded the used executables with **store paths** (`/nix/store`).]{.fragment}
+[Nix has encoded the used executables with **store paths**
+(`/nix/store`).]{.fragment}
 
 <!-- :::{.fragment .quiz} -->
 <!---->
@@ -723,13 +724,11 @@ flowchart TD
   [`default.nix`](https://github.com/NixOS/nixpkgs/blob/master/default.nix) from
   `nixpkgs`
   [[1](https://github.com/NixOS/nixpkgs/blob/374e6bcc403e02a35e07b650463c01a52b13a7c8/pkgs/top-level/default.nix#L21)]
-
   - Returns a **function `f`**.
   - When called returns attribute set **`pkgs`** for your `system` (e.g
     `"x86_64-linux"`).
 
 - Package Search:
-
   - [https://search.nixos.org/packages](https://search.nixos.org/packages)
   - [https://www.nixhub.io](https://www.nixhub.io).
 
@@ -864,7 +863,6 @@ A flake `flake.nix`:
 
 - References external Nix code - called
   [**`inputs`**](https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-configuration-explained#_1-flake-inputs).
-
   - Other repositories, local files, or URLs with a `flake.nix`.
 
 - Defines structured
@@ -914,7 +912,6 @@ A flake `flake.nix`:
 :::incremental
 
 - Nix evaluates a `flake.nix` by calling the `outputs` with `inputs`.
-
   - Try `nix repl` and `:lf .` to load the
     [`./flake.nix`](https://github.com/sdsc-ordes/nix-workshop/blob/main/flake.nix)
     in directory `.`.
@@ -1184,13 +1181,11 @@ Follow the steps in
 
 - 🦸[Devenv Nix Shell](https://devenv.sh) is **deterministic/reproducible** and
   with lots of power.
-
   - Foundation of a `flake.nix` and integration of a Nix shell. Simpler approach
     with [`devenv.nix`](https://devenv.sh/basics).
 
   - Nix community is flourishing -
     [contribute or support it](https://opencollective.com/nixos):
-
     - [Discourse Forum](https://discourse.nixos.org)
     - [Matrix Community](https://matrix.to/#/#space:nixos.org)
 
@@ -1223,7 +1218,6 @@ for toolchains like:
   **essential**
 
 - 🚀 Embrace **Nix** to gain
-
   - reproducibility
   - consistency
   - healthy local development
@@ -1303,7 +1297,6 @@ commands before.
 - Load the `flake` in the
   [the root directory](https://github.com/sdsc-ordes/nix-workshop/blob/main) in
   `nix repl` and use `:lf .`
-
   - Inspect the attribute `inputs.nixpkgs`.
   - Inspect the string `"${inputs.nixpkgs}"` and explore the output!
   - Try to explain `import "${inputs.nixpkgs}" { system = "x86_64-linux"; }`.
@@ -1313,7 +1306,6 @@ commands before.
   [the root directory](https://github.com/sdsc-ordes/nix-workshop/blob/main).
 
   Hints:
-
   - `nix eval --impure --expr 'builtins.currentSystem'`
   - `packages.${system}.treefmt`
   - `nix run`

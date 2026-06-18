@@ -9,6 +9,5 @@ Thanks to the following contributors:
   2025 which we integrated into this talk.
 
 - The Nix Community at
-
   - [https://discourse.nixos.org](https://discourse.nixos.org)
   - [https://matrix.to/#/#community:nixos.org](https://matrix.to/#/#community:nixos.org)
