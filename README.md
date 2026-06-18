@@ -75,21 +75,28 @@ You need the following tools:
 
 ## Usage
 
-1. **`just init`** -> Init the `build` folder with the pinned
-   [`reveal.js`](.gitmodules) source and inject some [changed files](src/mixin)
-   (styles, fonts, etc.) and install dependencies inside the build folder.
+1. **Automatic** with **`just serve`**.
 
-2. **`just watch`** -> Watch the files in [`src`](src/) and synchronize changes
-   to the `build` folder. This is needed to continuously update your changes
-   source files and make the browser reload the page.
+   The tool `process-compose` is watching the files in [`src`](src/) and
+   synchronizes changes to the `build` folder. This is needed to continuously
+   update your changes source files and make the browser reload the page.
+   Finally build the presentation and display it in a browser.
 
-3. **`just present`** -> Serve the presentation in the browser and continuously
-   reload the page.
+2. **Manual** with
 
-4. **`just package`** -> Export the presentation as HTML and PDF inside a `.zip`
+- **`just watch`** -> Watch the files in [`src`](src/) and synchronize changes
+  to the `build` folder + build the presentation. This is needed to continuously
+  update your changes a source files and make the browser reload the page at
+  [`http://localhost:3000`](http://localhost:3000).
+
+- **`just present`** -> Serve the presentation at
+  [`http://localhost:3000`](http://localhost:3000) in the browser and
+  continuously reload the page.
+
+3. **`just package`** -> Export the presentation as HTML and PDF inside a `.zip`
    file to the [`publish`](publish) folder.
 
-5. **`just publish`** -> Build and upload the (selected) presentation to the
+4. **`just publish`** -> Build and upload the (selected) presentation to the
    `publish` **branch** in the folder `docs/gh-pages` which can then be served
    by Github pages. The
    [`.publish.yaml`](./src/presentations/presentation-1/.publish.yaml) helps in
@@ -117,7 +124,6 @@ Check the following resources with additional slide materials:
 
 - Company Logo: Edit the file
   [`company-logo.svg`](css/theme/source/files/company-logo.svg).
-
   - Replace embedded image in [`company.scss`](css/theme/source/company.scss)
     with
 

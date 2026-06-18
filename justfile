@@ -12,10 +12,13 @@ container_mgr := env("CONTAINER_MGR", "podman")
 # The presentation to render.
 presentation := env("PRESENTATION", "presentation-1")
 
+# Default recipe when you run `just`
+default:
+    just --list
+
 # Enter the default Nix development shell.
 develop *args:
     just nix-develop default "$@"
-
 
 # Format the project.
 format *args:
@@ -84,9 +87,13 @@ init pres=presentation:
     just sync "{{pres}}"
 
     echo "Install node packages in '{{build_dir}}' ..."
-    (cd "{{build_dir}}" && pnpm install && pnpm run build)
+    (cd "{{build_dir}}" &&
+        pnpm install &&
+        pnpm run build)
 
     just pandoc "{{pres}}"
+
+    touch "{{build_dir}}/.init-complete"
 
 
 # Syncs everything to the build folder, where pandoc is run and the
