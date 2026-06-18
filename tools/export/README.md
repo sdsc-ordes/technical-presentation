@@ -9,7 +9,7 @@ There are two scripts `start-presentation-unix.sh` and
 You need to start this presentation with disabling web-security since it loads
 JavaScript plugins and files from the disk:
 
-```shell
+```bash
 google-chrome \
   --new-window \
   --disable-web-security \

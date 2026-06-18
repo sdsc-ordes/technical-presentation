@@ -127,6 +127,7 @@ $codeFontSize: 16pt;
 
     font-size: $codeFontSize;
     border-radius: 4pt;
+    border-radius: 4pt;
     width: fit-content;
     max-width: 100%;
     max-height: calc(var(--slide-height) - 100px);
@@ -143,6 +144,7 @@ $codeFontSize: 16pt;
       line-height: normal;
       color: #e6e6e6;
       background: #232323;
+      border-radius: 0pt;
       border-radius: 0pt;
       padding: 1ex;
       padding-left: 2ex;
