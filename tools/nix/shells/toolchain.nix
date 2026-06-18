@@ -22,6 +22,7 @@ let
         parallel
         direnv
 
+        nodejs-slim_24
         pnpm
 
         pandoc
