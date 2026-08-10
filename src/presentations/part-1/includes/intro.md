@@ -463,7 +463,7 @@ let
 f = { list ? [] }: {
   a = builtins.map (x: x*x) list;
 };
-in f [ 1 3 9 ]
+in f { list = [ 1 3 9 ]; }
 # -> { a = [ 1 9 81 ] }
 ```
 
