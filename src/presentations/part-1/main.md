@@ -5,12 +5,12 @@ subtitle: |
   A cure for your 7 page HowTo  <br>
 
 author:
+  - "**Almut Lütge**,
+    [almut.luetge@sdsc.ethz.ch](mailto:almut.luetge@sdsc.ethz,ch)"
   - "**Gabriel Nützi**,
     [gabriel.nuetzi@sdsc.ethz.ch](mailto:gabriel.nuetzi@sdsc.ethz.ch)"
   - "**Cyril Matthey-Doret**,
     [cyril.matthey-doret@epfl.ch](mailto:cyril.matthey-doret@epfl.ch)"
-  - "**Almut Lütge**,
-    [almut.luetge@sdsc.ethz.ch](mailto:almut.luetge@sdsc.ethz,ch)"
 
 notes: |
 

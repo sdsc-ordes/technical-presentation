@@ -122,8 +122,6 @@ do it proper from the start.
 
 :::
 
----
-
 #  What is **Nix**?
 
 ---
@@ -362,33 +360,6 @@ Nix accomplishes that with the Nix language.
 
 ---
 
-##  The Nix Language
-
-:::incremental
-
-- _Domain-specific_ **functional** language (**no side-effects**).
-
-- Structurally similar to JSON but with
-  [functions](https://nixos.org/guides/nix-pills/05-functions-and-imports.html).
-
-- [Fundamental data types](https://nixos.org/guides/nix-pills/04-basics-of-language.html#basics-of-language)
-  such as `string`, `integer`, `path`, `list`, and `attribute set`.
-
-- **Lazy Evaluated**: _expression evaluation delayed until needed_.
-
-- ⚠️**Specifically designed** for **deterministic/reproducible** software
-  deployment.
-
-:::
-
-:::notes
-
-The Nix language is specifically designed for deterministic software building
-and distribution. Due to its narrow scope, it lacks certain features, such as
-floating-point types, which are unnecessary in this context.
-
-:::
-
 ## Package It with Nix (3)
 
 Getting back to: [`whats-is-my-ip.nix`](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/what-is-my-ip.nix):
@@ -514,8 +485,6 @@ Show the output of `ldd curl` etc.
 
 # What Is a Flake?
 
-You have seen files like `flake.nix` lying around in repositories already.
-
 A [`flake.nix`](./flake.nix)
 \[[1](https://nix.dev/manual/nix/2.30/command-ref/new-cli/nix3-flake),
 [2](https://nixos-and-flakes.thiscute.world/other-usage-of-flakes/outputs)\]
@@ -593,62 +562,21 @@ A flake `flake.nix`:
 
 ---
 
-## What Is a Nix Derivation?
+## Flake outputs
 
-A [derivation](https://nix.dev/manual/nix/2.24/glossary#gloss-derivation) is a
+| Output                                                     | What it does                                        | Invoked with                                   |
+| ---------------------------------------------------------- | --------------------------------------------------- | ---------------------------------------------- |
+| `packages.<system>.<name>`                                 | Buildable derivation — the installable package      | `nix build .#name`                             |
+| `devShells.<system>.<name>`                                | Reproducible shell with dev dependencies in `$PATH` | `nix develop`                                  |
+| `apps.<system>.<name>`                                     | Executable entry point for the flake                | `nix run .#name`                               |
+| `nixosConfigurations.<host>` / `homeConfigurations.<name>` | Full system or user-level declarative config        | `nixos-rebuild switch` / `home-manager switch` |
 
-- **specialized attribute set**, describes how to **build** a Nix package.
+:::notes
 
-  ```nix
-  { type = "derivation"; ... }
-  ```
+Flakes are a great example of the power of nix. Through the language and cli you can define and build packages, but also development environment (devShells), executable path (apps) and
+configurations.
 
-  Check `nix repl -f <nixpkgs>` and type `pkgs.curl.type`.
-
-::: notes
-
-A [derivation](https://nix.dev/manual/nix/2.24/glossary#gloss-derivation) is a
-**specialized attribute set** that describes how to build a Nix package. In raw
-form, it looks like `{ type = "derivation"; ... }` and carries a well-defined
-structure with built-in meaning.
-
-:::
-
----
-
-## Whats a Derivation?
-
-> **A [derivation](https://zero-to-nix.com/concepts/derivations)** is a **build
-> instruction** to realize a **package in the `/nix/store`** using a
-> [special `derivation` function](https://noogle.dev/f/builtins/derivation).
->
-> - Can depend on multiple other
->   [derivations](https://zero-to-nix.com/concepts/derivations).
-> - Produce one or more outputs.
->
-> The complete set of dependencies required to build a derivation—including its
-> transitive dependencies—is called a **closure**.
-> [[Ref]](https://zero-to-nix.com/concepts/derivations)
-
----
-
-## Evaluate & Build a Derivation
-
-```mermaid
-flowchart LR
-    A["<strong>Flake</strong><br><code>flake.nix</code>"] -->|"contains output attributes"| B["<strong><code>packages.x86_64-linux.mypackage</code></strong><br>Nix Derivation"]
-    B -->|"evaluate"| C["<strong>Store Derivation</strong><br><code>/nix/store/*.drv</code>"]
-    C -->|"realize/build"| D["<strong>Outputs</strong><br>in<code>/nix/store/*</code>"]
-```
-
-::: incremental
-
-- **Evaluating**: Store build instructions in the `/nix/store`<br> (a store
-  derivation `*.drv`,
-  [more details](https://nix.dev/manual/nix/2.24/glossary#gloss-store-derivation)).
-
-- **Building**: Realizing outputs of the derivation in the `/nix/store`. _This
-  can literally be anything!_
+Other tools e.g. uv do something similar within the scope of one language, but nix gives you full flexibility here. You can specify multiple environment for different use cases, e.g. `frontend` `backend`, `full-stack` or different packages each of them treated independent and much more.
 
 :::
 
@@ -675,21 +603,6 @@ Its a Nix **derivation** in the output attribute set `devShells` of the
 ```
 
 The `banana-shell` derivation is meant to be consumed by `nix develop`.
-
----
-
-## Use [`devenv.sh`](https://devenv.sh) for Nix DevShells
-
-:::incremental
-
-- 🚧 Nix DevShells from `nixpkgs` (`pkgs.mkShell`) are **raw** and **too
-  simplistic**.
-
-- 🌻Nix DevShells from [`devenv.sh`](https://devenv.sh) provides more concise
-  configuration.
-  - ❤️‍🔥Configuration based on mechanics which drive `NixOS` (NixOS Modules).
-
-:::
 
 ---
 
@@ -783,6 +696,109 @@ for toolchains like:
 ::::::
 
 # Appendix
+
+##  The Nix Language
+
+:::incremental
+
+- _Domain-specific_ **functional** language (**no side-effects**).
+
+- Structurally similar to JSON but with
+  [functions](https://nixos.org/guides/nix-pills/05-functions-and-imports.html).
+
+- [Fundamental data types](https://nixos.org/guides/nix-pills/04-basics-of-language.html#basics-of-language)
+  such as `string`, `integer`, `path`, `list`, and `attribute set`.
+
+- **Lazy Evaluated**: _expression evaluation delayed until needed_.
+
+- ⚠️**Specifically designed** for **deterministic/reproducible** software
+  deployment.
+
+:::
+
+:::notes
+
+The Nix language is specifically designed for deterministic software building
+and distribution. Due to its narrow scope, it lacks certain features, such as
+floating-point types, which are unnecessary in this context.
+
+:::
+
+## What Is a Nix Derivation?
+
+A [derivation](https://nix.dev/manual/nix/2.24/glossary#gloss-derivation) is a
+
+- **specialized attribute set**, describes how to **build** a Nix package.
+
+  ```nix
+  { type = "derivation"; ... }
+  ```
+
+  Check `nix repl -f <nixpkgs>` and type `pkgs.curl.type`.
+
+::: notes
+
+A [derivation](https://nix.dev/manual/nix/2.24/glossary#gloss-derivation) is a
+**specialized attribute set** that describes how to build a Nix package. In raw
+form, it looks like `{ type = "derivation"; ... }` and carries a well-defined
+structure with built-in meaning.
+
+:::
+
+---
+
+## Whats a Derivation?
+
+> **A [derivation](https://zero-to-nix.com/concepts/derivations)** is a **build
+> instruction** to realize a **package in the `/nix/store`** using a
+> [special `derivation` function](https://noogle.dev/f/builtins/derivation).
+>
+> - Can depend on multiple other
+>   [derivations](https://zero-to-nix.com/concepts/derivations).
+> - Produce one or more outputs.
+>
+> The complete set of dependencies required to build a derivation—including its
+> transitive dependencies—is called a **closure**.
+> [[Ref]](https://zero-to-nix.com/concepts/derivations)
+
+---
+
+## Evaluate & Build a Derivation
+
+```mermaid
+flowchart LR
+    A["<strong>Flake</strong><br><code>flake.nix</code>"] -->|"contains output attributes"| B["<strong><code>packages.x86_64-linux.mypackage</code></strong><br>Nix Derivation"]
+    B -->|"evaluate"| C["<strong>Store Derivation</strong><br><code>/nix/store/*.drv</code>"]
+    C -->|"realize/build"| D["<strong>Outputs</strong><br>in<code>/nix/store/*</code>"]
+```
+
+::: incremental
+
+- **Evaluating**: Store build instructions in the `/nix/store`<br> (a store
+  derivation `*.drv`,
+  [more details](https://nix.dev/manual/nix/2.24/glossary#gloss-store-derivation)).
+
+- **Building**: Realizing outputs of the derivation in the `/nix/store`. _This
+  can literally be anything!_
+
+:::
+
+---
+
+## Use [`devenv.sh`](https://devenv.sh) for Nix DevShells
+
+:::incremental
+
+- 🚧 Nix DevShells from `nixpkgs` (`pkgs.mkShell`) are **raw** and **too
+  simplistic**.
+
+- 🌻Nix DevShells from [`devenv.sh`](https://devenv.sh) provides more concise
+  configuration.
+  - ❤️‍🔥Configuration based on mechanics which drive `NixOS` (NixOS Modules).
+
+:::
+
+---
 
 ## Fixed Point Combinator 🤯
 
