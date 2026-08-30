@@ -31,7 +31,7 @@ notes: |
 lang: en
 
 date: |
-  Aug 31st, 2026, [Repository](https://github.com/sdsc-ordes/nix-workshop), [Slides](https://sdsc-ordes.github.io/technical-presentation/gh-pages/nix-workshop/part-1)
+  Aug 31st, 2026, [Repository](https://github.com/sdsc-ordes/nix-workshop), [Slides](https://sdsc-ordes.github.io/technical-presentation/gh-pages/nix-presentation/part-1)
 
 css: presentations/part-1/css/custom.css
 highlightjs-theme: railscasts
