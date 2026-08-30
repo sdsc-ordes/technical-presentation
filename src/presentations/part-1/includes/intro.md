@@ -1,19 +1,10 @@
 <!-- markdownlint-disable-file MD034 MD033 MD001 MD024 MD026-->
 
-# Requirements
+# Resources
 
-All examples refer to the
-[workshop repository](https://github.com/sdsc-ordes/nix-workshop) in the root
-directory.
+Slides and the original workshop can be found here:
 
 ::::::{.columns}
-
-:::{.column width="50%" style="text-align:center;"}
-
-[Workshop Repository](https://github.com/sdsc-ordes/nix-workshop)<br>
-![](${meta:include-base-dir}/assets/images/qr-tag-repo.svg){height="8em"}
-
-:::
 
 :::{.column width="50%" style="text-align:center;"}
 
@@ -22,10 +13,14 @@ directory.
 
 :::
 
-::::::
+:::{.column width="50%" style="text-align:center;"}
 
-Ensure that you
-[have the requirements fulfilled](https://github.com/sdsc-ordes/nix-workshop#requirements).
+[Workshop Repository](https://github.com/sdsc-ordes/nix-workshop)<br>
+![](${meta:include-base-dir}/assets/images/qr-tag-repo.svg){height="8em"}
+
+:::
+
+::::::
 
 # Motivation
 
@@ -72,6 +67,22 @@ environments.
 
 ---
 
+### Sure, but it is useful ...
+
+[![](${meta:include-base-dir}/assets/images/docker.jpg){width="50%"}]{.center-content}
+
+::: notes
+
+I used to think that the whole "docker is not reproducible" debate is something rather academic, because docker was/is the defacto standard in the community and very useful.
+
+Nix does not challenge the use of container, but prevents you from "misusing" them. Contraily nix can help to make container reproducibile AND let's you work locally in the same environment as you ship inside the container.
+
+It is not about nix vs. docker, but about the best tool for each task.
+
+:::
+
+---
+
 ### 🧪 Development Setups
 
 <br>
@@ -113,23 +124,7 @@ do it proper from the start.
 
 ---
 
-###  What is **Nix**?
-
-**Nix** is a software package management & deployment infrastructure:
-
-::: incremental
-
-- 🏃🏻‍♂️Software is built and run in a **predictable and reproducible** way.
-
-- ✅ Builds are **reproducible** — same inputs give same results.
-
-- 🔄 Installs packages **without breaking** others.
-
-- 📦 Can create **isolated dev environments**.
-
-- 💻 Works on Linux, macOS.
-
-:::
+#  What is **Nix**?
 
 ---
 
@@ -164,24 +159,45 @@ immediately turn off potential new Nix-enthusiasts.
 
 ---
 
-## Learn Nix the Fun Way
+##  The **Nix** Ecosystem
 
-### Why I love Nix, and you should too! 💖
+Main projects related to **Nix**:
+
+::: incremental
+
+- 🎁 **Nix(Package Manager)**: Turns a configuration into a software application.
+
+- 💬 **Nix(Programming Language)**: Functional programming language to write a software/system configuration.
+
+- 📦 **Nixpkgs**: Standard library for Nix.
+
+- 💻 **NixOS**: Declarative Linux distribution.
+
+:::
 
 ::: notes
+One of the confusions derives from the same name being used for different parts of the nix ecosystem:
+There is the Nix package manager, that similar to other package manager install software packages and handles different versions. It comes with a cli (similar to e.g. uv, but will mostly be handled in your workflows directly).
 
-We will do that by first learning in a nutshell the basics of the Nix language.
-Its not that difficult.
-
-This enables you to understand the key insights this talk leads to at the end of
-the presentation. So bare with me and remember that at the end there will be an
-**Aha**-moment.
+In addition there is Nix the programming language - a functional programming language made for declarative software design. It has a steep learning curve, but provides a lot of power to use nix packages and its concepts beyond the usual depenendcy management.
 
 :::
 
 ---
 
-## Tool Dependencies
+## Nix Basics
+
+### Same, same, but different! 🧙‍♀️
+
+::: notes
+
+Some of the concepts will probably sound familiar to you (e.g. lock files for dependency pinning), but nix goes beyond that scope, resulting in something that feels very different.
+
+:::
+
+---
+
+## Example: A Simple Shell Script.
 
 I am building a script to find my IP:
 
@@ -219,18 +235,20 @@ version of that script.
 
 ## Package It with Nix (1)
 
-```nix {line-numbers="10|11-14"}
-{
-  system ? builtins.currentSystem,
-  pkgs ?
-    import
-      (builtins.fetchTarball "https://github.com/NixOS/nixpkgs/archive/9684b53175fc6c09581e94cc85f05ab77464c7e3.tar.gz")
-      {
-        inherit system;
-      },
-}:
-pkgs.writeShellScriptBin "what-is-my-ip"
-''
+```nix {line-numbers="2-11|13-15" style="font-size:14pt"}
+let
+  system = builtins.currentSystem; # e.g. `x86_64-linux`
+
+  # Download something into the `/nix/store/...-source`
+  src = builtins.fetchTarball
+    "https://github.com/NixOS/nixpkgs/archive/9684b53175fc6c09581e94cc85f05ab77464c7e3.tar.gz";
+
+  # Import the `default.nix` in the `/nix/store/...-source`
+  f = import src;
+
+  pkgs = f { inherit system; }; # This is the package attribute set of `nixpkgs`.
+in
+pkgs.writeShellScriptBin "what-is-my-ip" ''
   ${pkgs.curl}/bin/curl -s http://ipinfo.io | \
     ${pkgs.jq}/bin/jq --raw-output .ip
 ''
@@ -238,10 +256,7 @@ pkgs.writeShellScriptBin "what-is-my-ip"
 
 :::notes
 
-With out going now into what this does, this is the Nix code which will build
-the reproducible version of this script. You see there is a function
-`writeShellScriptBin` and a string which encodes basically what was the content
-of our script.
+Before we go through what each line here does in detail, let's check the output of what it generates.
 
 :::
 
@@ -252,7 +267,9 @@ of our script.
 Building this Nix code gives you a store path:
 
 ```bash
-/nix/store/7x9hf9g95d4wjjvq853x25jhakki63bz-what-is-my-ip
+nix build -f ./examples/what-is-my-ip.nix --print-out-paths
+
+> "/nix/store/7x9hf9g95d4wjjvq853x25jhakki63bz-what-is-my-ip"
 ```
 
 ::: {.fragment}
@@ -273,18 +290,14 @@ which contains the script and all needed dependencies
 [Nix has encoded the used executables with **store paths**
 (`/nix/store`).]{.fragment}
 
-<!-- :::{.fragment .quiz} -->
-<!---->
-<!-- _**Quiz:** Can you share this script with your colleague?_ -->
-<!---->
-<!-- ::: -->
-
 :::notes
 
-We will later on see how we build something with Nix.
+Do not think you can now simply share this script by giving the contents of
+directory `/nix/store/7x9hf9g95d4wjjvq853x25jhakki63bz-what-is-my-ip` to
+somebody else and it will work. This is not sufficient as we need the other
+derivations as well. This is done differently namely over Nix itself, because
+Nix has all information (`nix copy`).
 
-No you cannot directly share this script, we will see at the end of the
-presentation how this is done since Nix knows everything about the dependency?
 You might ask now Jeah, ok these paths are just in the `/nix/store`, what is it
 any good? Its just how other package manager would store the binaries somewhere
 for a tool like `jq`.
@@ -335,8 +348,6 @@ on**:
 
 :::notes
 
-Time: < 10minutes
-
 We see that Nix does some hashing here for the stuff it puts in the
 `/nix/store`.
 
@@ -345,21 +356,11 @@ down to the commit and build instructions.
 
 - click
 
-Nix accomplishes that with the Nix language. Lets dive into the language and
-give you an "in-a-nutshell" introduction into the language itself to understand
-how this manifests itself.
+Nix accomplishes that with the Nix language.
 
 :::
 
-#  The Nix Language
-
-<h3>In a Nutshell</h3>
-
-:::notes
-
-gabyx: takeover.
-
-:::
+---
 
 ##  The Nix Language
 
@@ -388,262 +389,9 @@ floating-point types, which are unnecessary in this context.
 
 :::
 
-##  The Nix Language
+## Package It with Nix (3)
 
-::: incremental
-
-- Nix files `*.nix` - contain mostly one
-  [_function_](https://nixos.org/guides/nix-pills/05-functions-and-imports.html).
-
-- The function below takes one argument `banana` and returns an attribute set
-  `{ x = ... }`:
-
-  ```nix {line-numbers="2|3|4|5|6|7|8|9"}
-  # myfunction.nix
-  banana: # Function with one argument `banana`.
-  let     # Define variables.
-    number = 1;  # A number.
-    list = [ 1 2 3 "help"];  # A list with 4 elements.
-    set = { a = 1; b.c.d = [1]; };  # A nested attribute set.
-    result = banana.getColor { v = number; };  # Calls another function `banana.getColor`.
-  in
-  { x = number; y = set.b.c.d; z = result; } # Return an attribute set.
-  ```
-
-- For later: Watch this
-  [short introduction](https://www.youtube.com/watch?v=HiTgbsFlPzs).
-
-:::
-
----
-
-## Examples
-
-::::::{.columns}
-
-:::{.column width="50%"}
-
-```nix {line-numbers="2|3|5|6" .fragment}
-let # start for "procedural" statements
- mult = a: b: a * b;
- mult10 = mult 10; # Bind the first arg.
-in
-mult10 (mult 8 2)
-# -> 160
-```
-
-```nix {line-numbers="2|3-4|7|8" .fragment}
-let
-f = args: {
-  a = args.banana + "-nice";
-  b = args.orange + "-sour";
-};
-in
-f { banana = "1"; orange = "2" }
-# -> { a = "1-nice"; b = "2-sour"; }
-```
-
-:::
-
-:::{.column width="50%"}
-
-```nix {line-numbers="2|3-4|7|8" .fragment}
-let
-f = { ban, ora, ... }: { # Destructuring
-  a = ban + "-nice";
-  b = ora + "-sour";
-};
-in
-f { ban = "1"; ora = "2"; berry ="3"; }
-# -> { a = "1-nice"; b = "2-sour"; }
-```
-
-```nix {line-numbers="2|3|5|6" .fragment}
-let
-f = { list ? [] }: {
-  a = builtins.map (x: x*x) list;
-};
-in f [ 1 3 9 ]
-# -> { a = [ 1 9 81 ] }
-```
-
-:::
-
-::::::
-
----
-
-### More Examples
-
-::::::{.columns}
-
-:::{.column width="50%"}
-
-```nix {line-numbers="2|3" .fragment}
-# Concat lists.
-[ 1 2 3 ] ++ [ 1 2 3 ]
-# [ 1 2 3 1 2 3 ];
-```
-
-```nix {line-numbers="2|3" .fragment}
-# Merge attribute sets.
-{ a = 1; b = 2; } // { a = 2; c = 3; }
-# -> { a = 2; b = 2; c = 3; }
-```
-
-```nix {line-numbers="1-5|2|3|4|6" .fragment}
-rec {
-  b = 2;
-  c = b + d;
-  d = 10;
-} # Discouraged: prefer `inherit`.
-# -> { b = 2; c = 12; d = 10; }
-```
-
-:::
-
-:::{.column width="50%"}
-
-```nix {line-numbers="3|5|6" .fragment}
-# Lazy evaluation.
-let
-  x = abort "fail";
-in
-if true then 42 else x
-# -> 42
-```
-
-```nix {line-numbers="3|4" .fragment}
-# Import files.
-let
-  myfunc = import ./myfunction.nix;
-in myfunc 1 + (import ./other.nix 3)
-```
-
-:::
-
-::::::
-
----
-
-## Attribute Set Building: `inherit`
-
-```nix {line-numbers="3|4|5|8|9" .fragment}
-# Inherit 'key = value'.
-let
-  width = 100;
-  color = "blue";
-  set = { b = 1; };
-in
-{
-  inherit color;   # color = color;
-  inherit (set) b; # b     = set.b;
-}
-```
-
----
-
-## Variable Interpolation
-
-```nix {line-numbers="2|3|4-6|7" .fragment}
-let
-  key = "c"
-  color = "blue";
-  set = {
-    c = { v = "hello-${color}" ;}
-  };
-in set.${key}.v
-
-# -> "hello-blue"
-```
-
----
-
-## Strings and Paths
-
-```nix {line-numbers="2|3|5"}
-let
-  dir = ./.github/workflows;     # A path. Nix makes them absolute!
-  file = "${dir}/gh-pages.yaml"; # Interpolated path gets added into the `/nix/store`.
-in file
-# -> "/nix/store/w9il9gvki2nfdzfc1lrlbiv3xy3mx90a-workflows/gh-pages.yaml"
-```
-
----
-
-## Caution With `let` Statements
-
-Do not reassign in `let` blocks:
-
-```nix {line-numbers="2|3|3,6"}
-let
-  a = "hello";
-  a = a + "world";
-  #   ^
-  #   |
-  #  🆘 Endless recursion, this is not reassigning.
-in a
-```
-
-:::notes
-
-There is an error due to how let bindings work in the Nix expression language:
-they are immutable and non-sequential.
-
-:::
-
-:::{.fragment}
-
-✅ Configure [ `nixd` ](https://github.com/nix-community/nixd) (Nix Language
-Server) in your IDE to see "Go to definitions".
-
-:::
-
----
-
-## Questions ?
-
-Try out the examples shown before yourself with `nix repl`
-([see slide](#repl-instructions))
-
-::::::{.columns}
-
-:::{.column width="40%"}
-
-Verify in the interactive Nix shell:
-
-```bash
-nix repl
-```
-
-:::
-
-:::{.column width="60%"}
-
-Or pass standard input to `nix eval`:
-
-```bash
-echo 'let a = 3; in a' | nix eval --file -
-```
-
-:::
-
-::::::
-
-**Time: `3min`**
-
-# Revisit `whats-is-my-ip`
-
-:::notes
-
-cmdoret: takeover.
-
-:::
-
-## Building Our First Package (1) {#building-package}
-
-Put the following in a script
-[`whats-is-my-ip.nix`](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/what-is-my-ip.nix):
+Getting back to: [`whats-is-my-ip.nix`](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/what-is-my-ip.nix):
 
 ```nix {line-numbers="2|4-6|8-9|11|13-16" style="font-size:14pt"}
 let
@@ -738,41 +486,7 @@ flowchart TD
 
 ---
 
-## Building Our First Package (2)
-
-```bash
-nix build -f ./examples/what-is-my-ip.nix --print-out-paths
-
-> "/nix/store/7x9hf9g95d4wjjvq853x25jhakki63bz-what-is-my-ip"
-```
-
-::: {.fragment}
-
-Explore whats in `/nix/store/7x9hf9g95d...-what-is-my-ip/bin/what-is-my-ip`:
-
-```bash
-#!/nix/store/mc4485g4apaqzjx59dsmqscls1zc3p2w-bash-5.2p37/bin/bash
-/nix/store/zl7h70n70g5m57iw5pa8gqkxz6y0zfcf-curl-8.12.1-bin/bin/curl \
-  -s "http://ipinfo.io" | \
-  /nix/store/y50rkdixqzgdgnps2vrc8g0f0kyvpb9w-jq-1.7.1-bin/bin/jq \
-    --raw-output ".ip"
-```
-
-:::
-
-:::notes
-
-Do not think you can now simply share this script by giving the contents of
-directory `/nix/store/7x9hf9g95d4wjjvq853x25jhakki63bz-what-is-my-ip` to
-somebody else and it will work. This is not sufficient as we need the other
-derivations as well. This is done differently namely over Nix itself, because
-Nix has all information (`nix copy`).
-
-:::
-
----
-
-## Building Our First Package (3)
+## Package It with Nix (4)
 
 ```nix {line-numbers="1"}
 pkgs.writeShellScriptBin "what-is-my-ip" ''
@@ -785,29 +499,7 @@ pkgs.writeShellScriptBin "what-is-my-ip" ''
   [`derivation`](#appendix-the-builtin-function-derviation) command
   ([see appendix](#appendix-the-builtin-function-derviation)).
 
----
-
-## Inspect the Dependency Graph
-
-Run
-
-```bash
-nix-store --query --include-outputs --graph \
-  $(nix build -f ./examples/what-is-my-ip.nix --print-out-paths) > graph.dot
-
-nix shell "github:nixos/nixpkgs#graphviz" --command dot \
-  --args -Grankdir=TB -Gconcentrate=true -Tpng graph.dot > graph.png
-```
-
-and inspect `graph.png`.
-
-## Inspect the Dependency Graph
-
-[![](${meta:include-base-dir}/assets/images/graph-whats-my-ip.svg){width="100%"
-.border-light}]{.center-content}
-
-:::notes
-
+::: notes
 The question is how does Nix know all this?
 
 Nix builds in a sandbox where only `/nix/store` (and some others, +no internet)
@@ -842,12 +534,6 @@ A [`flake.nix`](./flake.nix)
 Remember
 [`fetchTarball ".../NixOS/nixpkgs/..."` in `what-is-my-ip.nix`](#building-package).<br>
 🌻 A `flake.nix` is a better method for locked inputs.
-
-:::
-
-:::notes
-
-gabyx: takeover.
 
 :::
 
@@ -902,34 +588,6 @@ A flake `flake.nix`:
   specifying what the flake provides (e.g., packages, modules, or NixOS
   configurations)
   [\[doc\]](https://nix.dev/manual/nix/2.30/command-ref/new-cli/nix3-flake#flake-format).
-
-:::
-
----
-
-## What Is A Flake? (3)
-
-:::incremental
-
-- Nix evaluates a `flake.nix` by calling the `outputs` with `inputs`.
-  - Try `nix repl` and `:lf .` to load the
-    [`./flake.nix`](https://github.com/sdsc-ordes/nix-workshop/blob/main/flake.nix)
-    in directory `.`.
-
-  - Check `outputs.packages.x86_64-linux = { ... }`.
-
-    Flat attribute set of Nix **derivations**.
-
-    **Note: Certain output attributes are `system` scoped, e.g.
-    `packages.x86_64-linux`**.
-
-:::
-
-:::notes
-
-Another method is to start the `nix repl .` which is almost the same except that
-the available attribute names on `outputs` are directly available and not
-`output.*` scoped.
 
 :::
 
@@ -994,83 +652,7 @@ flowchart LR
 
 :::
 
-## Build A Derivation
-
-Build the
-[example derivation](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/flake-simple/pkgs/default.nix) -
-eval. & realize it in the Nix store:
-
-```bash
-cd nix-workshop
-nix build -L "./examples/flake-simple#packages.x86_64-linux.mytool" \
-  --print-out-paths --out-link ./mytool
-```
-
-or in steps [see appendix](#evaluate-build-a-derivation).
-
-::: incremental
-
-- ℹ️ The string `./examples/flake-simple#packages.x86_64-linux.mytool` is called
-  an **installable** ([see appendix](#what-is-an-installable)).
-
-- 🩳 **Short Form:** `nix build "./examples/flake-simple#mytool"` uses
-  `builtins.currentSystem` (works also for macOS users).
-
-:::
-
----
-
-## Build A Derivation (2)
-
-::::::{.columns}
-
-:::{.column width="50%" .fragment}
-
-✅ Inspect `tree ./mytool`:
-
-```bash
-/nix/store/blm702jzc...vd9gxp4c9n-mytool
-└── bin
-    └── mytool
-```
-
-:::
-
-:::{.column width="50%" .fragment}
-
-✅ Run it with:
-
-```bash
-./mytool/bin/mytool -h
-```
-
-```bash
-nix run "./examples/flake-simple#mytool"
-```
-
-:::
-
-:::
-
----
-
-## Build/Run A Derivation - Github
-
-You can also specify `github` repositories and nested flakes and build/run
-derivations on them:
-
-```bash
-nix build -L "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#mytool"
-nix run "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#mytool"
-```
-
 # Nix Development Shells
-
-:::notes
-
-cmdoret: takeover.
-
-:::
 
 ## What Is a Nix DevShell?
 
@@ -1094,38 +676,6 @@ Its a Nix **derivation** in the output attribute set `devShells` of the
 
 The `banana-shell` derivation is meant to be consumed by `nix develop`.
 
-## Create A DevShell
-
-The flake in
-[`./examples/flake-simple`](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/flake-simple/flake.nix)
-defines `devShells` an output:
-
-```nix {line-numbers="2|3-12|4|5|7-10"}
-devShells.x86_64-linux =
-  let pkgs = inputs.nixpkgs-unstable.legacyPackages.${system}; in
-  {
-    default = pkgs.mkShell {
-      packages = [ pkgs.skopeo pkgs.cowsay ];
-
-      shellHook = ''
-        echo "Hello from Shell"
-        ${pkgs.cowsay}/bin/cowsay
-      '';
-    };
-  }
-);
-```
-
-:::{.fragment}
-
-Function `pkgs.mkShell` makes a derivation consumable by `nix develop`:
-
-```bash {style="font-size:14pt"}
-nix develop "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#default" --command zsh
-```
-
-:::
-
 ---
 
 ## Use [`devenv.sh`](https://devenv.sh) for Nix DevShells
@@ -1146,36 +696,6 @@ nix develop "github:sdsc-ordes/nix-workshop?dir=examples/flake-simple#default" -
 ## Questions ?
 
 [![](${meta:include-base-dir}/assets/images/questions.png){style="width:30%"}]{.center-content}
-
-# Workshop 🏑
-
-Time to get 🫵r fingers dirty with the following exercises:
-
-::::::{.columns}
-
-:::{.column width="50%"}
-
-1. **Setup** a `flake.nix` for a _Go_ project.
-2. **Write a function** `forAllSystems`.
-3. **Setup a Nix shell** with [https://devenv.sh](https://devenv.sh).
-4. **Add packages** to the Nix shell.
-5. **Add** Nix shell **capabilities**.
-6. Add custom options to `devenv` for a `run-it` script \[optional\].
-
-:::
-
-:::{.column width="50%"}
-
-7. **Build** the Go executable into **a derivation**.
-8. Version pin the Go compiler \[optional\].
-9. **Build** a **Docker container** with Nix with your package.
-
-:::
-
-::::::
-
-Follow the steps in
-[`examples/flake-go/README.md`](https://github.com/sdsc-ordes/nix-workshop/tree/main/examples/flake-go/README.md).
 
 # Outlook
 
@@ -1261,179 +781,6 @@ for toolchains like:
 :::
 
 ::::::
-
-# Homework
-
-Solutions in the [notes](#help).
-
-## Inspect the Dependency Graph
-
-- Reproduce the commands for building `what-is-my-ip.nix` on your machine in the
-  [workshop repository](https://github.com/sdsc-ordes/nix-workshop).
-- Inspect the store path.
-- Explore the dependencies and answer the quiz below:
-
-**Time: 15-20min**
-
-:::{.quiz}
-
-_**Quiz:** What do you expect<br>
-`/nix/store/zl7h70n70g5m57iw5pa8gqkxz6y0zfcf-curl-8.12.1-bin/bin/curl`<br> links
-to and what does your system `curl` link to? <br><br> Use `ldd` to inspect._
-
-:::
-
-:::notes
-
-Before we go on with learning more on Nix, I want you to replicate the shown
-commands before.
-
-:::
-
----
-
-## Inspect a Flake
-
-- Load the `flake` in the
-  [the root directory](https://github.com/sdsc-ordes/nix-workshop/blob/main) in
-  `nix repl` and use `:lf .`
-  - Inspect the attribute `inputs.nixpkgs`.
-  - Inspect the string `"${inputs.nixpkgs}"` and explore the output!
-  - Try to explain `import "${inputs.nixpkgs}" { system = "x86_64-linux"; }`.
-
-- Eval/build/run the `treefmt` utility in the `packages` output in the flake
-  inside
-  [the root directory](https://github.com/sdsc-ordes/nix-workshop/blob/main).
-
-  Hints:
-  - `nix eval --impure --expr 'builtins.currentSystem'`
-  - `packages.${system}.treefmt`
-  - `nix run`
-  - `"github:sdsc-ordes/nix-workshop#..."`
-
-**Time: 15-20min**
-
-:::notes
-
-**Solutions**:
-
-Do `nix repl` and load `:lf github:sdsc-ordes/nix-workshop#treefmt` or (`:lf .`
-if you have a local clone). Inspecting the `inputs.nixpkgs` gives you something
-like this which is a attribute set representing a `flake`:
-
-```json
-{
-  _type = "flake";
-  checks = { ... };
-  devShells = { ... };
-  htmlDocs = { ... };
-  inputs = { ... };
-  lastModified = 1741862977;
-  lastModifiedDate = "20250313104937";
-  legacyPackages = { ... };
-  lib = { ... };
-  narHash = "sha256-prZ0M8vE/ghRGGZcflvxCu40ObKaB+ikn74/xQoNrGQ=";
-  nixosModules = { ... };
-  outPath = "/nix/store/vawkv67jxh8kl4flrqgpcsmn9inqgvjv-source";
-  outputs = { ... };
-  rev = "cdd2ef009676ac92b715ff26630164bb88fec4e0";
-  shortRev = "cdd2ef0";
-  sourceInfo = { ... };
-}
-```
-
-When you interpolate `${inputs.nixpkgs}`, it will store the whole flake into the
-Nix store giving you a store path, namely the **source of the `nixpkgs`
-repository**.
-
-```bash
-tree -L 1 /nix/store/vawkv67jxh8kl4flrqgpcsmn9inqgvjv-source
-> /nix/store/vawkv67jxh8kl4flrqgpcsmn9inqgvjv-source
-> ├── ci
-> ├── CONTRIBUTING.md
-> ├── COPYING
-> ├── default.nix
-> ├── doc
-> ├── flake.nix
-> ├── lib
-> ├── maintainers
-> ├── nixos
-> ├── pkgs
-> ├── README.md
-> └── shell.nix
-> 7 directories, 6 files
-```
-
-When you do `import "${inputs.nixpkgs}"` you load the `default.nix` file in that
-source directory. It will give you a function which will return the package
-attribute set of the `nixpkgs`-repository. When you call that function with
-`(import "${inputs.nixpkgs}) { system = "x86_64-linux"; }` you get the
-instantiated package set for the system `x86_64-linux`.
-[The function in `default.nix`](https://github.com/NixOS/nixpkgs/blob/bd3d85928a10c5b66b02e632e1d8acfdf1d7af2c/pkgs/top-level/impure.nix#L12)
-has some more possibilities to set platform settings for cross-compiling related
-things. The already instantiated package set can also be got from
-`inputs.nixpkgs.legacyPackages.${system}`. The name `legacyPackages` is an
-unfortunate naming and has nothing to do that packages are "legacy".
-
-Evaluating the `treefmt` utility in the `packages` output in the flake is giving
-you the build instruction (the derivation).
-
-```bash
-nix eval "github:sdsc-ordes/nix-workshop#treefmt#treefmt"
-> «derivation /nix/store/72zknv2ssr8pkvf5jrc0g5w64bqjvyq1-treefmt.drv»
-```
-
-Building and running `treefmt` can be done with
-
-```bash
-nix build ".#treefmt"
-nix run ".#treefmt"
-# or by doing it without a clone.
-nix build "github:sdsc-ordes/nix-workshop#treefmt"
-nix run "github:sdsc-ordes/nix-workshop#treefmt"
-```
-
-By the way: I consider `treefmt` the **ultimate gold standard** of formatting
-tools. [Check it out here.](https://github.com/numtide/treefmt-nix)
-
-:::
-
----
-
-## Modify the DevShell
-
-- Modify
-  [`./examples/flake-simple`](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/flake-simple/flake.nix)
-  to include your
-  [package from `nixpkgs`](https://search.nixos.org/packages?channel=unstable).
-
-**Time: 5 min**
-
-:::notes
-
-**Solution:**
-
-Add for example `pkgs.zoxide` to `packages` by doing `inherit (pkgs) zoxide;`
-resulting in
-
-```nix
-packages = forAllSystems (
-  system:
-  let
-    # That import is the same as the above.
-    pkgs = (import inputs.nixpkgs-unstable) { inherit system; };
-
-    # Load some packages.
-    mypkgs = (import ./pkgs) pkgs;
-  in
-  {
-    inherit (mypkgs) mytool banana-icecream;
-    inherit (pkgs) zoxide;
-  }
-);
-```
-
-:::
 
 # Appendix
 

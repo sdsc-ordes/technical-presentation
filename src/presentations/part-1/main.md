@@ -1,42 +1,37 @@
 ---
-title: Nix Workshop 
-pagetitle: Nix Workshop
+title: Why reproducibility matters
+pagetitle: Why reproducibility matters - A cure for your 7 page HowTo
 subtitle: |
-  Part 1: Nix, Flakes & Nix DevShell<br>
+  A cure for your 7 page HowTo  <br>
 
 author:
   - "**Gabriel Nützi**,
     [gabriel.nuetzi@sdsc.ethz.ch](mailto:gabriel.nuetzi@sdsc.ethz.ch)"
   - "**Cyril Matthey-Doret**,
     [cyril.matthey-doret@epfl.ch](mailto:cyril.matthey-doret@epfl.ch)"
+  - "**Almut Lütge**,
+    [almut.luetge@sdsc.ethz.ch](mailto:almut.luetge@sdsc.ethz,ch)"
 
 notes: |
-  cmdoret: start
 
-  - Why did we invest so much time for this workshop?
+  - Why did we prepare this presentation?
 
     - We have been using Nix now successfully for some time in our team for
     development workflows/CI/packaging etc,
     - Some of us even run their laptops on NixOS to drive a deterministic/reproducible workflow.
+    - Others "just" use basics, but collaborative development became much more efficient and fun.
 
     - The Nix technology solves a lot of headaches around the phrase "it works on my machine"
     but comes with a steeper learning curve.
 
     - To give something back to the OSS-community and to
-    maybe bring more people into the Nix ecosphere, this workshop tries to target the
-    basics in a fun way with some hands on session after this
-    45minutes introduction.
-
-  - All examples refer to the workshop repository.
-
-  - Check out the appendix after the workshop which contains more in depth details for the curious.
-
-  - Its good to keep questions to the slide breaks we put in or after the intro.
+    maybe bring more people into the Nix ecosphere, this talk tries to target the
+    basic concepts and is accompanied by a other resources, e.g. last years workshop to get hands-on experience.
 
 lang: en
 
 date: |
-  May 8, 2025 (Updated: **Sep 16, 2025**), [Repository](https://github.com/sdsc-ordes/nix-workshop), [Slides](https://sdsc-ordes.github.io/technical-presentation/gh-pages/nix-workshop/part-1)
+  Aug 31st, 2026, [Repository](https://github.com/sdsc-ordes/nix-workshop), [Slides](https://sdsc-ordes.github.io/technical-presentation/gh-pages/nix-workshop/part-1)
 
 css: presentations/part-1/css/custom.css
 highlightjs-theme: railscasts
@@ -78,7 +73,6 @@ hash: true
 ---
 
 ```{.include}
-${meta:include-base-dir}/includes/changelog.md
 ${meta:include-base-dir}/includes/help.md
 ${meta:include-base-dir}/includes/acknowledgement.md
 ${meta:include-base-dir}/includes/intro.md
