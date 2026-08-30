@@ -79,9 +79,13 @@ environments.
 
 ::: notes
 
-I used to think that the whole "docker is not reproducible" debate is something rather academic, because docker was/is the defacto standard in the community and very useful.
+I used to think that the whole "docker is not reproducible" debate is something
+rather academic, because docker was/is the defacto standard in the community and
+very useful.
 
-Nix does not challenge the use of container, but prevents you from "misusing" them. Contraily nix can help to make container reproducibile AND let's you work locally in the same environment as you ship inside the container.
+Nix does not challenge the use of container, but prevents you from "misusing"
+them. Contraily nix can help to make container reproducibile AND let's you work
+locally in the same environment as you ship inside the container.
 
 It is not about nix vs. docker, but about the best tool for each task.
 
@@ -169,9 +173,11 @@ Main projects related to **Nix**:
 
 ::: incremental
 
-- 🎁 **Nix(Package Manager)**: Turns a configuration into a software application.
+- 🎁 **Nix(Package Manager)**: Turns a configuration into a software
+  application.
 
-- 💬 **Nix(Programming Language)**: Functional programming language to write a software/system configuration.
+- 💬 **Nix(Programming Language)**: Functional programming language to write a
+  software/system configuration.
 
 - 📦 **Nixpkgs**: Standard library for Nix + build functions for >130k packages.
 
@@ -180,10 +186,17 @@ Main projects related to **Nix**:
 :::
 
 ::: notes
-One of the confusions derives from the same name being used for different parts of the nix ecosystem:
-There is the Nix package manager, that similar to other package manager install software packages and handles different versions. It comes with a cli (similar to e.g. uv, but will mostly be handled in your workflows directly).
 
-In addition there is Nix the programming language - a functional programming language made for declarative software design. It has a steep learning curve, but provides a lot of power to use nix packages and its concepts beyond the usual depenendcy management.
+One of the confusions derives from the same name being used for different parts
+of the nix ecosystem: There is the Nix package manager, that similar to other
+package manager install software packages and handles different versions. It
+comes with a cli (similar to e.g. uv, but will mostly be handled in your
+workflows directly).
+
+In addition there is Nix the programming language - a functional programming
+language made for declarative software design. It has a steep learning curve,
+but provides a lot of power to use nix packages and its concepts beyond the
+usual depenendcy management.
 
 :::
 
@@ -195,7 +208,9 @@ In addition there is Nix the programming language - a functional programming lan
 
 ::: notes
 
-Some of the concepts will probably sound familiar to you (e.g. lock files for dependency pinning), but nix goes beyond that scope, resulting in something that feels very different.
+Some of the concepts will probably sound familiar to you (e.g. lock files for
+dependency pinning), but nix goes beyond that scope, resulting in something that
+feels very different.
 
 :::
 
@@ -260,7 +275,8 @@ pkgs.writeShellScriptBin "what-is-my-ip" ''
 
 :::notes
 
-Before we go through what each line here does in detail, let's check the output of what it generates.
+Before we go through what each line here does in detail, let's check the output
+of what it generates.
 
 :::
 
@@ -368,7 +384,8 @@ Nix accomplishes that with the Nix language.
 
 ## Package It with Nix (3)
 
-Getting back to: [`whats-is-my-ip.nix`](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/what-is-my-ip.nix):
+Getting back to:
+[`whats-is-my-ip.nix`](https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/what-is-my-ip.nix):
 
 ```nix {line-numbers="2|4-6|8-9|11|13-16" style="font-size:14pt"}
 let
@@ -477,6 +494,7 @@ pkgs.writeShellScriptBin "what-is-my-ip" ''
   ([see appendix](#appendix-the-builtin-function-derviation)).
 
 ::: notes
+
 The question is how does Nix know all this?
 
 Nix builds in a sandbox where only `/nix/store` (and some others, +no internet)
@@ -579,10 +597,14 @@ A flake `flake.nix`:
 
 :::notes
 
-Flakes are a great example of the power of nix. Through the language and cli you can define and build packages, but also development environment (devShells), executable path (apps) and
-configurations.
+Flakes are a great example of the power of nix. Through the language and cli you
+can define and build packages, but also development environment (devShells),
+executable path (apps) and configurations.
 
-Other tools e.g. uv do something similar within the scope of one language, but nix gives you full flexibility here. You can specify multiple environment for different use cases, e.g. `frontend` `backend`, `full-stack` or different packages each of them treated independent and much more.
+Other tools e.g. uv do something similar within the scope of one language, but
+nix gives you full flexibility here. You can specify multiple environment for
+different use cases, e.g. `frontend` `backend`, `full-stack` or different
+packages each of them treated independent and much more.
 
 :::
 
