@@ -179,7 +179,7 @@ Main projects related to **Nix**:
 - 💬 **Nix(Programming Language)**: Functional programming language to write a
   software/system configuration.
 
-- 📦 **Nixpkgs**: Standard library for Nix + build functions for >130k packages.
+- 📦 **Nixpkgs**: Standard library for Nix + build functions for >140k packages.
 
 - 💻 **NixOS**: Declarative Linux distribution.
 
