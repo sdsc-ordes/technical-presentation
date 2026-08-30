@@ -24,6 +24,12 @@ Slides and the original workshop can be found here:
 
 # Motivation
 
+## Install Dependecies = Good Luck 🤞🏼
+
+<iframe src="presentations/part-1/assets/pytorch-site/index.html" width="100%" height="500" style="border:1px solid #ccc; border-radius:5pt"></iframe>
+
+---
+
 ##  Why Nix?
 
 You start `python` and you get this:
