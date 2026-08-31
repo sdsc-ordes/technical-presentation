@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Almut Lütge, almut.luetge@sdsc.ethz.ch">
+  <meta name="author" content="Gabriel Nützi, gabriel.nuetzi@sdsc.ethz.ch">
+  <meta name="author" content="Cyril Matthey-Doret, cyril.matthey-doret@epfl.ch">
+  <title>Why reproducibility matters - A cure for your 7 page
+HowTo</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@5.1.0/dist/reveal.css">
+  <style>
+    .reveal .sourceCode {  /* see #7635 */
+      overflow: visible;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+
+  <link rel="stylesheet" href="dist/theme/company.css" />
+  <link rel="stylesheet" href="plugin/highlight/styles/railscasts.css" />
+
+  <script>
+      // If decktape export we need to load some other css
+      // Emoji-Convertion
+      if (window.location.search.match(/decktape/gi)) {
+        let link = document.createElement("link")
+        link.rel = "stylesheet"
+        link.type = "text/css"
+        link.href = "css/print/decktape.css"
+        document.getElementsByTagName("head")[0].appendChild(link)
+      }
+    </script>
+
+  <link rel="stylesheet" href="presentations/part-1/css/custom.css"/>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Why reproducibility matters</h1>
+  <h3 class="subtitle"><p>A cure for your 7 page HowTo  <br></p></h3>
+  <p class="author"><strong>Almut Lütge</strong>, <a
+href="mailto:almut.luetge@sdsc.ethz,ch">almut.luetge@sdsc.ethz.ch</a></p>
+  <p class="author"><strong>Gabriel Nützi</strong>, <a
+href="mailto:gabriel.nuetzi@sdsc.ethz.ch">gabriel.nuetzi@sdsc.ethz.ch</a></p>
+  <p class="author"><strong>Cyril Matthey-Doret</strong>, <a
+href="mailto:cyril.matthey-doret@epfl.ch">cyril.matthey-doret@epfl.ch</a></p>
+  <p class="date"><p>Aug 31st, 2026, <a
+href="https://github.com/sdsc-ordes/nix-workshop"
+target="_blank">Repository</a>, <a
+href="https://sdsc-ordes.github.io/technical-presentation/gh-pages/nix-presentation/part-1"
+target="_blank">Slides</a></p></p>
+  <aside class="notes">
+    <p><ul>
+<li><p>Why did we prepare this presentation?</p>
+<ul>
+<li><p>We have been using Nix now successfully for some time in our team
+for development workflows/CI/packaging etc,</p></li>
+<li><p>Some of us even run their laptops on NixOS to drive a
+deterministic/reproducible workflow.</p></li>
+<li><p>Others “just” use basics, but collaborative development became
+much more efficient and fun.</p></li>
+<li><p>The Nix technology solves a lot of headaches around the phrase
+“it works on my machine” but comes with a steeper learning
+curve.</p></li>
+<li><p>To give something back to the OSS-community and to maybe bring
+more people into the Nix ecosphere, this talk tries to target the basic
+concepts and is accompanied by a other resources, e.g. last years
+workshop to get hands-on experience.</p></li>
+</ul></li>
+</ul></p>
+  </aside>
+</section>
+
+<section id="nix-in-the-rse-profession-and-career-track"
+class="slide level2">
+<h2>Nix in the “RSE profession and Career” track? 🤨</h2>
+<p>“I hope […] it convinces you to see your home environment as your
+career-long companion and thus worthy of a long-running personal
+project.”</p>
+<p><cite>— Luc Perkins - Determinate Systems Blog</cite></p>
+<aside class="notes">
+<p>I still think nix is this toolbox that provides you a new perspective
+on your builds and dependency management - worth investing into
+considering the time you spend with this throughout a career.</p>
+</aside>
+</section>
+<section id="help" class="title-slide slide level1">
+<h1>Help</h1>
+<p>How to use these slides:</p>
+<ul>
+<li><kbd>S</kbd>: See the speaker notes.</li>
+<li><kbd>Esc</kbd>: See all slides and jump around.</li>
+<li><kbd>Space</kbd>: Go forward.</li>
+<li><kbd>Shift</kbd> + <kbd>Space</kbd>: Go backward.</li>
+</ul>
+</section>
+
+<section id="acknowledgment" class="title-slide slide level1">
+<h1>Acknowledgment</h1>
+<p>Thanks to the following contributors:</p>
+<ul>
+<li><p><a href="mailto:gabriel.nuetzi@sdsc.ethz.ch">Gabriel Nützi</a>
+for the workshop, patiently teaching nix and reviewing.</p></li>
+<li><p><a href="mailto:cyril.matthey-doret@epfl.ch">Cyril
+Matthey-Doret</a> for the workshop and reviewing.</p></li>
+<li><p>SDSC ORDES Team for feedback.</p></li>
+<li><p><a href="farid.m.zakaria@gmail.com">Farid Zakaria</a> for giving
+the talk at PlanetNix 2025 which we integrated into this talk.</p></li>
+<li><p>The Nix Community at</p>
+<ul>
+<li><a href="https://discourse.nixos.org"
+target="_blank">https://discourse.nixos.org</a></li>
+<li><a href="https://matrix.to/#/#community:nixos.org"
+target="_blank">https://matrix.to/#/#community:nixos.org</a></li>
+</ul></li>
+</ul>
+<!-- markdownlint-disable-file MD034 MD033 MD001 MD024 MD026-->
+</section>
+
+<section id="resources" class="title-slide slide level1">
+<h1>Resources</h1>
+<p>Slides and the original workshop can be found here:</p>
+<div class="columns">
+<div class="column" style="text-align:center;">
+<p><a
+href="https://sdsc-ordes.github.io/technical-presentation/gh-pages/nix-workshop/part-1"
+target="_blank">Slides</a><br> <img
+data-src="presentations/part-1/assets/images/convert/presentations/part-1/assets/images/qr-tag-slides.svg"
+style="height:8em" /></p>
+</div><div class="column" style="text-align:center;">
+<p><a href="https://github.com/sdsc-ordes/nix-workshop"
+target="_blank">Workshop Repository</a><br> <img
+data-src="presentations/part-1/assets/images/convert/presentations/part-1/assets/images/qr-tag-repo.svg"
+style="height:8em" /></p>
+</div>
+</div>
+</section>
+
+<section>
+<section id="motivation" class="title-slide slide level1">
+<h1>Motivation</h1>
+
+</section>
+<section id="install-dependecies-good-luck" class="slide level2">
+<h2>Install Dependecies = Good Luck 🤞🏼</h2>
+<iframe src="presentations/part-1/assets/pytorch-site/index.html" width="100%" height="500" style="border:1px solid #ccc; border-radius:5pt">
+</iframe>
+<aside class="notes">
+<p>pytorch is a complex example because of the graphics dependencies,
+but still with nix this becomes a one step process. Nowadays when I
+switch projects I enter the directory and that is it.</p>
+</aside>
+</section>
+<section id="why-nix" class="slide level2">
+<h2> Why Nix?</h2>
+<p>You start <code>python</code> and you get this:</p>
+<pre class="bash"><code>&gt;&gt;&gt; import numpy
+Segmentation fault (core dumped)</code></pre>
+<aside class="notes">
+<p>Importing a package like <code>numpy</code> in python is not a
+trivial task as you might expect. <code>Numpy</code> heavily depends on
+build shared object files on your system, such as <code>LAPACK</code>,
+<code>BLAS</code>, which it tries to load when you import
+<code>python</code>.</p>
+<p>The error above is hard to identify, it might be due to misalignment
+of system libraries with your python environment etc.</p>
+<p>This will not happen with Nix, never!.</p>
+<p>But you might ask, what is with <code>conda</code> or
+<code>devcontainers</code> or <code>mamba</code>? They resolve these
+issues right?</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<h3 id="it-works-on-my-machine">💣 It Works on My Machine</h3>
+<p><span class="center-content"><img
+data-src="presentations/part-1/assets/images/convert/presentations/part-1/assets/images/it-works-on-my-machine.jpg"
+style="width:30.0%" /></span></p>
+<aside class="notes">
+<p>Developer environments have become increasingly more complicated and
+the least what we want is to be stuck in the land of
+<code>it works on my machine</code>.</p>
+<p>Lets look at some technology which claim to setup reproducible
+developer environments.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<h3 id="sure-but-it-is-useful">Sure, but it is useful …</h3>
+<p><span class="center-content"><img
+data-src="presentations/part-1/assets/images/convert/presentations/part-1/assets/images/docker.jpg"
+style="width:50.0%" /></span></p>
+<aside class="notes">
+<p>I used to think that the whole “docker is not reproducible” debate is
+something rather academic, because docker was/is the defacto standard in
+the community and very useful.</p>
+<p>Nix does not challenge the use of container, but prevents you from
+“misusing” them. Contraily nix can help to make container reproducibile
+AND let’s you work locally in the same environment as you ship inside
+the container.</p>
+<p>It is not about nix vs. docker, but about the best tool for each
+task.</p>
+</aside>
+</section>
+<section class="slide level2">
+
+<h3 id="development-setups">🧪 Development Setups</h3>
+<p><br></p>
+<div style="">
+<table>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 9%" />
+<col style="width: 19%" />
+<col style="width: 30%" />
+<col style="width: 31%" />
+</colgroup>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Local Development</th>
+<th><a href="https://mamba.readthedocs.io"
+target="_blank">Mamba</a></th>
+<th><a href="https://containers.dev/implementors/spec/"
+target="_blank">Devcontainer</a></th>
+<th><a href="https://www.youtube.com/watch?v=yQwW8dkuHqw"
+target="_blank">Nix/DevShell</a></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Maintenance</td>
+<td>⚠️ <strong>High</strong></td>
+<td>⚠️ Medium</td>
+<td>⚠️ Medium</td>
+<td>⚠️ Medium</td>
+</tr>
+<tr>
+<td>Reproducibility</td>
+<td>❌ Low</td>
+<td>⚠️ Medium</td>
+<td>⚠️ Medium</td>
+<td>✅ <strong>Very high</strong></td>
+</tr>
+<tr>
+<td>Ease of Use</td>
+<td>❌ Low</td>
+<td>✅ Easy</td>
+<td>✅ Ok</td>
+<td>❌ Low</td>
+</tr>
+<tr>
+<td>Dep. Mgmt.</td>
+<td>❌</td>
+<td>✅</td>
+<td>⚠️</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Portability</td>
+<td>💣</td>
+<td>⚠️</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>CI Stability</strong></td>
+<td>💣</td>
+<td>⚠️</td>
+<td>⚠️</td>
+<td>✅ <strong>Almost Perfect</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><a
+href="https://swissdatasciencecenter.github.io/best-practice-documentation/docs/dev-enablement/dev-env"
+target="_blank">Full Table</a></p>
+<aside class="notes">
+<p>This table shows the comparison between different technologies for
+setting up development environment. There exists many more of course.
+This chart is maybe more for people using python setups.</p>
+<p>The main I want to highlight here is that with a local development
+you obviously dont get any benefit. You cannot reproduce anything and
+you are stuck in the land of <code>it works on my machine</code>.</p>
+<p>Also they are sometimes used together and mixed back and forth. So
+people might use the <code>brew</code> package manager on macOS to
+install some stuff, then at the same time use <code>mamba</code> or
+<code>conda</code> to install some better managed python environments,
+and might interleave that with a <code>.devcontainer</code> etc. This is
+even more complex and you can get rid of all this complexity once you
+have understood what Nix can give you, which a lot of package managers
+try to solve but they don’t or cannot do it proper from the start.</p>
+<p>Nix has a steep learning curve, but I think is usually about fixing
+things upfront. The time you invest is saved later when you or someone
+joins the project.</p>
+</aside>
+</section></section>
+<section>
+<section id="what-is-nix" class="title-slide slide level1">
+<h1> What is <strong>Nix</strong>?</h1>
+
+</section>
+<section id="nix-started-2006" class="slide level2">
+<h2>Nix started 2006 …</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<figure>
+<img
+data-src="presentations/part-1/assets/images/convert/presentations/part-1/assets/images/phd-thesis.png"
+class="border-light" style="width:70.0%"
+alt="Eelco Dolstra’s PhD Thesis" />
+<figcaption aria-hidden="true"><a
+href="https://edolstra.github.io/pubs/phd-thesis.pdf"
+target="_blank">Eelco Dolstra’s PhD Thesis</a></figcaption>
+</figure>
+</div><div class="column fragment" style="width:50%;">
+<p><img
+data-src="presentations/part-1/assets/images/convert/presentations/part-1/assets/images/nix-explanation-meme.jpg"
+class="border-light" style="height:70.0%" /></p>
+</div>
+</div>
+<aside class="notes">
+<p>Starting the Nix journey from 2006 with Eelco Dolstra’s Phd might not
+be the best idea, not because of the thesis. But immediately jumping
+into academic and dense vocabulary about the ideas and technology that
+powers Nix might immediately turn off potential new Nix-enthusiasts.</p>
+</aside>
+</section>
+<section id="the-nix-ecosystem" class="slide level2">
+<h2> The <strong>Nix</strong> Ecosystem</h2>
+<p>Main projects related to <strong>Nix</strong>:</p>
+<ul>
+<li class="fragment"><p>🎁 <strong>Nix(Package Manager)</strong>: Turns
+a configuration into a software application.</p></li>
+<li class="fragment"><p>💬 <strong>Nix(Programming Language)</strong>:
+Functional programming language to write a software/system
+configuration.</p></li>
+<li class="fragment"><p>📦 <strong>Nixpkgs</strong>: Standard library
+for Nix + build functions for &gt;140k packages.</p></li>
+<li class="fragment"><p>💻 <strong>NixOS</strong>: Declarative Linux
+distribution.</p></li>
+</ul>
+<aside class="notes">
+<p>One of the confusions derives from the same name being used for
+different parts of the nix ecosystem: There is the Nix package manager,
+that similar to other package manager install software packages and
+handles different versions. It comes with a cli (similar to e.g. uv, but
+will mostly be handled in your workflows directly).</p>
+<p>In addition there is Nix the programming language - a functional
+programming language made for declarative software design. It has a
+steep learning curve, but provides a lot of power to use nix packages
+and its concepts beyond the usual depenendcy management.</p>
+<p>Alltogether nix brings devops into the programming world.</p>
+</aside>
+</section>
+<section id="nix-basics" class="slide level2">
+<h2>Nix Basics</h2>
+<h3 id="same-same-but-different">Same, same, but different! 🧙‍♀️</h3>
+<aside class="notes">
+<p>Some of the concepts will probably sound familiar to you (e.g. lock
+files for dependency pinning), but nix goes beyond that scope, resulting
+in something that feels very different.</p>
+</aside>
+</section>
+<section id="example-a-simple-shell-script." class="slide level2">
+<h2>Example: A Simple Shell Script.</h2>
+<p>I am building a script to find my IP:</p>
+<pre class="bash fragment"><code>#! /usr/bin/env bash
+curl -s http://ipinfo.io | jq --raw-output .ip</code></pre>
+<pre class="shell fragment" data-id="code-animation"><code>12.24.14.88</code></pre>
+<div class="fragment">
+<p><strong>What guarantees that <code>jq</code> or <code>curl</code> is
+available?</strong></p>
+</div>
+<aside class="notes">
+<p>We have all written such innocuous tooling scripts like that for
+example to accomplish some tasks in a software repository or even for
+CI.</p>
+<ul>
+<li>click</li>
+</ul>
+<p>The problem with this script comes first when you need to guarantee
+that the tools you use in the script are available and that they
+work.</p>
+<p>Lets have a look at how Nix would do that if you want to build a
+reproducible version of that script.</p>
+</aside>
+</section>
+<section id="package-it-with-nix-1" class="slide level2">
+<h2>Package It with Nix (1)</h2>
+<pre class="nix" data-line-numbers="2-11|13-15"
+style="font-size:14pt"><code>let
+  system = builtins.currentSystem; # e.g. `x86_64-linux`
+
+  # Download something into the `/nix/store/...-source`
+  src = builtins.fetchTarball
+    &quot;https://github.com/NixOS/nixpkgs/archive/9684b53175fc6c09581e94cc85f05ab77464c7e3.tar.gz&quot;;
+
+  # Import the `default.nix` in the `/nix/store/...-source`
+  f = import src;
+
+  pkgs = f { inherit system; }; # This is the package attribute set of `nixpkgs`.
+in
+pkgs.writeShellScriptBin &quot;what-is-my-ip&quot; &#39;&#39;
+  ${pkgs.curl}/bin/curl -s http://ipinfo.io | \
+    ${pkgs.jq}/bin/jq --raw-output .ip
+&#39;&#39;</code></pre>
+<aside class="notes">
+<p>Before we go through what each line here does in detail, let’s check
+the output of what it generates.</p>
+</aside>
+</section>
+<section id="package-it-with-nix-2" class="slide level2">
+<h2>Package It with Nix (2)</h2>
+<p>Building this Nix code gives you a store path:</p>
+<pre class="bash"><code>nix build -f ./examples/what-is-my-ip.nix --print-out-paths
+
+&gt; &quot;/nix/store/7x9hf9g95d4wjjvq853x25jhakki63bz-what-is-my-ip&quot;</code></pre>
+<div class="fragment">
+<p>which contains the script and all needed dependencies</p>
+<pre class="bash" data-line-numbers="|1,3,5"><code>#!/nix/store/mc4485g4apaqzjx59dsmqscls1zc3p2w-bash-5.2p37/bin/bash
+
+/nix/store/zl7h70n70g5m57iw5pa8gqkxz6y0zfcf-curl-8.12.1-bin/bin/curl \
+  -s &quot;http://ipinfo.io&quot; | \
+  /nix/store/y50rkdixqzgdgnps2vrc8g0f0kyvpb9w-jq-1.7.1-bin/bin/jq \
+    --raw-output &quot;.ip&quot;</code></pre>
+</div>
+<p><span class="fragment">Nix has encoded the used executables with
+<strong>store paths</strong> (<code>/nix/store</code>).</span></p>
+<aside class="notes">
+<p>Do not think you can now simply share this script by giving the
+contents of directory
+<code>/nix/store/7x9hf9g95d4wjjvq853x25jhakki63bz-what-is-my-ip</code>
+to somebody else and it will work. This is not sufficient as we need the
+other derivations as well. This is done differently namely over Nix
+itself, because Nix has all information (<code>nix copy</code>).</p>
+<p>You might ask now Jeah, ok these paths are just in the
+<code>/nix/store</code>, what is it any good? Its just how other package
+manager would store the binaries somewhere for a tool like
+<code>jq</code>.</p>
+<p>But thats only the partial story what Nix does differently. Lets look
+into it.</p>
+</aside>
+</section>
+<section id="what-is-this-hash" class="slide level2">
+<h2>What Is This Hash ?</h2>
+<div class="columns">
+<div class="column" style="align-content:center">
+<pre class="bash"><code>/nix/store/7x9hf9g95d4wjjvq853x25jhakki63bz-what-is-my-ip</code></pre>
+<div class="fragment">
+<p>The hash <code>7x9hf9g95d4wjjvq853x25jhakki63bz</code> of your built
+package <strong>depends on</strong>:</p>
+<ul>
+<li class="fragment">source code of the package (the bash script)</li>
+<li class="fragment">dependencies down to the commit level
+(<code>curl</code>, <code>jq</code>)</li>
+<li class="fragment">all build instructions (<code>nix</code> code,
+including dependencies)</li>
+</ul>
+</div>
+<p><span class="fragment"><strong>⛓️ Deterministic software
+packaging.</strong></span></p>
+</div><div class="column fragment" style="width:30%;">
+<p><img
+data-src="presentations/part-1/assets/images/convert/presentations/part-1/assets/images/fractal.gif"
+class="border-light" style="width:100.0%" /></p>
+</div>
+</div>
+<aside class="notes">
+<p>We see that Nix does some hashing here for the stuff it puts in the
+<code>/nix/store</code>.</p>
+<p>Seeing such a hash in Nix is an extremely strong guarantee of the
+software graph down to the commit and build instructions.</p>
+<ul>
+<li>click</li>
+</ul>
+<p>Nix accomplishes that with the Nix language.</p>
+</aside>
+</section>
+<section id="package-it-with-nix-3" class="slide level2">
+<h2>Package It with Nix (3)</h2>
+<p>Getting back to: <a
+href="https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/what-is-my-ip.nix"
+target="_blank"><code>whats-is-my-ip.nix</code></a>:</p>
+<pre class="nix" data-line-numbers="2|4-6|8-9|11|13-16"
+style="font-size:14pt"><code>let
+  system = builtins.currentSystem; # e.g. `x86_64-linux`
+
+  # Download something into the `/nix/store/...-source`
+  src = builtins.fetchTarball
+    &quot;https://github.com/NixOS/nixpkgs/archive/9684b53175fc6c09581e94cc85f05ab77464c7e3.tar.gz&quot;;
+
+  # Import the `default.nix` in the `/nix/store/...-source`
+  f = import src;
+
+  pkgs = f { inherit system; }; # This is the package attribute set of `nixpkgs`.
+in
+pkgs.writeShellScriptBin &quot;what-is-my-ip&quot; &#39;&#39;
+  ${pkgs.curl}/bin/curl -s http://ipinfo.io | \
+    ${pkgs.jq}/bin/jq --raw-output .ip
+&#39;&#39;</code></pre>
+<aside class="notes">
+<ul>
+<li><p><code>system</code>: a string mostly <code>x86_64-linux</code>
+and defaulted to your current system)</p></li>
+<li><p>The <code>builtins.fetchTarball</code> returns the downloaded
+content of an URL in the <code>/nix/store/...</code> Above it returns
+the content of <code>nixpkgs</code> repository at commit
+<code>9684b53175fc6c09581e94cc85f05ab77464c7e3</code>. Try it out in the
+<code>nix repl</code>.</p></li>
+<li><p><code>pkgs</code>: an attribute set and defaulted to the main
+function of the <a
+href="https://nixos.org/manual/nixpkgs/stable/#preface"
+target="_blank"><code>nixpkgs</code></a> repository. The repository <a
+href="https://nixos.org/manual/nixpkgs/stable/#preface"
+target="_blank"><code>nixpkgs</code></a> is the central package
+mono-repository which maintains packages (<em>derivations</em>) for
+Nix.</p></li>
+</ul>
+</aside>
+</section>
+<section class="slide level2">
+
+<h3 id="wait-what-is-github.comnixosnixpkgs">Wait! What is <a
+href="https://nixos.org/manual/nixpkgs/stable/#preface"
+target="_blank"><code>github.com/NixOS/nixpkgs</code></a> ?</h3>
+<p>󰳏 <a href="https://github.com/NixOS/nixpkgs"
+target="_blank"><code>nixpgkgs</code></a> is a mono-repository with Nix
+code to build software packages (&gt; 130k).</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<img
+data-src="presentations/part-1/assets/images/convert/816f6dc837d6fe75de041cea913fa7c595f0c0ca.svg" />
+</div><div class="column" style="align-content:center">
+<p> A commit in <code>nixpkgs</code> represents the
+<strong>version</strong> of <strong>all</strong> packages at that
+<strong>commit</strong> (a big tree).</p>
+</div>
+</div>
+</section>
+<section id="package-it-with-nix-4" class="slide level2">
+<h2>Package It with Nix (4)</h2>
+<pre class="nix" data-line-numbers="1"><code>pkgs.writeShellScriptBin &quot;what-is-my-ip&quot; &#39;&#39;
+  ${pkgs.curl}/bin/curl -s http://ipinfo.io | \
+    ${pkgs.jq}/bin/jq --raw-output .ip
+&#39;&#39;</code></pre>
+<ul>
+<li><code>pkgs.writeShellScriptBin</code> is a <strong>trivial builder
+function</strong> around the <a
+href="#/appendix-the-builtin-function-derviation"><code>derivation</code></a>
+command (<a href="#/appendix-the-builtin-function-derviation">see
+appendix</a>).</li>
+</ul>
+<aside class="notes">
+<p>The question is how does Nix know all this?</p>
+<p>Nix builds in a sandbox where only <code>/nix/store</code> (and some
+others, +no internet) is available. Any build tool which is used during
+the build will only pick up libraries from the <code>/nix/store</code>
+(any linker will link to these files). For
+<code>pkgs.writeShellScriptBin</code> it will also analyze the output
+script for store paths and include these in the runtime
+dependencies.</p>
+<p>Show the output of <code>ldd curl</code> etc.</p>
+</aside>
+</section></section>
+<section>
+<section id="what-is-a-flake" class="title-slide slide level1">
+<h1>What Is a Flake?</h1>
+<p>A <a href="./flake.nix"><code>flake.nix</code></a> [<a
+href="https://nix.dev/manual/nix/2.30/command-ref/new-cli/nix3-flake"
+target="_blank">1</a>, <a
+href="https://nixos-and-flakes.thiscute.world/other-usage-of-flakes/outputs"
+target="_blank">2</a>]</p>
+<ul>
+<li class="fragment"><p>provides a <strong>deterministic</strong> way to
+manage dependencies and configurations [<a
+href="https://www.youtube.com/live/yhfDtRRTmY8?si=xTjOKKIWIZPIwoU3&amp;t=18317"
+target="_blank">1</a>].</p></li>
+<li class="fragment"><p>comes with a <code>flake.lock</code> file which
+locks dependencies.</p></li>
+</ul>
+<div class="fragment">
+<p>Remember <a
+href="#/building-package"><code>fetchTarball ".../NixOS/nixpkgs/..."</code>
+in <code>what-is-my-ip.nix</code></a>.<br> 🌻 A <code>flake.nix</code>
+is a better method for locked inputs.</p>
+</div>
+</section>
+<section id="what-is-a-flake-2" class="slide level2">
+<h2>What Is a Flake? (2)</h2>
+<p>A flake <code>flake.nix</code>:</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li class="fragment">References external Nix code - called <a
+href="https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-configuration-explained#_1-flake-inputs"
+target="_blank"><strong><code>inputs</code></strong></a>.
+<ul>
+<li class="fragment">Other repositories, local files, or URLs with a
+<code>flake.nix</code>.</li>
+</ul></li>
+<li class="fragment">Defines structured <a
+href="https://nixos-and-flakes.thiscute.world/other-usage-of-flakes/outputs"
+target="_blank"><strong><code>outputs</code></strong></a> (a function).
+<ul>
+<li class="fragment">Specifies what the flake provides.</li>
+</ul></li>
+</ul>
+</div><div class="column" style="width:50%;">
+<pre class="nix" data-line-numbers="3,5"><code># flake.nix
+{
+  inputs = { /* ... */ };
+
+  outputs = inputs: {
+    packages = /* implementation */
+
+    # ... other output attributes ...
+  }
+}</code></pre>
+</div>
+</div>
+<aside class="notes">
+<ul>
+<li><strong>Inputs</strong>: An attribute set <code>inputs</code>,
+listing dependencies the flake relies on.</li>
+<li><strong>Outputs</strong>: A function that takes all
+<code>inputs</code> and returns an <a
+href="https://nixos-and-flakes.thiscute.world/other-usage-of-flakes/outputs"
+target="_blank"></a>, specifying what the flake provides (e.g.,
+packages, modules, or NixOS configurations) <a
+href="https://nix.dev/manual/nix/2.30/command-ref/new-cli/nix3-flake#flake-format"
+target="_blank">[doc]</a>.</li>
+</ul>
+</aside>
+</section>
+<section id="flake-outputs" class="slide level2">
+<h2>Flake outputs</h2>
+<table>
+<colgroup>
+<col style="width: 37%" />
+<col style="width: 32%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr>
+<th>Output</th>
+<th>What it does</th>
+<th>Invoked with</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>packages.&lt;system&gt;.&lt;name&gt;</code></td>
+<td>Buildable derivation — the installable package</td>
+<td><code>nix build .#name</code></td>
+</tr>
+<tr>
+<td><code>devShells.&lt;system&gt;.&lt;name&gt;</code></td>
+<td>Reproducible shell with dev dependencies in <code>$PATH</code></td>
+<td><code>nix develop</code></td>
+</tr>
+<tr>
+<td><code>apps.&lt;system&gt;.&lt;name&gt;</code></td>
+<td>Executable entry point for the flake</td>
+<td><code>nix run .#name</code></td>
+</tr>
+<tr>
+<td><code>nixosConfigurations.&lt;host&gt;</code> /
+<code>homeConfigurations.&lt;name&gt;</code></td>
+<td>Full system or user-level declarative config</td>
+<td><code>nixos-rebuild switch</code> /
+<code>home-manager switch</code></td>
+</tr>
+</tbody>
+</table>
+<aside class="notes">
+<p>Flakes are a great example of the power of nix. Through the language
+and cli you can define and build packages, but also development
+environment (devShells), executable path (apps) and configurations.</p>
+<p>Other tools e.g. uv do something similar within the scope of one
+language, but nix gives you full flexibility here. You can specify
+multiple environment for different use cases, e.g. <code>frontend</code>
+<code>backend</code>, <code>full-stack</code> or different packages each
+of them treated independent and much more.</p>
+</aside>
+</section>
+<section id="questions" class="slide level2">
+<h2>Questions ?</h2>
+<p><span class="center-content"><img
+data-src="presentations/part-1/assets/images/convert/presentations/part-1/assets/images/questions.png"
+style="width:30%" /></span></p>
+</section></section>
+<section>
+<section id="outlook" class="title-slide slide level1">
+<h1>Outlook</h1>
+<ul>
+<li>🦸<a href="https://devenv.sh" target="_blank">Devenv Nix Shell</a>
+is <strong>deterministic/reproducible</strong> and with lots of power.
+<ul>
+<li><p>Foundation of a <code>flake.nix</code> and integration of a Nix
+shell. Simpler approach with <a href="https://devenv.sh/basics"
+target="_blank"><code>devenv.nix</code></a>.</p></li>
+<li><p>Nix community is flourishing - <a
+href="https://opencollective.com/nixos" target="_blank">contribute or
+support it</a>:</p>
+<ul>
+<li><a href="https://discourse.nixos.org" target="_blank">Discourse
+Forum</a></li>
+<li><a href="https://matrix.to/#/#space:nixos.org"
+target="_blank">Matrix Community</a></li>
+</ul></li>
+<li><p>Other commercial ( ‼️lock-in ) projects: <a
+href="https://www.jetify.com/devbox"
+target="_blank"><code>devbox</code></a>, <a href="https://flox.dev"
+target="_blank">flox</a>.</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="goodies-from-sdsc" class="slide level2">
+<h2>Goodies 🍬 from SDSC</h2>
+<p>We maintain <em>well-structured</em>, <em>state-of-the-art</em>,
+<em><code>nix</code>-enabled</em> <a
+href="https://github.com/sdsc-ordes/repository-templates"
+target="_blank"><strong>repository templates</strong></a> for toolchains
+like:</p>
+<ul>
+<li><a
+href="https://github.com/sdsc-ordes/repository-template#rust-template"
+target="_blank">Rust</a></li>
+<li><a
+href="https://github.com/sdsc-ordes/repository-template#go-template"
+target="_blank">Go</a></li>
+<li><a
+href="https://github.com/sdsc-ordes/repository-template#python-template"
+target="_blank">Python</a></li>
+<li><a
+href="https://github.com/sdsc-ordes/repository-template#generic-template"
+target="_blank">Generic</a></li>
+<li>etc.</li>
+</ul>
+<p><strong>The templates provide CI out of the box and are ready to
+use!</strong></p>
+</section>
+<section id="your-nix-journey" class="slide level2">
+<h2>Your Nix Journey</h2>
+<ul>
+<li class="fragment"><p>🌍 Tackling non-reproducible software
+distribution is <strong>hard</strong> — but
+<strong>essential</strong></p></li>
+<li class="fragment"><p>🚀 Embrace <strong>Nix</strong> to gain</p>
+<ul>
+<li class="fragment">reproducibility</li>
+<li class="fragment">consistency</li>
+<li class="fragment">healthy local development</li>
+<li class="fragment">CI for free (when you fix something with  its
+fixed!)</li>
+</ul></li>
+<li class="fragment"><p>🤝 The <strong>Nix community</strong> is
+welcoming and supportive — don’t hesitate to ask!</p></li>
+<li class="fragment"><p>✅ Check the references/resources provided (🤷‍♀️
+sometimes its a mess, but gets better).</p></li>
+</ul>
+</section></section>
+<section>
+<section id="references" class="title-slide slide level1">
+<h1>References</h1>
+
+</section>
+<section id="links" class="slide level2">
+<h2>Links</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<h4 id="nix-nixpkgs">Nix &amp; Nixpkgs</h4>
+<ul>
+<li><a href="https://wiki.nixos.org/wiki/NixOS_Wiki"
+target="_blank">Official Wiki</a></li>
+<li><a href="https://nix.dev/manual/nix/2.30/introduction.html"
+target="_blank">Official Manual</a></li>
+<li><a href="https://search.nixos.org/packages?"
+target="_blank">Official Package Search</a></li>
+<li><a href="https://noogle.dev/" target="_blank">Function
+Search</a></li>
+<li><a href="https://nixhub.io" target="_blank">Packages Search for
+Version Pinning</a></li>
+<li><a href="https://nixpk.gs/pr-tracker.html" target="_blank">Pull
+Request Tracker</a></li>
+</ul>
+</div><div class="column" style="width:50%;">
+<h4 id="nixos-related">NixOS Related</h4>
+<ul>
+<li><a href="https://nixos.org/manual/nixos/stable/"
+target="_blank">Manual</a></li>
+<li><a href="https://search.nixos.org/options?" target="_blank">Options
+Search</a></li>
+<li><a href="https://nixos-and-flakes.thiscute.world/nixos-with-flakes"
+target="_blank">With Flakes</a></li>
+<li><a href="https://status.nixos.org/" target="_blank">Status</a></li>
+</ul>
+</div>
+</div>
+</section></section>
+<section>
+<section id="appendix" class="title-slide slide level1">
+<h1>Appendix</h1>
+
+</section>
+<section id="the-nix-language" class="slide level2">
+<h2> The Nix Language</h2>
+<ul>
+<li class="fragment"><p><em>Domain-specific</em>
+<strong>functional</strong> language (<strong>no
+side-effects</strong>).</p></li>
+<li class="fragment"><p>Structurally similar to JSON but with <a
+href="https://nixos.org/guides/nix-pills/05-functions-and-imports.html"
+target="_blank">functions</a>.</p></li>
+<li class="fragment"><p><a
+href="https://nixos.org/guides/nix-pills/04-basics-of-language.html#basics-of-language"
+target="_blank">Fundamental data types</a> such as <code>string</code>,
+<code>integer</code>, <code>path</code>, <code>list</code>, and
+<code>attribute set</code>.</p></li>
+<li class="fragment"><p><strong>Lazy Evaluated</strong>: <em>expression
+evaluation delayed until needed</em>.</p></li>
+<li class="fragment"><p>⚠️<strong>Specifically designed</strong> for
+<strong>deterministic/reproducible</strong> software
+deployment.</p></li>
+</ul>
+<aside class="notes">
+<p>The Nix language is specifically designed for deterministic software
+building and distribution. Due to its narrow scope, it lacks certain
+features, such as floating-point types, which are unnecessary in this
+context.</p>
+</aside>
+</section>
+<section id="what-is-a-nix-derivation" class="slide level2">
+<h2>What Is a Nix Derivation?</h2>
+<p>A <a href="https://nix.dev/manual/nix/2.24/glossary#gloss-derivation"
+target="_blank">derivation</a> is a</p>
+<ul>
+<li><p><strong>specialized attribute set</strong>, describes how to
+<strong>build</strong> a Nix package.</p>
+<pre class="nix"><code>{ type = &quot;derivation&quot;; ... }</code></pre>
+<p>Check <code>nix repl -f &lt;nixpkgs&gt;</code> and type
+<code>pkgs.curl.type</code>.</p></li>
+</ul>
+<aside class="notes">
+<p>A <a href="https://nix.dev/manual/nix/2.24/glossary#gloss-derivation"
+target="_blank">derivation</a> is a <strong>specialized attribute
+set</strong> that describes how to build a Nix package. In raw form, it
+looks like <code>{ type = "derivation"; ... }</code> and carries a
+well-defined structure with built-in meaning.</p>
+</aside>
+</section>
+<section id="whats-a-derivation" class="slide level2">
+<h2>Whats a Derivation?</h2>
+<blockquote>
+<p><strong>A <a href="https://zero-to-nix.com/concepts/derivations"
+target="_blank">derivation</a></strong> is a <strong>build
+instruction</strong> to realize a <strong>package in the
+<code>/nix/store</code></strong> using a <a
+href="https://noogle.dev/f/builtins/derivation" target="_blank">special
+<code>derivation</code> function</a>.</p>
+<ul>
+<li>Can depend on multiple other <a
+href="https://zero-to-nix.com/concepts/derivations"
+target="_blank">derivations</a>.</li>
+<li>Produce one or more outputs.</li>
+</ul>
+<p>The complete set of dependencies required to build a
+derivation—including its transitive dependencies—is called a
+<strong>closure</strong>. <a
+href="https://zero-to-nix.com/concepts/derivations"
+target="_blank">[Ref]</a></p>
+</blockquote>
+</section>
+<section id="evaluate-build-a-derivation" class="slide level2">
+<h2>Evaluate &amp; Build a Derivation</h2>
+<img
+data-src="presentations/part-1/assets/images/convert/7b24462f274eff3607ebf07c2f7c5ce497497c93.svg" />
+<ul>
+<li class="fragment"><p><strong>Evaluating</strong>: Store build
+instructions in the <code>/nix/store</code><br> (a store derivation
+<code>*.drv</code>, <a
+href="https://nix.dev/manual/nix/2.24/glossary#gloss-store-derivation"
+target="_blank">more details</a>).</p></li>
+<li class="fragment"><p><strong>Building</strong>: Realizing outputs of
+the derivation in the <code>/nix/store</code>. <em>This can literally be
+anything!</em></p></li>
+</ul>
+</section>
+<section id="what-is-github.comnixosnixpkgs" class="slide level2">
+<h2>What is <a href="https://nixos.org/manual/nixpkgs/stable/#preface"
+target="_blank"><code>github.com/NixOS/nixpkgs</code></a> ?</h2>
+<ul>
+<li class="fragment">Statement <a
+href="#/building-package"><code>f = import src;</code></a> imports <a
+href="https://github.com/NixOS/nixpkgs/blob/master/default.nix"
+target="_blank"><code>default.nix</code></a> from <code>nixpkgs</code>
+[<a
+href="https://github.com/NixOS/nixpkgs/blob/374e6bcc403e02a35e07b650463c01a52b13a7c8/pkgs/top-level/default.nix#L21"
+target="_blank">1</a>]
+<ul>
+<li class="fragment">Returns a <strong>function
+<code>f</code></strong>.</li>
+<li class="fragment">When called returns attribute set
+<strong><code>pkgs</code></strong> for your <code>system</code> (e.g
+<code>"x86_64-linux"</code>).</li>
+</ul></li>
+<li class="fragment">Package Search:
+<ul>
+<li class="fragment"><a href="https://search.nixos.org/packages"
+target="_blank">https://search.nixos.org/packages</a></li>
+<li class="fragment"><a href="https://www.nixhub.io"
+target="_blank">https://www.nixhub.io</a>.</li>
+</ul></li>
+<li class="fragment">Function Search: <a href="https://noogle.dev"
+target="_blank">https://noogle.dev</a>.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="nix-development-shells" class="title-slide slide level1">
+<h1>Nix Development Shells</h1>
+
+</section>
+<section id="what-is-a-nix-devshell" class="slide level2">
+<h2>What Is a Nix DevShell?</h2>
+<p>Its a Nix <strong>derivation</strong> in the output attribute set
+<code>devShells</code> of the <code>flake.nix</code>:</p>
+<pre class="nix" data-line-numbers="7-9"><code>{
+  inputs = { /* ... */ };
+  outputs = inputs: {
+    packages.x86_64-linux = {
+      mytool = /* derivation */
+    };
+    devShells.x86_64-linux = {
+      banana-shell = /* derivation */
+    };
+    # ... other outputs ...
+  }
+}</code></pre>
+<p>The <code>banana-shell</code> derivation is meant to be consumed by
+<code>nix develop</code>.</p>
+</section>
+<section id="use-devenv.sh-for-nix-devshells" class="slide level2">
+<h2>Use <a href="https://devenv.sh"
+target="_blank"><code>devenv.sh</code></a> for Nix DevShells</h2>
+<ul>
+<li class="fragment"><p>🚧 Nix DevShells from <code>nixpkgs</code>
+(<code>pkgs.mkShell</code>) are <strong>raw</strong> and <strong>too
+simplistic</strong>.</p></li>
+<li class="fragment"><p>🌻Nix DevShells from <a href="https://devenv.sh"
+target="_blank"><code>devenv.sh</code></a> provides more concise
+configuration.</p>
+<ul>
+<li class="fragment">❤️‍🔥Configuration based on mechanics which drive
+<code>NixOS</code> (NixOS Modules).</li>
+</ul></li>
+</ul>
+</section>
+<section id="fixed-point-combinator" class="slide level2">
+<h2>Fixed Point Combinator 🤯</h2>
+<p>In maths a fix point <code>x</code> of a function <code>F</code> is
+defined as:</p>
+<p><span class="math display">\[
+x = F(x).
+\]</span></p>
+<div class="fragment">
+<p>In functional programming a fix-point <strong>combinator</strong>
+<code>fix</code> is a <em>higher-order</em> function.<br> It returns the
+fix point of a function <code>F</code>:</p>
+</div>
+<div class="fragment">
+<pre class="nix"><code>fix = F: let x = F x in x</code></pre>
+</div>
+</section>
+<section id="fixed-point-combinator-1" class="slide level2">
+<h2>Fixed-Point Combinator 🤯</h2>
+<p>That is how recursive self-referential sets can be defined.</p>
+<pre class="nix" data-line-numbers="2|5|7|9"><code>let
+  fix = F: let x = F x in x;
+
+  # Define the constructor of the set.
+  newSet = self: { path = &quot;/bin&quot;; full = self.path + &quot;/my-app&quot;; };
+
+  mySet = fix newSet; # fulfills: mySet == fix mySet;
+in
+  mySet.full</code></pre>
+<p>Seems recursive in <code>let x = F x</code> but <strong>but isn’t
+🤯</strong>, because its lazy evaluated. <a
+href="https://nixcademy.com/de/posts/what-you-need-to-know-about-laziness"
+target="_blank">What you need to know about laziness.</a>.</p>
+<p>Used in <code>pkgs.callPackage</code> in <code>nixpkgs</code>.</p>
+</section>
+<section id="why-nix-is-lazy-evaluated" class="slide level2">
+<h2>Why Nix is Lazy Evaluated?</h2>
+<div style="font-size:14pt">
+<blockquote>
+<p>The choice for lazy evaluation allows us to write Nix expressions in
+a convenient and elegant style: Packages are described by Nix
+expressions and these Nix expressions can freely be passed around in a
+Nix program – as long as we do not access the contents of the package,
+no evaluation and thus no build will occur. […] At the call site of a
+function, we can supply all potential dependencies without having to
+worry that unneeded dependencies might be evaluated. For instance, the
+whole of the Nix packages collection is essentially one attribute set
+where each attribute maps to one package contained in the collection. It
+is very convenient that at this point, we do not have to deal with the
+administration of what exactly will be needed where. Another benefit is
+that we can easily store meta information with packages, such as name,
+version number, homepage, license, description and maintainer. Without
+any extra effort, we can access such meta-information without having to
+build the whole package. [<a
+href="https://edolstra.github.io/pubs/nixos-jfp-final.pdf"
+target="_blank">Paper</a>]</p>
+</blockquote>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="the-builtin-function-derivation">The builtin function
+<code>derivation</code></h3>
+<p>This is what <code>pkgs.writeShellScriptBin</code> would expand to:
+(see <a
+href="https://github.com/sdsc-ordes/nix-workshop/blob/main/examples/what-is-my-ip-orig.nix"
+target="_blank">./examples/what-is-my-ip-orig.nix</a>):</p>
+<pre class="nix" data-line-numbers="1|2|4|5|7-20|10|12-16|22,10"
+style="font-size:12pt;"><code>derivation {
+  inherit system;
+
+  name = &quot;what-is-my-ip&quot;;
+  builder = &quot;/bin/sh&quot;;
+
+  args = [
+    &quot;-c&quot;
+    &#39;&#39;
+      ${pkgs.coreutils}/bin/mkdir -p $out/bin
+
+      {
+        echo &#39;#!/bin/sh&#39;
+        echo &#39;${pkgs.curl}/bin/curl -s http://ipinfo.io | \
+        ${pkgs.jq}/bin/jq --raw-output .ip&#39;
+      } &gt; $out/bin/what-is-my-ip
+
+      ${pkgs.coreutils}/bin/chmod +x $out/bin/what-is-my-ip
+    &#39;&#39;
+  ];
+
+  outputs = [ &quot;out&quot; ];
+}</code></pre>
+</section>
+<section id="store-derivation" class="slide level2">
+<h2>Store Derivation</h2>
+<blockquote>
+<p>A store <strong>derivation</strong> (<code>*.drv</code>) contains
+only <strong>build instructions</strong> for Nix to
+<strong>realize/build</strong> it. This can be literally anything,
+e.g. a software package, a wrapper shell script or only source
+files.</p>
+</blockquote>
+</section>
+<section id="evaluate-build-a-derivation-1" class="slide level2">
+<h2>Evaluate &amp; Build a Derivation</h2>
+<pre class="bash"><code># Evaluate it.
+drvPath=$(nix eval &quot;./examples/flake-simple#packages.x86_64-linux.mytool&quot; --raw)
+# Realize it.
+nix build -L &quot;$drvPath&quot; --print-out-paths --out-link ./mytool</code></pre>
+</section>
+<section id="inspect-a-derivation" class="slide level2">
+<h2>Inspect a Derivation</h2>
+<pre class="bash"><code>nix eval &quot;./examples/flake-simple#packages.x86_64-linux.mytool&quot;
+
+&gt; «derivation /nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv»</code></pre>
+<p><code>./examples/flake-simple#packages.x86_64-linux.mytool</code> is
+an <em>installable</em>. More later!</p>
+<div class="fragment">
+<pre class="bash"><code># Inspect the store derivation.
+cat /nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv</code></pre>
+</div>
+<aside class="notes">
+<p>Realize that even when you are on macOS <code>aarch64-darwin</code>,
+that we can evaluate the derivation for another architecture.</p>
+</aside>
+</section>
+<section id="inspect-a-derivation-2" class="slide level2">
+<h2>Inspect a Derivation (2)</h2>
+<pre class="bash"><code>&gt; Derive([(&quot;out&quot;,&quot;/nix/store/5rvqlxk2vx0hx1yk8qdll2l8l62pfn8n-treefmt&quot;,&quot;&quot;,&quot;&quot;)],
+[(&quot;/nix/store/1fmb3b4cmr1bl1v6vgr8plw15rqw5jhf-treefmt.toml.drv&quot;,[&quot;out&quot;]),
+(&quot;/nix/store/3avbfsh9rjq8psqbbplv2da6dr679cib-treefmt-2.1.0.drv&quot;,[&quot;out&quot;]),
+(&quot;/nix/store/61fjldjpjn6n8b037xkvvrgjv4q8myhl-bash-5.2p37.drv&quot;,[&quot;out&quot;]),
+(&quot;/nix/store/gp6gh2jn0x7y7shdvvwxlza4r5bmh211-stdenv-linux.drv&quot;,[&quot;out&quot;])]
+,[&quot;/nix/store/v6x3cs394jgqfbi0a42pam708flxaphh-default-builder.sh&quot;]
+,&quot;x86_64-linux&quot;,&quot;/nix/store/8vpg72ik2kgxfj05lc56hkqrdrfl8xi9-bash-5.2p37/bin/bash&quot;,
+[&quot;-e&quot;,&quot;/nix/store/v6x3cs394jgqfbi0a42pam708flxaphh-default-builder.sh&quot;],
+[ (&quot;__structuredAttrs&quot;,&quot;&quot;),(&quot;allowSubstitutes&quot;,&quot;&quot;),
+(&quot;buildCommand&quot;,&quot;target=$out/bin/treefmt\nmkdir -p \&quot;$(dirname \&quot;$target\&quot;)\&quot;\n\nif [ -e \&quot;$textPath\&quot; ]; then\n  mv \&quot;$textPath\&quot; \&quot;$target\&quot;\nelse\n  echo -n \&quot;$text\&quot; &gt; \&quot;$target\&quot;\nfi\n\nif [ -n \&quot;$executable\&quot; ]; then\n  chmod +x \&quot;$target\&quot;\nfi\n\neval \&quot;$checkPhase\&quot;\n&quot;),(&quot;buildInputs&quot;,&quot;&quot;),(&quot;builder&quot;,&quot;/nix/store/8vpg72ik2kgxfj05lc56hkqrdrfl8xi9-bash-5.2p37/bin/bash&quot;),(&quot;checkPhase&quot;,&quot;/nix/store/8vpg72ik2kgxfj05lc56hkqrdrfl8xi9-bash-5.2p37/bin/bash -n -O extglob \&quot;$target\&quot;\n&quot;),(&quot;cmakeFlags&quot;,&quot;&quot;),(&quot;configureFlags&quot;,&quot;&quot;),(&quot;depsBuildBuild&quot;,&quot;&quot;),(&quot;depsBuildBuildPropagated&quot;,&quot;&quot;),(&quot;depsBuildTarget&quot;,&quot;&quot;),(&quot;depsBuildTargetPropagated&quot;,&quot;&quot;),(&quot;depsHostHost&quot;,&quot;&quot;),(&quot;depsHostHostPropagated&quot;,&quot;&quot;),(&quot;depsTargetTarget&quot;,&quot;&quot;),(&quot;depsTargetTargetPropagated&quot;,&quot;&quot;),(&quot;doCheck&quot;,&quot;&quot;),(&quot;doInstallCheck&quot;,&quot;&quot;),(&quot;enableParallelBuilding&quot;,&quot;1&quot;),(&quot;enableParallelChecking&quot;,&quot;1&quot;),(&quot;enableParallelInstalling&quot;,&quot;1&quot;),(&quot;executable&quot;,&quot;1&quot;),(&quot;mesonFlags&quot;,&quot;&quot;),(&quot;name&quot;,&quot;treefmt&quot;),(&quot;nativeBuildInputs&quot;,&quot;&quot;),(&quot;out&quot;,&quot;/nix/store/5rvqlxk2vx0hx1yk8qdll2l8l62pfn8n-treefmt&quot;),(&quot;outputs&quot;,&quot;out&quot;),(&quot;passAsFile&quot;,&quot;buildCommand text&quot;),(&quot;patches&quot;,&quot;&quot;),(&quot;preferLocalBuild&quot;,&quot;1&quot;),(&quot;propagatedBuildInputs&quot;,&quot;&quot;),(&quot;propagatedNativeBuildInputs&quot;,&quot;&quot;),(&quot;stdenv&quot;,&quot;/nix/store/hsxp8g7zdr6wxk1mp812g8nbzvajzn4w-stdenv-linux&quot;),(&quot;strictDeps&quot;,&quot;&quot;),(&quot;system&quot;,&quot;x86_64-linux&quot;),(&quot;text&quot;,&quot;#!/nix/store/8vpg72ik2kgxfj05lc56hkqrdrfl8xi9-bash-5.2p37/bin/bash\nset -euo pipefail\nunset PRJ_ROOT\nexec /nix/store/0jcp33pgf85arjv3nbghws34mrmy7qq5-treefmt-2.1.0/bin/treefmt \\\n  --config-file=/nix/store/qk8rqccch6slk037dhnprryqwi8mv0xs-treefmt.toml \\\n  --tree-root-file=.git/config \\\n  \&quot;$@\&quot;\n\n&quot;)])</code></pre>
+<div class="fragment">
+<p>JSON output of the above:</p>
+<pre class="bash"><code>nix derivation show /nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv</code></pre>
+</div>
+<aside class="notes">
+<p>The output of
+<code>/nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv</code>
+above is the internal serialization of the formatter’s derivation which
+<strong>when built</strong> can be used to format all files in this
+repository.</p>
+</aside>
+</section>
+<section id="inspect-a-derivation-3" class="slide level2">
+<h2>Inspect a Derivation (3)</h2>
+<pre class="json" style="font-size:12pt"><code>{
+  &quot;/nix/store/l8pma77py04gd5819zkk3h7jx0bgxqgm-mytool.drv&quot;: {
+    &quot;args&quot;: [
+      &quot;-e&quot;,
+      &quot;/nix/store/vj1c3wf9c11a0qs6p3ymfvrnsdgsdcbq-source-stdenv.sh&quot;,
+      &quot;/nix/store/shkw4qm9qcw5sc5n1k5jznc83ny02r39-default-builder.sh&quot;
+    ],
+    &quot;builder&quot;: &quot;/nix/store/9nw8b61s8lfdn8fkabxhbz0s775gjhbr-bash-5.2p37/bin/bash&quot;,
+    &quot;env&quot;: {
+      &quot;__structuredAttrs&quot;: &quot;&quot;,
+      &quot;allowSubstitutes&quot;: &quot;&quot;,
+      &quot;buildCommand&quot;: &quot;target=$out/bin/mytool\nmkdir -p \&quot;$(dirname \&quot;$target\&quot;)\&quot;\n\nif [ -e \&quot;$textPath\&quot; ]; then\n  mv \&quot;$textPath\&quot; \&quot;$target\&quot;\nelse\n  echo -n \&quot;$text\&quot; &gt; \&quot;$target\&quot;\nfi\n\nif [ -n \&quot;$executable\&quot; ]; then\n  chmod +x \&quot;$target\&quot;\nfi\n\neval \&quot;$checkPhase\&quot;\n&quot;,
+      &quot;buildInputs&quot;: &quot;&quot;,
+      &quot;builder&quot;: &quot;/nix/store/9nw8b61s8lfdn8fkabxhbz0s775gjhbr-bash-5.2p37/bin/bash&quot;,
+      &quot;checkPhase&quot;: &quot;/nix/store/9nw8b61s8lfdn8fkabxhbz0s775gjhbr-bash-5.2p37/bin/bash -n -O extglob \&quot;$target\&quot;\n&quot;,
+      &quot;cmakeFlags&quot;: &quot;&quot;,
+      &quot;configureFlags&quot;: &quot;&quot;,
+      &quot;depsBuildBuild&quot;: &quot;&quot;,
+      &quot;depsBuildBuildPropagated&quot;: &quot;&quot;,
+      &quot;depsBuildTarget&quot;: &quot;&quot;,
+      &quot;depsBuildTargetPropagated&quot;: &quot;&quot;,
+      &quot;depsHostHost&quot;: &quot;&quot;,
+      &quot;depsHostHostPropagated&quot;: &quot;&quot;,
+      &quot;depsTargetTarget&quot;: &quot;&quot;,
+      &quot;depsTargetTargetPropagated&quot;: &quot;&quot;,
+      &quot;doCheck&quot;: &quot;&quot;,
+      &quot;doInstallCheck&quot;: &quot;&quot;,
+      &quot;enableParallelBuilding&quot;: &quot;1&quot;,
+      &quot;enableParallelChecking&quot;: &quot;1&quot;,
+      &quot;enableParallelInstalling&quot;: &quot;1&quot;,
+      &quot;executable&quot;: &quot;1&quot;,
+      &quot;mesonFlags&quot;: &quot;&quot;,
+      &quot;name&quot;: &quot;mytool&quot;,
+      &quot;nativeBuildInputs&quot;: &quot;&quot;,
+      &quot;out&quot;: &quot;/nix/store/blm702jzcwfppwrrj9925ivd9gxp4c9n-mytool&quot;,
+      &quot;outputs&quot;: &quot;out&quot;,
+      &quot;passAsFile&quot;: &quot;buildCommand text&quot;,
+      &quot;patches&quot;: &quot;&quot;,
+      &quot;preferLocalBuild&quot;: &quot;1&quot;,
+      &quot;propagatedBuildInputs&quot;: &quot;&quot;,
+      &quot;propagatedNativeBuildInputs&quot;: &quot;&quot;,
+      &quot;stdenv&quot;: &quot;/nix/store/npp9k9062ny7w0k1i03ij6xvqb7vhvjh-stdenv-linux&quot;,
+      &quot;strictDeps&quot;: &quot;&quot;,
+      &quot;system&quot;: &quot;x86_64-linux&quot;,
+      &quot;text&quot;: &quot;#!/nix/store/9nw8b61s8lfdn8fkabxhbz0s775gjhbr-bash-5.2p37/bin/bash\n\&quot;/nix/store/xkk1gr9bw2dbdjna8391rj1zl1l3dmhq-cowsay-3.8.4/bin/cowsay\&quot; \&quot;Hello there ;)\&quot;\necho \&quot;-------------------------------------\&quot;\n\&quot;/nix/store/4ydiim4lfk6nyab4pdkjj9s33pgbigfd-figlet-2.2.5/bin/figlet\&quot; \&quot;Do you expect\&quot;\n\&quot;/nix/store/4ydiim4lfk6nyab4pdkjj9s33pgbigfd-figlet-2.2.5/bin/figlet\&quot; \&quot;something \&quot;\n\&quot;/nix/store/4ydiim4lfk6nyab4pdkjj9s33pgbigfd-figlet-2.2.5/bin/figlet\&quot; \&quot;useful ? \&quot;\n\n&quot;
+    },
+    &quot;inputDrvs&quot;: {
+      &quot;/nix/store/1fsd2cb5ab7ci01ks4j0gbbq254jw6sk-stdenv-linux.drv&quot;: {
+        &quot;dynamicOutputs&quot;: {},
+        &quot;outputs&quot;: [&quot;out&quot;]
+      },
+      &quot;/nix/store/lrf9kbhlaf5mkvnlf3zr9wzvk7c2z72l-bash-5.2p37.drv&quot;: {
+        &quot;dynamicOutputs&quot;: {},
+        &quot;outputs&quot;: [&quot;out&quot;]
+      },
+      &quot;/nix/store/phq4wh4490manblg905xixpc3gvwr149-figlet-2.2.5.drv&quot;: {
+        &quot;dynamicOutputs&quot;: {},
+        &quot;outputs&quot;: [&quot;out&quot;]
+      },
+      &quot;/nix/store/wdpicivrj0bmzh935rr1hm1vlk18j0mp-cowsay-3.8.4.drv&quot;: {
+        &quot;dynamicOutputs&quot;: {},
+        &quot;outputs&quot;: [&quot;out&quot;]
+      }
+    },
+    &quot;inputSrcs&quot;: [
+      &quot;/nix/store/shkw4qm9qcw5sc5n1k5jznc83ny02r39-default-builder.sh&quot;,
+      &quot;/nix/store/vj1c3wf9c11a0qs6p3ymfvrnsdgsdcbq-source-stdenv.sh&quot;
+    ],
+    &quot;name&quot;: &quot;mytool&quot;,
+    &quot;outputs&quot;: {
+      &quot;out&quot;: {
+        &quot;path&quot;: &quot;/nix/store/blm702jzcwfppwrrj9925ivd9gxp4c9n-mytool&quot;
+      }
+    },
+    &quot;system&quot;: &quot;x86_64-linux&quot;
+  }
+}</code></pre>
+</section>
+<section id="what-is-an-installable" class="slide level2">
+<h2>What Is an Installable</h2>
+<div class="fragment">
+<p>The path
+<code>./examples/flake-simple#packages.x86_64-linux.mytool</code> is
+referred to as a <a
+href="https://nix.dev/manual/nix/2.24/command-ref/new-cli/nix#flake-output-attribute"
+target="_blank">Flake output attribute installable</a>, or simply an <a
+href="https://nix.dev/manual/nix/2.24/command-ref/new-cli/nix#installables"
+target="_blank"><em>installable</em></a>.</p>
+</div>
+<div class="fragment">
+<p>An <strong>installable</strong> is a Flake output that can be
+realized in the Nix store.</p>
+</div>
+<ul>
+<li class="fragment"><code>./examples/flake-simple</code> refers to this
+repository’s <a href="./flake.nix"><code>flake.nix</code></a>
+directory.</li>
+<li class="fragment"><code>packages.x86_64-linux.mytool</code> following
+<code>#</code> is an output attribute defined within the flake.</li>
+</ul>
+<div class="fragment">
+<p>Most <a
+href="https://nix.dev/manual/nix/2.24/command-ref/experimental-commands"
+target="_blank">modern Nix commands</a> accept
+<strong>installables</strong> as input, making them a fundamental
+concept in working with Flakes. <strong>You should only use the modern
+commands, e.g. <code>nix &lt;subcommand&gt;</code></strong>. Stay away
+from the command <code>nix-env</code>.</p>
+</div>
+</section>
+<section id="more-on-strings" class="slide level2">
+<h2>More on Strings</h2>
+<p>Nix distinguishes between</p>
+<ul>
+<li>normal <code>string</code>s: just text,</li>
+<li>and <em><code>string</code>s with context</em> : text + <strong>set
+of references to store paths</strong>.</li>
+</ul>
+<p>Strings <em>with context</em> are always created when derivations are
+involved:</p>
+<pre class="nix"><code>{pkgs, ...}: {
+  mytool = pkgs.writeShellScriptBin &quot;tool&quot;
+    # String with context, due to referencing `pkgs.coreutils`:
+    &#39;&#39;
+      echo &quot;hello&quot; | &quot;${pkgs.coreutils}/bin/tee&quot; -a test.log
+    &#39;&#39;;
+}</code></pre>
+<p><strong>Note:</strong> Use <code>builtins.getContext</code> to
+inspect a string with context.</p>
+</section></section>
+    </div>
+  </div>
+
+  <script src="plugin/code-blocks/move-data-attributes.js"></script>
+  <script src="plugin/highlight/add-keywords.js"></script>
+
+  <script src="dist/reveal.js"></script>
+
+  <!-- reveal.js plugins -->
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script src="plugin/math/math.js"></script>
+  <script src="plugin/search/search.js"></script>
+  <script src="plugin/zoom/zoom.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/menu/menu.js"></script>
+
+  <script>
+      moveDataAttributesToCodeElement()
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'fade',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1200,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 5.0e-2,
+
+        // Bounds for smallest/largest possible scale to apply to content
+        minScale: 0.1,
+
+        maxScale: 2,
+        mathjax3: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+          tex: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+          },
+        },
+
+        // Reveal Menu Plugin:
+        // https://github.com/denehyg/reveal.js-menu/tree/2.1.0?tab=readme-ov-file
+        menu: {
+            // Specifies which side of the presentation the menu will
+            // be shown. Use 'left' or 'right'.
+            side: 'left',
+
+            // Specifies the width of the menu.
+            // Can be one of the following:
+            // 'normal', 'wide', 'third', 'half', 'full', or
+            // any valid css length value
+            width: 'normal',
+
+            // Add slide numbers to the titles in the slide list.
+            // Use 'true' or format string (same as reveal.js slide numbers)
+            numbers: false,
+
+            // Specifies which slide elements will be used for generating
+            // the slide titles in the menu. The default selects the first
+            // heading element found in the slide, but you can specify any
+            // valid css selector and the text from the first matching
+            // element will be used.
+            // Note: that a section data-menu-title attribute or an element
+            // with a menu-title class will take precedence over this option
+            titleSelector: 'h1, h2, h3, h4, h5, h6',
+
+            // If slides do not have a matching title, attempt to use the
+            // start of the text content as the title instead
+            useTextContentForMissingTitles: false,
+
+            // Hide slides from the menu that do not have a title.
+            // Set to 'true' to only list slides with titles.
+            hideMissingTitles: false,
+
+            // Adds markers to the slide titles to indicate the
+            // progress through the presentation. Set to 'false'
+            // to hide the markers.
+            markers: true,
+
+            // Specify custom panels to be included in the menu, by
+            // providing an array of objects with 'title', 'icon'
+            // properties, and either a 'src' or 'content' property.
+            custom: false,
+
+            // Specifies the themes that will be available in the themes
+            // menu panel. Set to 'true' to show the themes menu panel
+            // with the default themes list. Alternatively, provide an
+            // array to specify the themes to make available in the
+            // themes menu panel, for example...
+            //
+            // [
+            //     { name: 'Black', theme: 'dist/theme/black.css' },
+            //     { name: 'White', theme: 'dist/theme/white.css' },
+            //     { name: 'League', theme: 'dist/theme/league.css' },
+            //     {
+            //       name: 'Dark',
+            //       theme: 'lib/reveal.js/dist/theme/black.css',
+            //       highlightTheme: 'lib/reveal.js/plugin/highlight/monokai.css'
+            //     },
+            //     {
+            //       name: 'Code: Zenburn',
+            //       highlightTheme: 'lib/reveal.js/plugin/highlight/zenburn.css'
+            //     }
+            // ]
+            //
+            // Note: specifying highlightTheme without a theme will
+            // change the code highlight theme while leaving the
+            // presentation theme unchanged.
+            themes: false,
+
+            // Specifies the path to the default theme files. If your
+            // presentation uses a different path to the standard reveal
+            // layout then you need to provide this option, but only
+            // when 'themes' is set to 'true'. If you provide your own
+            // list of themes or 'themes' is set to 'false' the
+            // 'themesPath' option is ignored.
+            themesPath: 'dist/theme/',
+
+            // Specifies if the transitions menu panel will be shown.
+            // Set to 'true' to show the transitions menu panel with
+            // the default transitions list. Alternatively, provide an
+            // array to specify the transitions to make available in
+            // the transitions panel, for example...
+            // ['None', 'Fade', 'Slide']
+            transitions: false,
+
+            // Adds a menu button to the slides to open the menu panel.
+            // Set to 'false' to hide the button.
+            openButton: true,
+
+            // If 'true' allows the slide number in the presentation to
+            // open the menu panel. The reveal.js slideNumber option must
+            // be displayed for this to take effect
+            openSlideNumber: false,
+
+            // If true allows the user to open and navigate the menu using
+            // the keyboard. Standard keyboard interaction with reveal
+            // will be disabled while the menu is open.
+            keyboard: true,
+
+            // Normally the menu will close on user actions such as
+            // selecting a menu item, or clicking the presentation area.
+            // If 'true', the sticky option will leave the menu open
+            // until it is explicitly closed, that is, using the close
+            // button or pressing the ESC or m key (when the keyboard
+            // interaction option is enabled).
+            sticky: false,
+
+            // If 'true' standard menu items will be automatically opened
+            // when navigating using the keyboard. Note: this only takes
+            // effect when both the 'keyboard' and 'sticky' options are enabled.
+            autoOpen: true,
+
+            // If 'true' the menu will not be created until it is explicitly
+            // requested by calling RevealMenu.init(). Note this will delay
+            // the creation of all menu panels, including custom panels, and
+            // the menu button.
+            delayInit: false,
+
+            // If 'true' the menu will be shown when the menu is initialised.
+            openOnInit: false,
+
+            // By default the menu will load it's own font-awesome library
+            // icons. If your presentation needs to load a different
+            // font-awesome library the 'loadIcons' option can be set to false
+            // and the menu will not attempt to load the font-awesome library.
+            loadIcons: true
+        },
+
+        highlight: {
+          highlightOnLoad: false,
+          beforeHighlight: (hljs) => {
+            const keywords = new Map([
+              [ "bash", [ "nix","curl","python","jq","tree","ldd","nix-store","dot" ] ]
+            ]);
+            addHighlightJSKeywords(hljs, keywords)
+
+            // Run the plugin's highlighting code that was skipped on load
+            Array.from(Reveal.getRevealElement().querySelectorAll('pre code')).forEach((block) => {
+                RevealHighlight().highlightBlock(block);
+            });
+          }
+        },
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom,
+          RevealHighlight,
+          RevealMath.MathJax3,
+          RevealMenu
+        ]
+      }).then(() => {
+        // Set two variables for slide and height and width, to scale
+        // better code blocks etc.
+        Reveal.on('ready', () => {
+          const config = Reveal.getConfig();
+          document.documentElement.style.setProperty('--slide-height', `px`);
+          document.documentElement.style.setProperty('--slide-width', `px`);
+        });
+      });
+    </script>
+    </body>
+</html>
