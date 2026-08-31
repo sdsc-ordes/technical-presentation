@@ -187,6 +187,7 @@ pandoc pres=presentation:
     PRESENTATION_ROOT="$presentation_dir" \
     IMAGE_CONVERT_ROOT="$image_convert_dir" \
     BUILD_ROOT="$build_dir" \
+    MERMAID_BIN="$root_dir/tools/scripts/mmdc-no-sandbox.sh" \
       pandoc \
          --data-dir="$data_dir" \
          --defaults=pandoc-dirs.yaml \
