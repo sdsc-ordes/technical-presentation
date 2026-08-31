@@ -28,6 +28,12 @@ Slides and the original workshop can be found here:
 
 <iframe src="presentations/part-1/assets/pytorch-site/index.html" width="100%" height="500" style="border:1px solid #ccc; border-radius:5pt"></iframe>
 
+:::notes
+
+pytorch is a complex example because of the graphics dependencies, but still with nix this becomes a one step process. Nowadays when I switch projects I enter the directory and that is it.
+
+:::
+
 ---
 
 ##  Why Nix?
@@ -130,6 +136,9 @@ and you can get rid of all this complexity once you have understood what Nix can
 give you, which a lot of package managers try to solve but they don't or cannot
 do it proper from the start.
 
+Nix has a steep learning curve, but I think is usually about fixing things upfront. 
+The time you invest is saved later when you or someone joins the project.
+
 :::
 
 #  What is **Nix**?
@@ -197,6 +206,8 @@ In addition there is Nix the programming language - a functional programming
 language made for declarative software design. It has a steep learning curve,
 but provides a lot of power to use nix packages and its concepts beyond the
 usual depenendcy management.
+
+Alltogether nix brings devops into the programming world.
 
 :::
 
@@ -458,28 +469,6 @@ flowchart TD
 
 ---
 
-### What is [`github.com/NixOS/nixpkgs`](https://nixos.org/manual/nixpkgs/stable/#preface) ?
-
-::: incremental
-
-- Statement [`f = import src;`](#building-package) imports
-  [`default.nix`](https://github.com/NixOS/nixpkgs/blob/master/default.nix) from
-  `nixpkgs`
-  [[1](https://github.com/NixOS/nixpkgs/blob/374e6bcc403e02a35e07b650463c01a52b13a7c8/pkgs/top-level/default.nix#L21)]
-  - Returns a **function `f`**.
-  - When called returns attribute set **`pkgs`** for your `system` (e.g
-    `"x86_64-linux"`).
-
-- Package Search:
-  - [https://search.nixos.org/packages](https://search.nixos.org/packages)
-  - [https://www.nixhub.io](https://www.nixhub.io).
-
-- Function Search: [https://noogle.dev](https://noogle.dev).
-
-:::
-
----
-
 ## Package It with Nix (4)
 
 ```nix {line-numbers="1"}
@@ -607,32 +596,6 @@ different use cases, e.g. `frontend` `backend`, `full-stack` or different
 packages each of them treated independent and much more.
 
 :::
-
-# Nix Development Shells
-
-## What Is a Nix DevShell?
-
-Its a Nix **derivation** in the output attribute set `devShells` of the
-`flake.nix`:
-
-```nix { line-numbers="7-9" }
-{
-  inputs = { /* ... */ };
-  outputs = inputs: {
-    packages.x86_64-linux = {
-      mytool = /* derivation */
-    };
-    devShells.x86_64-linux = {
-      banana-shell = /* derivation */
-    };
-    # ... other outputs ...
-  }
-}
-```
-
-The `banana-shell` derivation is meant to be consumed by `nix develop`.
-
----
 
 ## Questions ?
 
@@ -810,6 +773,54 @@ flowchart LR
   can literally be anything!_
 
 :::
+
+---
+
+## What is [`github.com/NixOS/nixpkgs`](https://nixos.org/manual/nixpkgs/stable/#preface) ?
+
+::: incremental
+
+- Statement [`f = import src;`](#building-package) imports
+  [`default.nix`](https://github.com/NixOS/nixpkgs/blob/master/default.nix) from
+  `nixpkgs`
+  [[1](https://github.com/NixOS/nixpkgs/blob/374e6bcc403e02a35e07b650463c01a52b13a7c8/pkgs/top-level/default.nix#L21)]
+  - Returns a **function `f`**.
+  - When called returns attribute set **`pkgs`** for your `system` (e.g
+    `"x86_64-linux"`).
+
+- Package Search:
+  - [https://search.nixos.org/packages](https://search.nixos.org/packages)
+  - [https://www.nixhub.io](https://www.nixhub.io).
+
+- Function Search: [https://noogle.dev](https://noogle.dev).
+
+:::
+
+---
+
+# Nix Development Shells
+
+## What Is a Nix DevShell?
+
+Its a Nix **derivation** in the output attribute set `devShells` of the
+`flake.nix`:
+
+```nix { line-numbers="7-9" }
+{
+  inputs = { /* ... */ };
+  outputs = inputs: {
+    packages.x86_64-linux = {
+      mytool = /* derivation */
+    };
+    devShells.x86_64-linux = {
+      banana-shell = /* derivation */
+    };
+    # ... other outputs ...
+  }
+}
+```
+
+The `banana-shell` derivation is meant to be consumed by `nix develop`.
 
 ---
 

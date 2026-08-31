@@ -73,6 +73,7 @@ hash: true
 ---
 
 ```{.include}
+${meta:include-base-dir}/includes/disclaimer.md
 ${meta:include-base-dir}/includes/help.md
 ${meta:include-base-dir}/includes/acknowledgement.md
 ${meta:include-base-dir}/includes/intro.md
